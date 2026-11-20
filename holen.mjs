@@ -47,6 +47,7 @@ const KADER_BEWERBE = {   // Abschnitte der volleynet-Seite „Mannschaften“
   '2. Landesliga Damen': '2LLD', '3. Landesliga Damen': '3LLD', 'Vorarlberg Cup Herren': 'VCH', 'Vorarlberg Cup Damen': 'VCD',
 };
 const LK_API = 'https://volley-ball.at/landesklasse/api.php?p=liga';
+const KADER_VERSION = 2;
 const TERMINE_UHR = 18, SPIELDAUER_MIN = 60, NACHSEHEN_TAGE = 3;
 
 // ---------------------------------------------------------------- Hilfen
@@ -152,7 +153,8 @@ const titelAdresse = (s) => s.replace(/\b[A-ZÄÖÜ]{3,}\b/g, titelCase);
 // ---------------------------------------------------------------- volleynet: Kader
 async function kader(vorher, teams) {
   const v = vorher?.kader;
-  if (v && !(jetzt.getTime() >= ab18Heute && (v.stand ?? 0) < ab18Heute)) return v;
+  // KADER_VERSION erhöhen, wenn sich die Aufbereitung ändert – dann wird gleich neu geholt
+  if (v && v.version === KADER_VERSION && !(jetzt.getTime() >= ab18Heute && (v.stand ?? 0) < ab18Heute)) return v;
   const liste = await holen('https://vvv.volleynet.at/Teams');
   if (!liste) return v ?? null;
   const urls = {};
@@ -168,7 +170,7 @@ async function kader(vorher, teams) {
     if (z) raus[name] = z; else if (v?.teams?.[name]) raus[name] = v.teams[name];
   }
   console.log(`Kader: ${Object.keys(raus).length} Teams`);
-  return { stand: Date.now(), teams: raus };
+  return { stand: Date.now(), version: KADER_VERSION, teams: raus };
 }
 function kaderZerlegen(html) {
   let teil = -1;
@@ -436,7 +438,8 @@ for (const t of d.teams) await writeFile(path.join(AUSGABE, t.kalender), kalende
 
 const w = wien();
 const saison = +w.month >= 7 ? `${w.year}/${String(+w.year + 1).slice(2)}` : `${+w.year - 1}/${w.year.slice(2)}`;
-const daten = { stand: jetzt.toISOString(), verein: d.verein, saison,
+const { _hinweis, ...inhalt } = JSON.parse(await readFile(path.join(ORDNER, 'inhalt.json'), 'utf8'));   // Texte, Training, Kontakt
+const daten = { stand: jetzt.toISOString(), verein: d.verein, saison, inhalt,
   teams: d.teams.map(({ _spiele, _gruppe, ...t }) => t),
   spiele: d.spiele.map(({ phase, ...s }) => s) };
 // Hat sich etwas geändert? Sonst muss der Workflow nichts veröffentlichen (Ausgabe für GitHub Actions)

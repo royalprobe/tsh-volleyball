@@ -1,5 +1,5 @@
-// Lokale Vorschau: http://localhost:8097/ zeigt die echte Volleyball-Seite von ts-hohenems.at mit dem Widget an der Stelle,
-// wo es im Jimdo-Element „Widget/HTML“ stehen wird (unter den Trainingszeiten). public/ wird unter / ausgeliefert.
+// Lokale Vorschau: http://localhost:8097/ zeigt die echte Volleyball-Seite von ts-hohenems.at mit dem Widget statt der
+// bisherigen Inhalte (wie es nach dem Umbau in Jimdo aussehen soll). public/ wird unter / ausgeliefert.
 // Vorher `npm run holen`, damit public/daten.json da ist. ?leer zeigt das Widget allein auf einer leeren Seite.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -25,8 +25,11 @@ createServer(async (req, res) => {
 <body style="margin:0;padding:24px 16px;font-family:Montserrat,sans-serif;background:#fff"><div style="max-width:940px;margin:auto">${snippet}</div></body>`;
       } else {
         jimdo ??= await (await fetch(SEITE)).text();
+        // so, wie die Seite in Jimdo aussehen soll: das Widget als einziges Element im Inhaltsbereich
+        // (die bisherigen Elemente – Überschrift, Bild, Kontakt, Trainingszeiten – stecken jetzt im Widget)
         html = jimdo.replace('<head>', `<head><base href="${SEITE}">`)
-          .replace(/(j-hr ">\s*<hr\/>\s*<\/div>)/, `$1${snippet}`);
+          .replace(/(<div id="content_area" data-container="content">)[\s\S]*?(<!-- END _content\.sass -->)/,
+            `$1${snippet}</div></div></div>\n    $2`);
       }
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
       return res.end(html);

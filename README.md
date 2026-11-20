@@ -13,6 +13,9 @@ Auf der Seite ein Element **Widget/HTML** einfügen und das hineinkopieren:
 <script src="https://royalprobe.github.io/tsh-volleyball/tsh-volleyball.js" defer></script>
 ```
 
+Das Widget ist die ganze Seite: Kopf mit Logo und nächstem Heimspiel, Teams, Spiele, Trainingszeiten, Kontakt. Es ist das
+**einzige Element** der Jimdo-Seite (Überschrift, Bild, Kontakt- und Trainingstext von früher fallen weg).
+Texte, Trainingszeiten, Hallen und Kontakte stehen in **`inhalt.json`** – ändern, committen, pushen, nach ein, zwei Minuten online.
 Das Widget lebt in einem Shadow DOM: Jimdo-Stile greifen nicht hinein, die Schrift der Homepage wird übernommen.
 Farbe (Blau `#002266` wie die Homepage) und Logo stehen in `public/tsh-volleyball.js` bzw. `public/logo.png`.
 
