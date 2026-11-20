@@ -23,10 +23,6 @@
   var TAGE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
   var TAGE_LANG = { Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag' };
 
-  // Ball als Linienzeichnung (Hintergrund im Kopf)
-  var BALL = '<svg viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="5">'
-    + '<circle cx="100" cy="100" r="92"/><path d="M100 8c-30 40-34 92-8 140M100 8c38 22 62 62 62 110M8 100c40-10 92 2 130 42M192 100c-42 12-82 6-118-22M30 160c34-36 82-56 140-46"/></g></svg>';
-
   var CSS = [
     ':host{all:initial;display:block;font-family:inherit;color:#1e293b;--blau:#002266;--blau-2:#0b3f8f;--akzent:#6592a7;--hell:#eef3f9;--rand:#e1e7ef;--grau:#64748b;--grau-2:#94a3b8;--gruen:#16803c;--rot:#c81e1e;--live:#e0001b;--r:14px}',
     '*{box-sizing:border-box}',
@@ -37,8 +33,9 @@
     // ---- Kopf
     '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:center;padding:36px 36px 32px;border-radius:calc(var(--r) + 6px);color:#fff;',
     'background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
-    '.hero .ball{position:absolute;right:-70px;top:-90px;width:380px;color:rgba(255,255,255,.06);pointer-events:none}',
-    '.hero .ball svg{width:100%;height:auto;display:block}',
+    // Zeichen der Turnerschaft (Steinbock im Kreis) schimmert rechts durch
+    '.hero .zeichen{position:absolute;right:-30px;top:50%;width:420px;aspect-ratio:1;transform:translateY(-50%) rotate(-8deg);background:#fff;opacity:.1;pointer-events:none;-webkit-mask:var(--zeichen) center/contain no-repeat;mask:var(--zeichen) center/contain no-repeat}',
+    '.h-spiel{z-index:1}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:18px;min-width:0}',
     '.logo{display:block;width:min(100%,460px);aspect-ratio:640/115;background:#fff;-webkit-mask:var(--logo) left center/contain no-repeat;mask:var(--logo) left center/contain no-repeat}',
     '.saison{align-self:flex-start;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.78em;font-weight:700;letter-spacing:.08em;text-transform:uppercase}',
@@ -48,7 +45,7 @@
     '.knopf.voll{background:#fff;color:var(--blau)}.knopf.voll:hover{box-shadow:0 6px 18px rgba(0,0,0,.25);transform:translateY(-1px)}',
     '.knopf.rand{border:1px solid rgba(255,255,255,.35)}.knopf.rand:hover{background:rgba(255,255,255,.1)}',
     '.knopf svg{width:16px;height:16px}',
-    '.h-spiel{position:relative;display:flex;flex-direction:column;gap:10px;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(4px)}',
+    '.h-spiel{position:relative;display:flex;flex-direction:column;gap:10px;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16)}',
     '.h-spiel[data-link]{cursor:pointer}.h-spiel[data-link]:hover{background:rgba(255,255,255,.12)}',
     '.h-titel{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.72em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}',
     '.h-wann{font-size:1.5em;font-weight:800;line-height:1.1}',
@@ -171,7 +168,7 @@
     '@media (prefers-reduced-motion:reduce){.live i{animation:none}.karte,.knopf{transition:none}}',
     '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.ko-mail{grid-column:1/-1}.d-raster{grid-template-columns:1fr}}',
     '@container (max-width:720px){.spiele{grid-template-columns:1fr}.karten{grid-template-columns:1fr 1fr}}',
-    '@container (max-width:540px){.w{font-size:14px;gap:36px}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .ball{width:260px;right:-80px;top:-70px}.karten{grid-template-columns:1fr;gap:8px}',
+    '@container (max-width:540px){.w{font-size:14px;gap:36px}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .zeichen{width:300px;right:-110px;top:38%}.karten{grid-template-columns:1fr;gap:8px}',
     '.pillen{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:1px 2px}.pillen::-webkit-scrollbar{display:none}',
     '.kachel{padding:14px}.tm{flex-direction:column}.tm .gg{display:none}.tm>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wt small{max-width:6.2em}',
     'th.bl,td.bl{display:none}.d-kopf{padding:16px}.d-kopf .t{font-size:1.25em}.zahlen{gap:14px}.kontakt{grid-template-columns:1fr}.a-kopf .t{font-size:1.45em}}'
@@ -205,7 +202,7 @@
     var p = wurzel.querySelector('.pillen'), scroll = p ? p.scrollLeft : 0;
     var inhalt = daten.inhalt || {};
     wurzel.querySelector('.inhalt').innerHTML = '<div class="w">'
-      + heroHtml(inhalt)
+      + heroHtml(inhalt) + trainingHtml(inhalt) + kontaktHtml(inhalt)
       + '<section class="abschnitt" id="teams"><div class="a-kopf"><div><small>Saison ' + h(daten.saison) + '</small><div class="t">Unsere Teams</div></div>'
       + '<p>' + (team ? 'Tabelle, Kader und Spiele von ' + h(teamVon(team).titel) : 'Team antippen für Tabelle, Kader und Spiele') + '</p></div>'
       + '<div class="pillen" role="group" aria-label="Team wählen">'
@@ -214,7 +211,6 @@
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
       + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><small>Ergebnisse &amp; Termine</small><div class="t">Spiele' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div></div>'
       + spieleHtml() + '</section>'
-      + trainingHtml(inhalt) + kontaktHtml(inhalt)
       + '<p class="fuss">Stand ' + h(new Date(daten.stand).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))
       + ' · Daten: vvv.volleynet.at, VolleyStation, Landesklasse</p></div>';
     p = wurzel.querySelector('.pillen');
@@ -246,13 +242,13 @@
         + (s.halle ? '<div class="h-ort"><a href="' + h(karte(s.halle + (s.adresse ? ', ' + s.adresse : ''))) + '" target="_blank" rel="noopener">' + h(s.halle) + '</a></div>' : '')
         + '</div>';
     }
-    return '<header class="hero"><span class="ball">' + BALL + '</span><div class="h-links">'
+    return '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<span class="saison">Saison ' + h(daten.saison) + '</span>'
       + (inhalt.einladung ? '<p class="einladung">' + h(inhalt.einladung) + '</p>' : '')
       + '<div class="knoepfe">' + (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + 'Schreib uns</a>' : '')
       + (inhalt.training ? '<button class="knopf rand" data-ziel="training">' + UHR_ICON + 'Trainingszeiten</button>' : '')
-      + '<button class="knopf rand" data-ziel="spiele">Spiele</button></div>'
+      + '<button class="knopf rand" data-ziel="teams">Teams</button><button class="knopf rand" data-ziel="spiele">Spiele</button></div>'
       + '</div>' + box + '</header>';
   }
 
@@ -464,7 +460,7 @@
     host = document.getElementById('tsh-volleyball');
     if (!host) { host = document.createElement('div'); host.id = 'tsh-volleyball'; skript.parentNode.insertBefore(host, skript); }
     wurzel = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-    wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}</style><div class="inhalt"><p class="leer">Wird geladen …</p></div>';
+    wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ts-zeichen.png")}</style><div class="inhalt"><p class="leer">Wird geladen …</p></div>';
     wurzel.addEventListener('click', function (e) {
       var ziel = e.target.closest('[data-team],[data-mehr],[data-link],[data-ziel],a');
       if (!ziel || ziel.tagName === 'A') return;
