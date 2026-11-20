@@ -139,6 +139,8 @@
     '@keyframes p{50%{opacity:.25}}',
     '.leer{margin:6px 0;color:var(--grau-2)}',
     '.mehr{margin-top:10px}',
+    // Teamauswahl am PC in einer Reihe: Knöpfe teilen sich die Breite
+    '@container (min-width:860px){.teamwahl{flex-wrap:nowrap;gap:5px}.teamwahl .pille{flex:1 1 auto;padding:7px 8px;text-align:center;font-size:.84em}}',
     '.pillen.archiv{flex-wrap:wrap !important;overflow:visible !important}',
     // ---- Training
     '.training{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}',
@@ -206,7 +208,7 @@
       + heroHtml(inhalt) + trainingHtml(inhalt) + kontaktHtml(inhalt)
       + '<section class="abschnitt" id="teams"><div class="a-kopf"><div><div class="t">Unsere Teams</div></div>'
       + '</div>'
-      + '<div class="pillen" role="group" aria-label="Team wählen">'
+      + '<div class="pillen teamwahl" role="group" aria-label="Team wählen">'
       + '<button class="pille" data-team="" aria-pressed="' + !team + '">Alle Teams</button>'
       + daten.teams.map(function (t) { return '<button class="pille" data-team="' + h(t.id) + '" aria-pressed="' + (team === t.id) + '">' + h(t.titel) + '</button>'; }).join('')
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
