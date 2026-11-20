@@ -204,7 +204,7 @@
     var inhalt = daten.inhalt || {};
     wurzel.querySelector('.inhalt').innerHTML = '<div class="w">'
       + heroHtml(inhalt) + trainingHtml(inhalt) + kontaktHtml(inhalt)
-      + '<section class="abschnitt" id="teams"><div class="a-kopf"><div><small>Saison ' + h(daten.saison) + '</small><div class="t">Unsere Teams</div></div>'
+      + '<section class="abschnitt" id="teams"><div class="a-kopf"><div><div class="t">Unsere Teams</div></div>'
       + '<p>' + (team ? 'Tabelle, Kader und Spiele von ' + h(teamVon(team).titel) : 'Team antippen für Tabelle, Kader und Spiele') + '</p></div>'
       + '<div class="pillen" role="group" aria-label="Team wählen">'
       + '<button class="pille" data-team="" aria-pressed="' + !team + '">Alle Teams</button>'
@@ -373,7 +373,7 @@
   function kontaktHtml(inhalt) {
     if (!inhalt.mail && !(inhalt.personen || []).length) return '';
     var initialen = function (n) { return n.split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); };
-    return '<section class="abschnitt" id="kontakt"><div class="a-kopf"><div><small>Fragen?</small><div class="t">Kontakt</div></div></div><div class="kontakt">'
+    return '<section class="abschnitt" id="kontakt"><div class="a-kopf"><div><div class="t">Kontakt</div></div></div><div class="kontakt">'
       + (inhalt.mail ? '<div class="ko-mail"><b>Neu dabei oder Wiedereinstieg?</b><p>Schreib uns einfach – wir melden uns.</p><a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + h(inhalt.mail) + '</a></div>' : '')
       + (inhalt.personen || []).map(function (p) {
         return '<div class="person"><span class="initialen">' + h(initialen(p.name)) + '</span><div><small>' + h(p.rolle) + '</small><b>' + h(p.name) + '</b>'
