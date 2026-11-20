@@ -1,21 +1,188 @@
 {
-  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team.",
+  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
   "einladung": "Lust auf Volleyball? Dann melde dich bei Thomas oder Günther für Details.",
   "mail": "volleyball@ts-hohenems.at",
   "personen": [
-    { "rolle": "Riegenleiter", "name": "Günther Amann", "mail": "guenther9@gmx.at" },
-    { "rolle": "Riegenleiter-Stellvertreter", "name": "Thomas Kerbl" }
+    {
+      "rolle": "Riegenleiter",
+      "name": "Günther Amann",
+      "mail": "guenther9@gmx.at"
+    },
+    {
+      "rolle": "Riegenleiter-Stellvertreter",
+      "name": "Thomas Kerbl"
+    }
   ],
   "hallen": {
-    "SMS": { "name": "SMS Hohenems", "karte": "Mittelschule Markt Hohenems, Jakob Hannibal-Straße 11, 6845 Hohenems" },
-    "Schwefel": { "name": "VS Schwefel", "karte": "Volksschule Schwefel, Hohenems" }
+    "SMS": {
+      "name": "SMS Hohenems",
+      "karte": "Mittelschule Markt Hohenems, Jakob Hannibal-Straße 11, 6845 Hohenems"
+    },
+    "Schwefel": {
+      "name": "VS Schwefel",
+      "karte": "Volksschule Schwefel, Hohenems"
+    }
   },
   "training": [
-    { "gruppe": "Herren 1", "zusatz": "Landesliga", "team": "Herren 1", "zeiten": [["Mo", "20:00", "22:00", "Schwefel"], ["Di", "20:00", "22:00", "SMS"], ["Fr", "20:00", "22:00", "SMS"]] },
-    { "gruppe": "Herren 2", "zusatz": "Landesliga", "team": "Herren 2", "zeiten": [["Mo", "20:00", "22:00", "SMS"]] },
-    { "gruppe": "Herren 3", "zusatz": "Jugend", "team": "Herren 3", "zeiten": [["Mo", "18:30", "20:30", "SMS"], ["Mi", "19:30", "21:30", "SMS"], ["Fr", "18:00", "20:00", "SMS"]] },
-    { "gruppe": "Damen", "zusatz": "und Jugend weiblich", "team": "Damen", "zeiten": [["Di", "19:00", "21:00", "SMS"], ["Fr", "18:00", "20:00", "SMS"]] },
-    { "gruppe": "Jungs", "zusatz": "Jahrgang 2014 und jünger", "zeiten": [["Mo", "17:00", "18:30", "SMS"], ["Fr", "18:00", "20:00", "SMS"]] },
-    { "gruppe": "Mädchen", "zusatz": "Jahrgang 2014 und jünger", "zeiten": [["Di", "17:00", "19:00", "SMS"], ["Fr", "16:00", "18:00", "SMS"]] }
+    {
+      "gruppe": "Herren 1",
+      "zusatz": "Landesliga",
+      "team": "Herren 1",
+      "zeiten": [
+        [
+          "Mo",
+          "20:00",
+          "22:00",
+          "Schwefel"
+        ],
+        [
+          "Di",
+          "20:00",
+          "22:00",
+          "SMS"
+        ],
+        [
+          "Fr",
+          "20:00",
+          "22:00",
+          "SMS"
+        ]
+      ]
+    },
+    {
+      "gruppe": "Herren 2",
+      "zusatz": "Landesliga",
+      "team": "Herren 2",
+      "zeiten": [
+        [
+          "Mo",
+          "20:00",
+          "22:00",
+          "SMS"
+        ]
+      ]
+    },
+    {
+      "gruppe": "Herren 3",
+      "zusatz": "Jugend",
+      "team": "Herren 3",
+      "zeiten": [
+        [
+          "Mo",
+          "18:30",
+          "20:30",
+          "SMS"
+        ],
+        [
+          "Mi",
+          "19:30",
+          "21:30",
+          "SMS"
+        ],
+        [
+          "Fr",
+          "18:00",
+          "20:00",
+          "SMS"
+        ]
+      ]
+    },
+    {
+      "gruppe": "Damen",
+      "zusatz": "und Jugend weiblich",
+      "team": "Damen",
+      "zeiten": [
+        [
+          "Di",
+          "19:00",
+          "21:00",
+          "SMS"
+        ],
+        [
+          "Fr",
+          "18:00",
+          "20:00",
+          "SMS"
+        ]
+      ]
+    },
+    {
+      "gruppe": "Jungs",
+      "zusatz": "Jahrgang 2014 und jünger",
+      "zeiten": [
+        [
+          "Mo",
+          "17:00",
+          "18:30",
+          "SMS"
+        ],
+        [
+          "Fr",
+          "18:00",
+          "20:00",
+          "SMS"
+        ]
+      ]
+    },
+    {
+      "gruppe": "Mädchen",
+      "zusatz": "Jahrgang 2014 und jünger",
+      "zeiten": [
+        [
+          "Di",
+          "17:00",
+          "19:00",
+          "SMS"
+        ],
+        [
+          "Fr",
+          "16:00",
+          "18:00",
+          "SMS"
+        ]
+      ]
+    }
+  ],
+  "archiv": [
+    {
+      "saison": "2025/2026",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2025-2026-1/"
+    },
+    {
+      "saison": "2024/2025",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2024-2025/"
+    },
+    {
+      "saison": "2023/2024",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2023-2024/"
+    },
+    {
+      "saison": "2022/2023",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2022-2023/"
+    },
+    {
+      "saison": "2021/2022",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2021-2022/"
+    },
+    {
+      "saison": "2020/2021",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2020-2021/"
+    },
+    {
+      "saison": "2019/2020",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2019-2020/"
+    },
+    {
+      "saison": "2018/2019",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2018-2019/"
+    },
+    {
+      "saison": "2017/2018",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2017-2018/"
+    },
+    {
+      "saison": "2016/2017",
+      "link": "https://www.ts-hohenems.at/sparten/volleyball/saison-2016-2017/"
+    }
   ]
 }

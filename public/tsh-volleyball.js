@@ -139,6 +139,7 @@
     '@keyframes p{50%{opacity:.25}}',
     '.leer{margin:6px 0;color:var(--grau-2)}',
     '.mehr{margin-top:10px}',
+    '.pillen.archiv{flex-wrap:wrap !important;overflow:visible !important}',
     // ---- Training
     '.training{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}',
     '.tr-karte{display:flex;flex-direction:column;gap:10px;padding:16px 18px;background:#fff;border:1px solid var(--rand);border-radius:var(--r)}',
@@ -210,7 +211,7 @@
       + daten.teams.map(function (t) { return '<button class="pille" data-team="' + h(t.id) + '" aria-pressed="' + (team === t.id) + '">' + h(t.titel) + '</button>'; }).join('')
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
       + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><small>Ergebnisse &amp; Termine</small><div class="t">Spiele' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div></div>'
-      + spieleHtml() + '</section>'
+      + spieleHtml() + '</section>' + archivHtml(inhalt)
       + '<p class="fuss">Stand ' + h(new Date(daten.stand).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))
       + ' · Daten: vvv.volleynet.at, VolleyStation, Landesklasse</p></div>';
     p = wurzel.querySelector('.pillen');
@@ -378,6 +379,12 @@
         return '<div class="person"><span class="initialen">' + h(initialen(p.name)) + '</span><div><small>' + h(p.rolle) + '</small><b>' + h(p.name) + '</b>'
           + (p.mail ? '<a href="mailto:' + h(p.mail) + '">' + h(p.mail) + '</a>' : '') + '</div></div>';
       }).join('') + '</div></section>';
+  }
+
+  function archivHtml(inhalt) {
+    if (!inhalt.archiv || !inhalt.archiv.length) return '';
+    return '<section class="abschnitt" id="archiv"><div class="a-kopf"><div><small>Archiv</small><div class="t">Frühere Saisonen</div></div></div>'
+      + '<div class="pillen archiv">' + inhalt.archiv.map(function (a) { return '<a class="pille" href="' + h(a.link) + '">' + h(a.saison) + '</a>'; }).join('') + '</div></section>';
   }
 
   // ------------------------------------------------------------------ Live-Spielstand (VolleyStation)
