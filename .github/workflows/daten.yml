@@ -1,4 +1,5 @@
 # Holt alle 15 Minuten die Daten (holen.mjs) und veröffentlicht public/ auf GitHub Pages – nur, wenn sich etwas geändert hat.
+# Zwei Jobs (holen, veröffentlichen): Im selben Job fand deploy-pages das gerade hochgeladene Artefakt oft noch nicht.
 name: Daten
 
 on:
@@ -18,12 +19,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  daten:
+  holen:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+    outputs:
+      veroeffentlichen: ${{ steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -36,14 +36,9 @@ jobs:
           VS_USER: ${{ secrets.VS_USER }}
           VS_PASS: ${{ secrets.VS_PASS }}
       - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
-        uses: actions/configure-pages@v6
-      - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
         uses: actions/upload-pages-artifact@v5
         with:
           path: public
-      - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
-        id: deploy
-        uses: actions/deploy-pages@v5
       # GitHub schaltet zeitgesteuerte Workflows in öffentlichen Repos nach 60 Tagen ohne Commit ab –
       # darum alle 40 Tage ein leerer Commit als Lebenszeichen
       - name: Lebenszeichen
@@ -55,3 +50,16 @@ jobs:
             git commit --allow-empty -m "Lebenszeichen (zeitgesteuerter Workflow bleibt aktiv)"
             git push
           fi
+
+  veroeffentlichen:
+    needs: holen
+    if: needs.holen.outputs.veroeffentlichen == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v6
+      - id: deploy
+        uses: actions/deploy-pages@v5
