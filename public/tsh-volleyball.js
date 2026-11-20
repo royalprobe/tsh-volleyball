@@ -51,7 +51,7 @@
     '.h-wann{font-size:1.5em;font-weight:800;line-height:1.1}',
     '.h-teams{display:flex;flex-direction:column;gap:2px;font-weight:600}',
     '.h-teams .gg{font-size:.75em;color:rgba(255,255,255,.55)}',
-    '.h-stand{display:flex;align-items:baseline;gap:10px}.h-stand b{font-size:2.2em;line-height:1}.h-stand span{font-size:.85em;color:rgba(255,255,255,.75)}',
+    '.h-stand em{font-style:normal;font-weight:800;color:#fff;background:var(--live);padding:0 6px;border-radius:5px}.h-stand{display:flex;align-items:baseline;gap:10px}.h-stand b{font-size:2.2em;line-height:1}.h-stand span{font-size:.85em;color:rgba(255,255,255,.75)}',
     '.h-ort{font-size:.82em;color:rgba(255,255,255,.75)}.h-ort a{text-decoration:underline;text-underline-offset:2px}',
     '.h-bewerb{align-self:flex-start;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.14);font-size:.72em;font-weight:700}',
     // ---- Abschnitte
@@ -234,7 +234,7 @@
     if (s) {
       var l = laeuft(s), d = datumKurz(s);
       var wert = l
-        ? '<div class="h-stand"><b>' + live[s.vs].stand.gewonnen.home + ':' + live[s.vs].stand.gewonnen.away + '</b><span>' + live[s.vs].stand.liste.map(function (x) { return x.h + ':' + x.a; }).join(' · ') + '</span></div>'
+        ? '<div class="h-stand"><b>' + live[s.vs].stand.gewonnen.home + ':' + live[s.vs].stand.gewonnen.away + '</b><span>' + live[s.vs].stand.liste.map(function (x) { return x.fertig ? x.h + ':' + x.a : '<em>' + x.h + ':' + x.a + '</em>'; }).join(' · ') + '</span></div>'
         : '<div class="h-wann">' + h(TAGE_LANG[d.tag] || d.tag) + ', ' + h(d.datum) + (s.zeit ? ' · ' + h(s.zeit) : '') + '</div>';
       box = '<div class="h-spiel"' + (s.link ? ' data-link="' + h(s.link) + '" role="link" tabindex="0"' : '') + '>'
         + '<div class="h-titel">' + (l ? 'Jetzt live' : eigen(s.heim) ? 'Nächstes Heimspiel' : 'Nächstes Spiel') + (l ? '<span class="live"><i></i>LIVE</span>' : '') + '</div>'
@@ -432,7 +432,7 @@
     if (!daten) return;
     var jetzt = Date.now(), ids = [];
     daten.spiele.forEach(function (s) {
-      if (!s.vs) return;
+      if (!s.vs || s.vs < 0) return;   // < 0: Vorführung
       var t = anpfiff(s);
       if (!s.ergebnis && jetzt >= t - VOR && jetzt <= t + NACHSCHAU) ids.push(s.vs);
       else if (sockets[s.vs]) { sockets[s.vs].close(); delete sockets[s.vs]; }
@@ -447,6 +447,32 @@
     document.head.appendChild(sc);
   }
 
+  // ------------------------------------------------------------------ Vorführung: ?livedemo in der Adresse
+  // Tut so, als liefe gerade das nächste Heimspiel (ohne VolleyStation), und zählt alle paar Sekunden einen Punkt weiter.
+  var DEMO = /[?&]livedemo(&|=|$)/.test(location.search), DEMO_ID = -1, demoTakt = null;
+  function demo() {
+    var s = daten.spiele.filter(function (x) { return x.ergebnis == null && eigen(x.heim) && x.datum >= heute(); })[0];
+    if (!s) return;
+    var vor40 = new Date(Date.now() - 40 * 60000);
+    s.vs = DEMO_ID; s.datum = heute(); s.zeit = zwei(vor40.getHours()) + ':' + zwei(vor40.getMinutes());
+    if (!live[DEMO_ID]) live[DEMO_ID] = { aus: false, stand: { gewonnen: { home: 1, away: 1 },
+      liste: [{ h: 25, a: 21, fertig: true }, { h: 23, a: 25, fertig: true }, { h: 17, a: 15, fertig: false }] } };
+    if (demoTakt) return;
+    demoTakt = setInterval(function () {
+      var st = live[DEMO_ID].stand, satz = st.liste[st.liste.length - 1];
+      if (live[DEMO_ID].aus) return;
+      if (Math.random() < 0.55) satz.h++; else satz.a++;
+      var ziel = st.liste.length === 5 ? 15 : 25;
+      if (Math.max(satz.h, satz.a) >= ziel && Math.abs(satz.h - satz.a) >= 2) {
+        satz.fertig = true;
+        st.gewonnen[satz.h > satz.a ? 'home' : 'away']++;
+        if (Math.max(st.gewonnen.home, st.gewonnen.away) >= 3) { live[DEMO_ID].aus = true; st.aus = true; }
+        else st.liste.push({ h: 0, a: 0, fertig: false });
+      }
+      spaeter();
+    }, 2500);
+  }
+
   // ------------------------------------------------------------------ Laden
   function laden(erstes) {
     return fetch(BASIS + 'daten.json?t=' + Math.floor(Date.now() / 60000), { cache: 'no-cache' }).then(function (a) {
@@ -454,6 +480,7 @@
       return a.json();
     }).then(function (d) {
       daten = d;
+      if (DEMO) demo();
       if (team && !teamVon(team)) team = null;
       zeichnen();
       liveSuchen();
