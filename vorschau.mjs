@@ -11,8 +11,9 @@ const SEITE = 'https://www.ts-hohenems.at/sparten/volleyball/';
 const TYPEN = { '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.ics': 'text/calendar', '.html': 'text/html' };
 let jimdo = null;
 
-const snippet = `<div class="j-module n j-htmlCode"><div id="tsh-volleyball"></div>
-<script src="http://localhost:${PORT}/tsh-volleyball.js" defer></script></div>`;
+// Adresse, unter der die Seite aufgerufen wurde – so geht die Vorschau auch vom Handy aus (http://<IP des PCs>:8097/)
+const snippet = (wirt) => `<div class="j-module n j-htmlCode"><div id="tsh-volleyball"></div>
+<script src="http://${wirt}/tsh-volleyball.js" defer></script></div>`;
 
 createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
@@ -22,14 +23,14 @@ createServer(async (req, res) => {
       if (url.searchParams.has('leer')) {
         html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TSH Volleyball</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-<body style="margin:0;padding:24px 16px;font-family:Montserrat,sans-serif;background:#fff"><div style="max-width:940px;margin:auto">${snippet}</div></body>`;
+<body style="margin:0;padding:24px 16px;font-family:Montserrat,sans-serif;background:#fff"><div style="max-width:940px;margin:auto">${snippet(req.headers.host)}</div></body>`;
       } else {
         jimdo ??= await (await fetch(SEITE)).text();
         // so, wie die Seite in Jimdo aussehen soll: das Widget als einziges Element im Inhaltsbereich
         // (die bisherigen Elemente – Überschrift, Bild, Kontakt, Trainingszeiten – stecken jetzt im Widget)
         html = jimdo.replace('<head>', `<head><base href="${SEITE}">`)
           .replace(/(<div id="content_area" data-container="content">)[\s\S]*?(<!-- END _content\.sass -->)/,
-            `$1${snippet}</div></div></div>\n    $2`);
+            `$1${snippet(req.headers.host)}</div></div></div>\n    $2`);
       }
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
       return res.end(html);
