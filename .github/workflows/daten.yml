@@ -25,8 +25,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - id: holen
@@ -36,14 +36,14 @@ jobs:
           VS_USER: ${{ secrets.VS_USER }}
           VS_PASS: ${{ secrets.VS_PASS }}
       - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public
       - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
         id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
       # GitHub schaltet zeitgesteuerte Workflows in öffentlichen Repos nach 60 Tagen ohne Commit ab –
       # darum alle 40 Tage ein leerer Commit als Lebenszeichen
       - name: Lebenszeichen
