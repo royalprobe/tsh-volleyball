@@ -1,0 +1,57 @@
+# Holt alle 15 Minuten die Daten (holen.mjs) und veröffentlicht public/ auf GitHub Pages – nur, wenn sich etwas geändert hat.
+name: Daten
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write     # nur für das Lebenszeichen (siehe unten)
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  daten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: holen
+        run: node holen.mjs
+        env:
+          VORHER_URL: https://royalprobe.github.io/tsh-volleyball/stand.json
+          VS_USER: ${{ secrets.VS_USER }}
+          VS_PASS: ${{ secrets.VS_PASS }}
+      - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
+        uses: actions/configure-pages@v5
+      - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
+        id: deploy
+        uses: actions/deploy-pages@v4
+      # GitHub schaltet zeitgesteuerte Workflows in öffentlichen Repos nach 60 Tagen ohne Commit ab –
+      # darum alle 40 Tage ein leerer Commit als Lebenszeichen
+      - name: Lebenszeichen
+        run: |
+          letzter=$(git log -1 --format=%ct)
+          if [ $(( $(date +%s) - letzter )) -gt $(( 40 * 86400 )) ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "Lebenszeichen (zeitgesteuerter Workflow bleibt aktiv)"
+            git push
+          fi

@@ -1,0 +1,5 @@
+node_modules/
+.env
+public/daten.json
+public/stand.json
+public/kalender/

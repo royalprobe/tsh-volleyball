@@ -1,0 +1,11 @@
+{
+  "name": "tsh-volleyball",
+  "private": true,
+  "type": "module",
+  "description": "Volleyball-Widget der TS Hohenems für die Jimdo-Homepage: Spiele, Ergebnisse, Tabellen, Kader, Live-Spielstand",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "holen": "node holen.mjs",
+    "vorschau": "node vorschau.mjs"
+  }
+}
