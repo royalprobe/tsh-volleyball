@@ -3,7 +3,7 @@
   "einladung": "Lust auf Volleyball? Dann melde dich bei Thomas oder Günther für Details.",
   "mail": "volleyball@ts-hohenems.at",
   "personen": [
-    { "rolle": "Riegenleiter", "name": "Günther Amann", "mail": "guenther9@gmx.at" },
+    { "rolle": "Riegenleiter", "name": "Günther Amann" },
     { "rolle": "Riegenleiter-Stellvertreter", "name": "Thomas Kerbl" }
   ],
   "hallen": {
