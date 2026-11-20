@@ -65,7 +65,7 @@
     '.pille{padding:7px 15px;border-radius:999px;border:1px solid #d6dee8;background:#fff;font-weight:600;font-size:.86em;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}',
     '.pille:hover{border-color:var(--blau);color:var(--blau)}',
     '.pille[aria-pressed=true]{background:var(--blau);border-color:var(--blau);color:#fff}',
-    '.karten{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}',
+    '.karten{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}',
     '.karte{position:relative;display:flex;flex-direction:column;gap:10px;padding:16px 18px;text-align:left;background:#fff;border:1px solid transparent;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06);transition:box-shadow .2s,transform .2s,border-color .2s}',
     '.karte:hover{border-color:#c9d6e6;box-shadow:0 10px 26px rgba(0,34,102,.10);transform:translateY(-2px)}',
     '.karte::after{content:"";position:absolute;right:16px;top:18px;width:8px;height:8px;border-top:2px solid var(--grau-2);border-right:2px solid var(--grau-2);transform:rotate(45deg);transition:transform .2s,border-color .2s}',
@@ -168,7 +168,7 @@
     '.fehler{padding:16px 18px;border-radius:var(--r);background:var(--hell);color:var(--grau)}',
     '@media (prefers-reduced-motion:reduce){.live i{animation:none}.karte,.knopf{transition:none}}',
     '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.ko-mail{grid-column:1/-1}.d-raster{grid-template-columns:1fr}}',
-    '@container (max-width:720px){.spiele{grid-template-columns:1fr}.karten{grid-template-columns:1fr 1fr}}',
+    '@container (max-width:720px){.spiele{grid-template-columns:1fr}}@container (max-width:640px){.karten{grid-template-columns:1fr 1fr}}',
     '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px 18px;border-radius:var(--r)}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .zeichen{width:230px;right:-70px;top:36%}.karten{grid-template-columns:1fr;gap:8px}',
     '.pillen{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:1px 2px}.pillen::-webkit-scrollbar{display:none}',
     '.kachel{padding:14px}.tm{flex-direction:column}.tm .gg{display:none}.tm>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wt small{max-width:6.2em}',
@@ -205,12 +205,12 @@
     wurzel.querySelector('.inhalt').innerHTML = '<div class="w">'
       + heroHtml(inhalt) + trainingHtml(inhalt) + kontaktHtml(inhalt)
       + '<section class="abschnitt" id="teams"><div class="a-kopf"><div><div class="t">Unsere Teams</div></div>'
-      + '<p>' + (team ? 'Tabelle, Kader und Spiele von ' + h(teamVon(team).titel) : 'Team antippen für Tabelle, Kader und Spiele') + '</p></div>'
+      + '</div>'
       + '<div class="pillen" role="group" aria-label="Team wählen">'
       + '<button class="pille" data-team="" aria-pressed="' + !team + '">Alle Teams</button>'
       + daten.teams.map(function (t) { return '<button class="pille" data-team="' + h(t.id) + '" aria-pressed="' + (team === t.id) + '">' + h(t.titel) + '</button>'; }).join('')
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
-      + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><small>Ergebnisse &amp; Termine</small><div class="t">Spiele' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div></div>'
+      + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><div class="t">Ergebnisse &amp; Termine' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div></div>'
       + spieleHtml() + '</section>' + archivHtml(inhalt)
       + '<p class="fuss">Stand ' + h(new Date(daten.stand).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))
       + ' · Daten: vvv.volleynet.at, VolleyStation, Landesklasse</p></div>';
@@ -383,7 +383,7 @@
 
   function archivHtml(inhalt) {
     if (!inhalt.archiv || !inhalt.archiv.length) return '';
-    return '<section class="abschnitt" id="archiv"><div class="a-kopf"><div><small>Archiv</small><div class="t">Frühere Saisonen</div></div></div>'
+    return '<section class="abschnitt" id="archiv"><div class="a-kopf"><div><div class="t">Archiv</div></div></div>'
       + '<div class="pillen archiv">' + inhalt.archiv.map(function (a) { return '<a class="pille" href="' + h(a.link) + '">' + h(a.saison) + '</a>'; }).join('') + '</div></section>';
   }
 
