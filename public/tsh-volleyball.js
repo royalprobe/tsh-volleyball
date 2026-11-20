@@ -365,8 +365,8 @@
   }
   function trainingHtml(inhalt) {
     if (!inhalt.training || !inhalt.training.length) return '';
-    return '<section class="abschnitt" id="training"><div class="a-kopf"><div><small>Mitmachen</small><div class="t">Trainingszeiten</div></div>'
-      + '<p>Halle antippen für die Karte</p></div><div class="training">' + inhalt.training.map(function (g) {
+    return '<section class="abschnitt" id="training"><div class="a-kopf"><div><div class="t">Trainingszeiten</div></div></div>'
+      + '<div class="training">' + inhalt.training.map(function (g) {
         return '<div class="tr-karte"><div class="tr-kopf"><b>' + h(g.gruppe) + '</b>' + (g.zusatz ? '<span>' + h(g.zusatz) + '</span>' : '') + '</div>' + zeitenHtml(g.zeiten, inhalt) + '</div>';
       }).join('') + '</div></section>';
   }
