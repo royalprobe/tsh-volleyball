@@ -1,6 +1,6 @@
 // Spielplan und Wertung des U14-Turniers: 12 Teams in zwei 6er-Gruppen (jeder gegen jeden), danach Überkreuz-Spiele
 // (1./2., 3./4., 5./6. der Gruppen) und alle Platzierungsspiele – 42 Spiele, 14 Runden, 3 Felder.
-// Ein Spiel = 1 Satz auf 25. Schiedsgericht: in der Gruppenphase pfeift die jeweils andere Gruppe.
+// Ein Spiel = 1 Satz auf 25. Schiedsgericht in der Gruppenphase: ein Team, das danach auf demselben Feld spielt.
 //
 // Teilnehmer eines Spiels sind Platzhalter: { g: 'A', p: 1 } = 1. der Gruppe A (erst bekannt, wenn die Gruppe fertig ist),
 // { s: 'S31' } / { v: 'S31' } = Sieger / Verlierer von Spiel 31, { t: 'A3' } = Team A3 direkt (Gruppenphase).
@@ -18,21 +18,58 @@ function rundenSechs() {
   return r;
 }
 
-/** Alle 42 Spiele mit Runde, Feld, Phase, Teilnehmern und Schiedsgericht */
+/** Für jede Liste [Kandidat 1, Kandidat 2] einen wählen, so dass die Einsätze je Team möglichst gleich sind
+ *  (alle Kombinationen durchprobieren, je Gruppe höchstens 2^15 – das geht schnell). */
+function schiriWahl(kandidaten) {
+  const gruppen = { A: [], B: [] };
+  kandidaten.forEach((k, i) => gruppen[k[0][0]].push(i));
+  const raus = [];
+  for (const idx of Object.values(gruppen)) {
+    let beste = null, besteWert = Infinity;
+    for (let maske = 0; maske < (1 << idx.length); maske++) {
+      const zahl = {};
+      idx.forEach((i, j) => { const t = kandidaten[i][(maske >> j) & 1]; zahl[t] = (zahl[t] || 0) + 1; });
+      const werte = Object.values(zahl);
+      while (werte.length < 6) werte.push(0);
+      const wert = werte.reduce((n, x) => n + x * x, 0) * 100 + (Math.max(...werte) - Math.min(...werte));
+      if (wert < besteWert) { besteWert = wert; beste = maske; }
+    }
+    idx.forEach((i, j) => { raus[i] = kandidaten[i][(beste >> j) & 1]; });
+  }
+  return raus;
+}
+
+/** Alle 42 Spiele mit Runde, Feld, Phase, Teilnehmern und Schiedsgericht (einmal gerechnet, danach aus dem Speicher) */
+let plan = null;
 export function spielplan() {
+  if (!plan) plan = planRechnen();
+  return plan.map((sp) => ({ ...sp }));
+}
+function planRechnen() {
   const spiele = [];
   let nr = 0;
   const neu = (runde, feld, phase, titel, heim, gast, schiri) => spiele.push({ id: `S${++nr}`, nr, runde, feld, phase, titel, heim, gast, schiri });
   const R = rundenSechs();
-  // Gruppenphase: Runde 1, 3, 5, 7, 9 Gruppe A, Runde 2, 4, … 10 Gruppe B. Pfeifen: Teams der anderen Gruppe, reihum.
+  // Gruppenphase: Runde 1, 3, 5, 7, 9 Gruppe A, Runde 2, 4, … 10 Gruppe B.
+  // Schiedsgericht: ein Team, das in der nächsten Runde auf demselben Feld spielt (also aus der anderen Gruppe) –
+  // welches der beiden, ist so gewählt, dass die Einsätze möglichst gleich verteilt sind (schiriWahl).
+  const gruppenSpiele = [];
   for (let r = 0; r < 5; r++) {
-    for (const [g, andere, runde] of [['A', 'B', r * 2 + 1], ['B', 'A', r * 2 + 2]]) {
-      R[r].forEach(([a, b], feld) => neu(runde, feld + 1, 'gruppe', `Gruppe ${g}`, { t: `${g}${a + 1}` }, { t: `${g}${b + 1}` },
-        { t: `${andere}${((r * 3 + feld) % 6) + 1}` }));
+    for (const [g, runde] of [['A', r * 2 + 1], ['B', r * 2 + 2]]) {
+      R[r].forEach(([a, b], feld) => gruppenSpiele.push({ runde, feld: feld + 1, g, heim: `${g}${a + 1}`, gast: `${g}${b + 1}` }));
     }
   }
+  const nachfolger = (sp) => gruppenSpiele.find((x) => x.runde === sp.runde + 1 && x.feld === sp.feld);
+  const wahl = schiriWahl(gruppenSpiele.filter((sp) => sp.runde < 10).map((sp) => { const n = nachfolger(sp); return [n.heim, n.gast]; }));
+  // Runde 10 (letzte der Gruppe B): Teams aus Gruppe A, die in Runde 11 auf demselben Feld spielen – die Platzierung
+  // der Gruppe A steht da schon fest (sie ist nach Runde 9 fertig)
+  const NACH_RUNDE_10 = { 1: { g: 'A', p: 5 }, 2: { g: 'A', p: 6 }, 3: { g: 'A', p: 3 } };
+  let i = 0;
+  for (const sp of gruppenSpiele) {
+    neu(sp.runde, sp.feld, 'gruppe', `Gruppe ${sp.g}`, { t: sp.heim }, { t: sp.gast }, sp.runde < 10 ? { t: wahl[i++] } : NACH_RUNDE_10[sp.feld]);
+  }
   // Überkreuz und Platzierung streng von hinten nach vorne: Platz 9–12, 5–8, Halbfinale, dann um Platz 11, 9, 7, 5, 3, Finale.
-  // Finale und Spiel um Platz 3 ohne Feld – das wird am Turniertag spontan entschieden.
+  // Runde 14 (Platz 5, Platz 3, Finale) ohne Feld – das wird am Turniertag spontan entschieden.
   neu(11, 1, 'kreuz', 'Überkreuz Platz 9–12', { g: 'A', p: 5 }, { g: 'B', p: 6 }, { g: 'B', p: 3 });  // S31
   neu(11, 2, 'kreuz', 'Überkreuz Platz 9–12', { g: 'B', p: 5 }, { g: 'A', p: 6 }, { g: 'A', p: 4 });  // S32
   neu(11, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 2 });   // S33
@@ -42,7 +79,7 @@ export function spielplan() {
   neu(13, 1, 'platz', 'Spiel um Platz 11', { v: 'S31' }, { v: 'S32' }, { s: 'S33' });  // S37
   neu(13, 2, 'platz', 'Spiel um Platz 9', { s: 'S31' }, { s: 'S32' }, { s: 'S34' });   // S38
   neu(13, 3, 'platz', 'Spiel um Platz 7', { v: 'S33' }, { v: 'S34' }, { v: 'S35' });   // S39
-  neu(14, 1, 'platz', 'Spiel um Platz 5', { s: 'S33' }, { s: 'S34' }, { s: 'S37' });   // S40
+  neu(14, null, 'platz', 'Spiel um Platz 5', { s: 'S33' }, { s: 'S34' }, { s: 'S37' });   // S40
   neu(14, null, 'platz', 'Spiel um Platz 3', { v: 'S35' }, { v: 'S36' }, { s: 'S39' }); // S41
   neu(14, null, 'platz', 'Finale', { s: 'S35' }, { s: 'S36' }, { s: 'S38' });          // S42
   return spiele;

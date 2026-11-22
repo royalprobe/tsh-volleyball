@@ -52,14 +52,14 @@
     '.felder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}',
     '.spiel{position:relative;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:#fff;text-align:left;border:2px solid transparent;min-width:0}',
     '.spiel.kann{cursor:pointer}.spiel.kann:hover{border-color:var(--akzent)}',
-    // „Mein Team“: eigene Spiele blau, Schiri-Einsätze gelb, alles andere tritt zurück
+    // „Mein Team“: eigene Spiele blau gefüllt, Schiri-Einsätze nur blau umrandet, alles andere tritt zurück
     '.spiel.spielt{background:#dbe7f8;border-color:var(--blau)}',
-    '.spiel.pfeift{background:#fff3cd;border-color:#d4a017}',
-    '.spiel.pfeift .s-schiri{color:#7a5800;font-weight:800}',
+    '.spiel.pfeift{background:#fff;border-color:var(--blau)}',
+    '.spiel.pfeift .s-schiri{color:var(--blau);font-weight:800}',
     '.spiel.anders{opacity:.45}',
     '.s-team .ich{color:var(--blau);font-weight:800}',
     '.marke{align-self:flex-start;margin-top:2px;padding:1px 8px;border-radius:999px;font-size:.66em;font-weight:800;letter-spacing:.06em;text-transform:uppercase}',
-    '.spielt .marke{background:var(--blau);color:#fff}.pfeift .marke{background:#d4a017;color:#fff}',
+    '.spielt .marke{background:var(--blau);color:#fff}.pfeift .marke{background:#fff;color:var(--blau);box-shadow:inset 0 0 0 1.5px var(--blau)}',
     '.legende{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8em;color:var(--grau)}.legende i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}',
     '.s-kopf{display:flex;justify-content:space-between;gap:6px;font-size:.68em;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--grau-2)}',
     '.s-kopf .ph{color:var(--akzent)}',
@@ -153,7 +153,7 @@
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div>'
-      + (mein ? '<div class="legende"><span><i style="background:#dbe7f8;border:2px solid #002266"></i>' + h(name(mein)) + ' spielt</span><span><i style="background:#fff3cd;border:2px solid #d4a017"></i>' + h(name(mein)) + ' pfeift</span></div>' : '')
+      + (mein ? '<div class="legende"><span><i style="background:#dbe7f8;border:2px solid #002266"></i>' + h(name(mein)) + ' spielt</span><span><i style="background:#fff;border:2px solid #002266"></i>' + h(name(mein)) + ' pfeift</span></div>' : '')
       + '<div class="runden">'
       + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(function (r) { return rundeHtml(r, r === akt); }).join('') + '</div></section>'
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Gruppen</div></div><div class="gruppen">' + tabelleHtml('A') + tabelleHtml('B') + '</div>'
