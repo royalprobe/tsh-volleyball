@@ -141,7 +141,11 @@
     '.mehr{margin-top:10px}',
     // Teamauswahl am PC in einer Reihe: Knöpfe teilen sich die Breite
     '@container (min-width:860px){.teamwahl{flex-wrap:nowrap;gap:5px}.teamwahl .pille{flex:1 1 auto;padding:7px 8px;text-align:center;font-size:.84em}}',
-    '.pillen.archiv{flex-wrap:wrap !important;overflow:visible !important}',
+    // Archiv: am PC alle Saisonen in einer Reihe, mittel 2 × 5, am Handy 2 Spalten
+    '.pillen.archiv{display:grid !important;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;overflow:visible !important;margin:0;padding:0}',
+    '.archiv .pille{text-align:center;padding:7px 4px;font-size:.84em}',
+    '@container (max-width:860px){.pillen.archiv{grid-template-columns:repeat(5,minmax(0,1fr))}}',
+    '@container (max-width:540px){.pillen.archiv{grid-template-columns:repeat(2,minmax(0,1fr))}}',
     // ---- Training
     '.training{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}',
     '.tr-karte{display:flex;flex-direction:column;gap:10px;padding:16px 18px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
