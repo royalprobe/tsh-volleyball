@@ -1,13 +1,12 @@
 // Sammelt alles für das Volleyball-Widget der TS Hohenems und schreibt public/daten.json (+ Kalender je Team).
 // Läuft alle 15 Minuten als GitHub-Workflow (.github/workflows/daten.yml), lokal mit `npm run holen`.
 //
-// Quellen (alle öffentlich bzw. mit dem eigenen VolleyStation-Panel-Zugang):
+// Quellen (alle öffentlich, nur lesen):
 //  - vvv.volleynet.at: Termine, Ergebnisse, Kader von Liga, Cup und Nachwuchs (robots.txt erlaubt das Abrufen).
 //    Die Seiten sind langsam (mehrere Sekunden je Seite): Termine und Kader einmal am Tag ab 18 Uhr, Ergebnisse nur,
 //    solange ein angepfiffenes Spiel noch ohne Ergebnis ist.
 //  - volley-ball.at/landesklasse/api.php?p=liga: Spielplan, Termine, Ergebnisse der Landesklasse (nur lesen).
-//  - panel.volleystation.com/api: die VolleyStation-Match-IDs (für den Live-Spielstand im Widget), einmal am Tag,
-//    nur mit VS_USER/VS_PASS (Umgebung oder .env).
+//  - volley-ball.at/liga.php: die VolleyStation-Match-IDs der Spiele (für den Live-Spielstand im Widget), alle 6 Stunden.
 // Der vorige Stand kommt aus public/daten.json bzw. (im Workflow) von der veröffentlichten Seite (VORHER_URL).
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
@@ -231,39 +230,39 @@ async function landesklasse(vorher) {
   return { spiele, tabellen };
 }
 
-// ---------------------------------------------------------------- VolleyStation-Panel: Match-IDs
+// ---------------------------------------------------------------- VolleyStation-Match-IDs (von volley-ball.at, nur lesen)
+// Die Liga-Seiten von volley-ball.at führen bei jedem Spiel die VolleyStation-Match-ID (data-match bzw. spiel.php?id=…).
+// Die braucht das Widget für den Live-Spielstand. Alle 6 Stunden, nur die Bewerbe, in denen der Verein spielt.
+const VVV_LIGEN = {
+  '1LLH': 'landesliga-herren-1', '2LLH': 'landesliga-herren-2', '1LLD': 'landesliga-damen-1', '2LLD': 'landesliga-damen-2',
+  '3LLD': 'landesliga-damen-3', 'VCH': 'herren-vvv-cup', 'VCD': 'damen-vvv-cup',
+  'U20w': 'nachwuchs-u20-weiblich', 'U20m': 'nachwuchs-u20-maennlich', 'NWU18w': 'nachwuchs-u18-weiblich',
+  'NWU18m': 'nachwuchs-u18-maennlich', 'NWU16w': 'nachwuchs-u16-weiblich', 'NWU16m': 'nachwuchs-u16-maennlich',
+};
 async function volleystation(vorher, spiele) {
   const v = vorher?.vs;
-  const { user, pass } = await zugang();
-  if (!user || !pass) { if (!v) console.log('VolleyStation: kein Zugang (VS_USER/VS_PASS) – ohne Live-Spielstand'); return v ?? { stand: 0, ids: {} }; }
-  if (v && Date.now() - v.stand < 20 * 3600000) return v;   // einmal am Tag
-  try {
-    const { holeMatches } = await import('./lib/panel.mjs');
-    const matches = await holeMatches(user, pass);
-    const ids = {};
-    for (const [nr, sp] of Object.entries(spiele)) {
-      const m = matches.find((x) => x.nummer && x.kuerzel ? x.kuerzel === sp.kuerzel && x.nummer === nr
-        : x.datum === sp.datum && klein(x.heim) === klein(sp.heim) && klein(x.gast) === klein(sp.gast));
-      if (m) ids[nr] = m.id;
+  if (v && v.quelle === 'volley-ball.at' && Date.now() - v.stand < 6 * 3600000) return v;
+  const kuerzel = [...new Set(Object.values(spiele).filter((s) => eigen(s.heim) || eigen(s.gast)).map((s) => s.kuerzel))].filter((k) => VVV_LIGEN[k]);
+  const seiten = await holenAlle(Object.fromEntries(kuerzel.map((k) => [k, `https://volley-ball.at/liga.php?id=${VVV_LIGEN[k]}`])));
+  const gefunden = [];   // { kuerzel, heim, gast, datum, id }
+  for (const [k, html] of Object.entries(seiten)) {
+    if (!html) continue;
+    for (const a of html.matchAll(/<a class="hg-spiel"([^>]*)>/g)) {
+      const attr = (n) => { const m = a[1].match(new RegExp(`${n}="([^"]*)"`)); return m ? text(m[1]) : ''; };
+      const id = (attr('data-match') || (attr('href').match(/(?:spiel\.php\?id=|\/matches\/)(\d+)/) || [])[1]);
+      if (!id) continue;
+      gefunden.push({ kuerzel: attr('data-bewerb').replace(/^liga:/, '') || k, heim: attr('data-heim'), gast: attr('data-gast'), datum: attr('data-start').slice(0, 10), id: Number(id) });
     }
-    console.log(`VolleyStation: ${matches.length} Spiele im Panel, ${Object.keys(ids).length} zugeordnet`);
-    return { stand: Date.now(), ids };
-  } catch (e) {
-    console.warn('VolleyStation:', e.message);
-    return v ?? { stand: 0, ids: {} };
   }
-}
-async function zugang() {
-  let user = process.env.VS_USER, pass = process.env.VS_PASS;
-  if (!user || !pass) {
-    try {
-      for (const z of (await readFile(path.join(ORDNER, '.env'), 'utf8')).split(/\r?\n/)) {
-        const m = z.match(/^\s*(VS_USER|VS_PASS)\s*=\s*(.*?)\s*$/);
-        if (m) m[1] === 'VS_USER' ? (user ||= m[2]) : (pass ||= m[2]);
-      }
-    } catch { /* keine .env */ }
+  if (!gefunden.length) { console.warn('volley-ball.at: keine Match-IDs gefunden, alter Stand bleibt'); return v ?? { stand: 0, ids: {} }; }
+  const ids = {};
+  for (const [nr, sp] of Object.entries(spiele)) {
+    const passt = gefunden.filter((g) => g.kuerzel === sp.kuerzel && klein(g.heim) === klein(sp.heim) && klein(g.gast) === klein(sp.gast));
+    const m = passt.length > 1 ? passt.find((g) => g.datum === sp.datum) ?? passt[0] : passt[0];
+    if (m) ids[nr] = m.id;
   }
-  return { user, pass };
+  console.log(`Match-IDs von volley-ball.at: ${gefunden.length} Spiele, ${Object.keys(ids).length} zugeordnet`);
+  return { stand: Date.now(), quelle: 'volley-ball.at', ids };
 }
 
 // ---------------------------------------------------------------- Tabellen

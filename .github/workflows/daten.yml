@@ -40,8 +40,6 @@ jobs:
         run: node holen.mjs
         env:
           VORHER_URL: https://royalprobe.github.io/tsh-volleyball/stand.json
-          VS_USER: ${{ secrets.VS_USER }}
-          VS_PASS: ${{ secrets.VS_PASS }}
       - if: steps.holen.outputs.geaendert == 'true' || github.event_name == 'push' || inputs.erzwingen == true
         uses: actions/upload-pages-artifact@v5
         with:
