@@ -328,7 +328,8 @@ function vereinsdaten(vn, kaderDaten, lk, vs) {
     const id = vs?.ids?.[nr] ?? null;
     alle.push({ quelle: 'liga', kuerzel: sp.kuerzel, phase: sp.phase, nr, bewerb: kurz, datum: sp.datum, zeit: sp.zeit, heim: sp.heim, gast: sp.gast,
       halle: sp.halle, adresse: sp.adresse, ergebnis: sp.ergebnis, saetze: sp.saetze, vs: id,
-      link: id && liga ? `https://panel.volleystation.com/website/${liga}/de/matches/${id}/` : null });
+      // Spielseite auf volley-ball.at (Aufstellung, Spielverlauf, live); ohne Match-ID die Liga-Seite dort
+      link: id ? `https://volley-ball.at/spiel.php?id=${id}` : VVV_LIGEN[sp.kuerzel] ? `https://volley-ball.at/liga.php?id=${VVV_LIGEN[sp.kuerzel]}` : null });
   }
   alle.push(...(lk?.spiele ?? []));
   const spiele = alle.filter((s) => eigen(s.heim) || eigen(s.gast));

@@ -388,7 +388,7 @@
     var ort = !vorbei(s) && s.halle ? (s.adresse
       ? '<a class="ort" href="' + h(karte(s.halle + ', ' + s.adresse)) + '" target="_blank" rel="noopener">' + h(s.halle) + '</a>'
       : '<span class="ort">' + h(s.halle) + '</span>') : '';
-    return '<div class="zeile' + klasse + '"' + (s.link ? ' data-link="' + h(s.link) + '" role="link" tabindex="0" title="Spiel bei ' + (s.quelle === 'lk' ? 'der Landesklasse' : 'VolleyStation') + ' ansehen"' : '') + '>'
+    return '<div class="zeile' + klasse + '"' + (s.link ? ' data-link="' + h(s.link) + '" role="link" tabindex="0" title="Spiel auf volley-ball.at ansehen' + (s.quelle === 'lk' ? ' (Landesklasse)' : '') + '"' : '') + '>'
       + '<span class="dt"><b>' + d.tag + '</b>' + d.datum + '</span>'
       + '<span class="mi"><span class="tm">' + name(s.heim) + '<span class="gg">–</span>' + name(s.gast) + '</span>'
       + '<span class="bw">' + h(s.bewerb) + '</span>' + (laeuft(s) ? '<span class="live"><i></i>LIVE</span>' : '') + ort + '</span>'
