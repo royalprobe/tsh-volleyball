@@ -234,6 +234,7 @@
 
   var MAIL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
   var INSTA_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>';
+  var YT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.8z" fill="currentColor"/></svg>';
   var UHR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
   function heroHtml(inhalt) {
@@ -397,7 +398,8 @@
     var initialen = function (n) { return n.split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); };
     return '<section class="abschnitt" id="kontakt"><div class="a-kopf"><div><div class="t">Kontakt</div></div></div><div class="kontakt">'
       + (inhalt.mail ? '<div class="ko-mail"><b>Neu dabei oder Wiedereinstieg?</b><p>Schreib uns einfach – wir melden uns.</p><div class="knoepfe"><a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + h(inhalt.mail) + '</a>'
-        + (inhalt.instagram ? '<a class="knopf rand" href="' + h(inhalt.instagram) + '" target="_blank" rel="noopener">' + INSTA_ICON + '@' + h(inhalt.instagram.replace(/\/+$/, '').split('/').pop()) + '</a>' : '') + '</div></div>' : '')
+        + (inhalt.instagram ? '<a class="knopf rand" href="' + h(inhalt.instagram) + '" target="_blank" rel="noopener">' + INSTA_ICON + '@' + h(inhalt.instagram.replace(/\/+$/, '').split('/').pop()) + '</a>' : '')
+        + (inhalt.youtube ? '<a class="knopf rand" href="' + h(inhalt.youtube) + '" target="_blank" rel="noopener">' + YT_ICON + 'YouTube</a>' : '') + '</div></div>' : '')
       + (inhalt.personen || []).map(function (p) {
         return '<div class="person"><span class="initialen">' + h(initialen(p.name)) + '</span><div><small>' + h(p.rolle) + '</small><b>' + h(p.name) + '</b>'
           + (p.mail ? '<a href="mailto:' + h(p.mail) + '">' + h(p.mail) + '</a>' : '') + '</div></div>';
