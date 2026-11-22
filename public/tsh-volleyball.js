@@ -33,8 +33,8 @@
     // ---- Kopf
     '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:center;padding:36px 36px 32px;border-radius:calc(var(--r) + 6px);color:#fff;',
     'background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
-    // Zeichen der Turnerschaft (Steinbock im Kreis) schimmert rechts durch
-    '.hero .zeichen{position:absolute;right:-20px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%) rotate(-8deg);background:#fff;opacity:.1;pointer-events:none;-webkit-mask:var(--zeichen) center/contain no-repeat;mask:var(--zeichen) center/contain no-repeat}',
+    // altes Vereinslogo (Ball mit Flammen) in Blautönen schimmert rechts durch
+    '.hero .zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none}',
     '.h-spiel{z-index:1}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:18px;min-width:0}',
     '.heim{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;margin:-8px 0 2px -4px;padding:4px 10px 4px 6px;border-radius:999px;font-size:.8em;font-weight:700;color:rgba(255,255,255,.8)}',
@@ -558,7 +558,7 @@
     host = document.getElementById('tsh-volleyball');
     if (!host) { host = document.createElement('div'); host.id = 'tsh-volleyball'; skript.parentNode.insertBefore(host, skript); }
     wurzel = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-    wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ts-zeichen.png")}</style><div class="inhalt"><p class="leer">Wird geladen …</p></div>';
+    wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ball-zeichen.png")}</style><div class="inhalt"><p class="leer">Wird geladen …</p></div>';
     wurzel.addEventListener('click', function (e) {
       var ziel = e.target.closest('[data-team],[data-mehr],[data-link],[data-ziel],a');
       if (!ziel || ziel.tagName === 'A') return;
