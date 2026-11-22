@@ -290,6 +290,13 @@
     }).join('') + '</div>';
   }
 
+  // Betreuer von volleynet: die Trainer aus inhalt.json zuerst, in deren Reihenfolge (Herren 2: Frank Brandenburg vorne)
+  function betreuer(t, inhalt) {
+    var tr = trainingVon(t, inhalt)[0], namen = tr && tr.trainer ? tr.trainer.split('/').map(klein) : [];
+    var rang = function (b) { var i = namen.indexOf(klein(b[0])); return i < 0 ? 99 : i; };
+    return t.kader.betreuer.map(function (b, i) { return [b, i]; })
+      .sort(function (x, y) { return rang(x[0]) - rang(y[0]) || x[1] - y[1]; }).map(function (x) { return x[0]; });
+  }
   function trainingVon(t, inhalt) {
     return (inhalt.training || []).filter(function (g) { return g.team && klein(g.team) === klein(t.titel); });
   }
@@ -315,7 +322,7 @@
     if (t.kader) {
       out += '<div class="kachel"><div class="k-kopf">Kader<span>' + t.kader.spieler.length + ' Spieler' + (/Damen|weiblich|Mädchen/i.test(t.titel) ? 'innen' : '') + '</span></div><ul class="kader">' + t.kader.spieler.map(function (s) {
         return '<li><span class="nr">' + h(s[0]) + '</span><span class="nm">' + h(s[1]) + '</span>' + (s[2] ? '<span class="pos">' + h(s[2]) + '</span>' : '') + '</li>';
-      }).join('') + '</ul>' + (t.kader.betreuer.length ? '<p class="betreuer">' + t.kader.betreuer.map(function (b) { return h(b[0]) + (b[1] ? ' (' + h(b[1]) + ')' : ''); }).join(' · ') + '</p>' : '') + '</div>';
+      }).join('') + '</ul>' + (t.kader.betreuer.length ? '<p class="betreuer">' + betreuer(t, inhalt).map(function (b) { return h(b[0]) + (b[1] ? ' (' + h(b[1].charAt(0).toUpperCase() + b[1].slice(1)) + ')' : ''); }).join(' · ') + '</p>' : '') + '</div>';
     }
     var tr = trainingVon(t, inhalt);
     if (tr.length) out += '<div class="kachel voll"><div class="k-kopf">Training</div>' + trainerHtml(tr[0]) + zeitenHtml(tr[0].zeiten, inhalt) + '</div>';
