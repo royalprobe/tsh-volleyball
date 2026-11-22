@@ -160,7 +160,7 @@
       + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">12 Teams · 3 Felder</span></div></div>'
       + '<div class="jetzt"><div class="t">' + (daten.datum === heute() ? 'Jetzt' : 'Als Nächstes') + '</div><div class="z">' + h(rundeSp[0].zeit) + ' Uhr</div><ul>'
       + rundeSp.map(function (s) {
-        return '<li><small>' + (s.feld ? 'Feld ' + s.feld : 'Feld offen') + '</small><span>' + h(name(s.heim) || s.heimText) + ' – ' + h(name(s.gast) || s.gastText) + '</span>'
+        return '<li><small>' + (s.feld ? 'Feld ' + s.feld : '') + '</small><span>' + h(name(s.heim) || s.heimText) + ' – ' + h(name(s.gast) || s.gastText) + '</span>'
           + (s.ergebnis ? '<b>' + s.ergebnis[0] + ':' + s.ergebnis[1] + '</b>' : '<span></span>') + '</li>'; }).join('')
       + '</ul></div></header>'
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
@@ -188,7 +188,7 @@
           return '<div class="s-team' + cls + '"><span' + (id ? (id === mein ? ' class="ich"' : '') : ' class="offen"') + '>' + h(id ? name(id) : text) + '</span>' + (s.ergebnis ? '<b>' + s.ergebnis[i] + '</b>' : '') + '</div>';
         };
         return '<' + (pin ? 'button' : 'div') + ' class="spiel schatten' + (pin ? ' kann' : '') + art + '"' + (pin ? ' data-spiel="' + s.id + '"' : '') + '>'
-          + '<div class="s-kopf"><span>' + (s.feld ? 'Feld ' + s.feld + ' · ' : 'Feld offen · ') + 'Spiel ' + s.nr + '</span><span class="ph">' + h(s.phase === 'gruppe' ? '' : s.titel) + '</span></div>'
+          + '<div class="s-kopf"><span>' + (s.feld ? 'Feld ' + s.feld + ' · ' : '') + 'Spiel ' + s.nr + '</span><span class="ph">' + h(s.phase === 'gruppe' ? '' : s.titel) + '</span></div>'
           + team(s.heim, s.heimText, 0) + team(s.gast, s.gastText, 1)
           + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + '</div>'
           + (spielt ? '<span class="marke">Spielt</span>' : pfeift ? '<span class="marke">Pfeift</span>' : '')
