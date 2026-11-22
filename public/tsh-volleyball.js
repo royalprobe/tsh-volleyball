@@ -232,7 +232,8 @@
       + '<button class="pille" data-team="" aria-pressed="' + !team + '">Alle Teams</button>'
       + daten.teams.map(function (t) { return '<button class="pille" data-team="' + h(t.id) + '" aria-pressed="' + (team === t.id) + '">' + h(t.titel) + '</button>'; }).join('')
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
-      + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><div class="t">Ergebnisse &amp; Termine' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div></div>'
+      + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><div class="t">Ergebnisse &amp; Termine' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div>'
+      + (team ? kalenderHtml(teamVon(team)) : '') + '</div>'
       + spieleHtml() + '</section>' + archivHtml(inhalt)
       + '<p class="fuss">Stand ' + h(new Date(daten.stand).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))
       + ' · Daten: vvv.volleynet.at, VolleyStation, Landesklasse</p></div>';
@@ -344,10 +345,15 @@
     var tr = trainingVon(t, inhalt);
     if (tr.length) out += '<div class="kachel voll"><div class="k-kopf">Training</div>' + trainerHtml(tr[0]) + zeitenHtml(tr[0].zeiten, inhalt) + '</div>';
     out += '</div>';
-    var ics = new URL(t.kalender, BASIS).href, webcal = ics.replace(/^https?:/, 'webcal:');
-    out += '<div class="kal">Spieltermine in den eigenen Kalender: <a href="' + h(webcal) + '">iPhone / Outlook</a>'
-      + '<a href="https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener">Google</a><a href="' + h(ics) + '" download>Datei</a></div>';
     return out + '</div>';
+  }
+
+  // Kalender-Abo eines Teams – steht bei „Ergebnisse & Termine“, sobald ein Team gewählt ist
+  function kalenderHtml(t) {
+    if (!t || !t.kalender) return '';
+    var ics = new URL(t.kalender, BASIS).href, webcal = ics.replace(/^https?:/, 'webcal:');
+    return '<div class="kal">Termine in den eigenen Kalender: <a href="' + h(webcal) + '">iPhone / Outlook</a>'
+      + '<a href="https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener">Google</a><a href="' + h(ics) + '" download>Datei</a></div>';
   }
 
   function spieleHtml() {
