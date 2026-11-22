@@ -93,8 +93,8 @@
     '.d-raster{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;align-items:start}',
     '.d-raster>.voll{grid-column:1/-1}',
     '.foto{margin:0;overflow:hidden;border-radius:var(--r);background:var(--hell);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
-    '.foto img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 0%}',
-    '@container (max-width:540px){.foto img{aspect-ratio:4/3}}',
+    '.foto img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}',
+    '.d-raster.mitfoto{grid-template-columns:1fr 1fr}',
     '.kachel{min-width:0;padding:16px 18px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     '.k-kopf{display:flex;justify-content:space-between;gap:10px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--rand);font-size:.74em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blau)}',
     '.k-kopf span{color:var(--grau-2);letter-spacing:.04em}',
@@ -189,7 +189,7 @@
     '.fuss{margin:-8px 4px 0 0;font-size:.72em;color:var(--grau-2);text-align:right}',
     '.fehler{padding:16px 18px;border-radius:var(--r);background:var(--hell);color:var(--grau)}',
     '@media (prefers-reduced-motion:reduce){.live i{animation:none}.karte,.knopf{transition:none}}',
-    '@container (max-width:860px){.ko-karte{grid-template-columns:1fr}.ko-knoepfe{flex-direction:row;flex-wrap:wrap}.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.d-raster{grid-template-columns:1fr}}',
+    '@container (max-width:860px){.ko-karte{grid-template-columns:1fr}.ko-knoepfe{flex-direction:row;flex-wrap:wrap}.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.d-raster,.d-raster.mitfoto{grid-template-columns:1fr}}',
     '@container (max-width:720px){.spiele{grid-template-columns:1fr}}@container (max-width:640px){.karten{grid-template-columns:1fr 1fr}}',
     '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px 18px;border-radius:var(--r)}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .zeichen{width:230px;right:-70px;top:36%}.karten{grid-template-columns:1fr;gap:8px}',
     '.pillen{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:1px 2px}.pillen::-webkit-scrollbar{display:none}',
@@ -322,13 +322,14 @@
       out += '<div class="zahlen"><span><b>' + h(p.platz) + '.</b><small>Platz</small></span>' + (p.pkt !== '' ? '<span><b>' + h(p.pkt) + '</b><small>Punkte</small></span>' : '')
         + '<span><b>' + p.s + ':' + p.n + '</b><small>Siege</small></span></div>';
     }
-    out += '</div><div class="d-raster">';
+    // mit Mannschaftsfoto: Foto (ganz, 4:3) links, Tabelle rechts, Kader darunter über die ganze Breite
     var foto = (inhalt.fotos || {})[t.titel];
-    if (foto) out += '<figure class="foto voll"><img src="' + h(new URL(foto, BASIS).href) + '" alt="Mannschaftsfoto ' + h(t.titel) + '" loading="lazy" decoding="async"></figure>';
+    out += '</div><div class="d-raster' + (foto ? ' mitfoto' : '') + '">';
+    if (foto) out += '<figure class="foto"><img src="' + h(new URL(foto, BASIS).href) + '" alt="Mannschaftsfoto ' + h(t.titel) + '" loading="lazy" decoding="async"></figure>';
     if (t.tabelle) {
       var tb = t.tabelle, ende = tb.endstand;
       var titel = t.quelle === 'lk' ? tb.name : t.bewerbe[0] + (/^(Meisterschaftsphase|Landesmeisterschaft|Nachwuchsliga)$/.test(tb.name) ? '' : ' · ' + tb.name);
-      out += '<div class="kachel' + (t.kader ? '' : ' voll') + '"><div class="k-kopf">' + (ende ? 'Endstand' : 'Tabelle') + '<span>' + h(titel) + '</span></div><div class="tab"><table><thead><tr><th></th><th class="team">Team</th><th>Sp</th><th>S</th><th>N</th><th>Sätze</th><th class="bl">Bälle</th>'
+      out += '<div class="kachel' + (t.kader && !foto ? '' : foto ? '' : ' voll') + '"><div class="k-kopf">' + (ende ? 'Endstand' : 'Tabelle') + '<span>' + h(titel) + '</span></div><div class="tab"><table><thead><tr><th></th><th class="team">Team</th><th>Sp</th><th>S</th><th>N</th><th>Sätze</th><th class="bl">Bälle</th>'
         + (ende ? '' : '<th>Pkt</th>') + '</tr></thead><tbody>' + tb.zeilen.map(function (z) {
           return '<tr' + (klein(z[1]) === klein(t.name) ? ' class="ich"' : '') + '><td class="pl">' + h(z[0]) + '</td><td class="team">' + h(z[1].replace(/\s+U\d\d\s+(weiblich|männlich)$/i, ''))
             + '</td><td>' + h(z[2]) + '</td><td>' + h(z[3]) + '</td><td>' + h(z[4]) + '</td><td>' + h(z[5] + ':' + z[6]) + '</td><td class="bl">' + h(z[7] + ':' + z[8]) + '</td>'
@@ -336,7 +337,7 @@
         }).join('') + '</tbody></table></div></div>';
     }
     if (t.kader) {
-      out += '<div class="kachel"><div class="k-kopf">Kader<span>' + t.kader.spieler.length + ' Spieler' + (/Damen|weiblich|Mädchen/i.test(t.titel) ? 'innen' : '') + '</span></div><ul class="kader">' + t.kader.spieler.map(function (s) {
+      out += '<div class="kachel' + (foto ? ' voll' : '') + '"><div class="k-kopf">Kader<span>' + t.kader.spieler.length + ' Spieler' + (/Damen|weiblich|Mädchen/i.test(t.titel) ? 'innen' : '') + '</span></div><ul class="kader">' + t.kader.spieler.map(function (s) {
         return '<li><span class="nr">' + h(s[0]) + '</span><span class="nm">' + h(s[1]) + '</span>' + (s[2] ? '<span class="pos">' + h(s[2]) + '</span>' : '') + '</li>';
       }).join('') + '</ul>' + (t.kader.betreuer.length ? '<p class="betreuer">' + betreuer(t, inhalt).map(function (b) { return h(b[0]) + (b[1] ? ' (' + h(b[1].charAt(0).toUpperCase() + b[1].slice(1)) + ')' : ''); }).join(' · ') + '</p>' : '') + '</div>';
     }
