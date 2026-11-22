@@ -1,5 +1,7 @@
 # Holt alle 15 Minuten die Daten (holen.mjs) und veröffentlicht public/ auf GitHub Pages – nur, wenn sich etwas geändert hat.
 # Zwei Jobs (holen, veröffentlichen): Im selben Job fand deploy-pages das gerade hochgeladene Artefakt oft noch nicht.
+# Angestoßen wird er alle 15 Minuten von außen (cron-job.org ruft die GitHub-API „workflow_dispatch“ auf), weil GitHub
+# den eigenen Zeitplan bei wenig genutzten Repos nur alle paar Stunden ausführt. Der Zeitplan unten bleibt als Rückfall.
 name: Daten
 
 on:
@@ -8,6 +10,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      erzwingen:
+        description: 'Auch ohne Änderung veröffentlichen'
+        type: boolean
+        default: false
 
 permissions:
   contents: write     # nur für das Lebenszeichen (siehe unten)
@@ -23,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      veroeffentlichen: ${{ steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule' }}
+      veroeffentlichen: ${{ steps.holen.outputs.geaendert == 'true' || github.event_name == 'push' || inputs.erzwingen == true }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -35,7 +42,7 @@ jobs:
           VORHER_URL: https://royalprobe.github.io/tsh-volleyball/stand.json
           VS_USER: ${{ secrets.VS_USER }}
           VS_PASS: ${{ secrets.VS_PASS }}
-      - if: steps.holen.outputs.geaendert == 'true' || github.event_name != 'schedule'
+      - if: steps.holen.outputs.geaendert == 'true' || github.event_name == 'push' || inputs.erzwingen == true
         uses: actions/upload-pages-artifact@v5
         with:
           path: public
