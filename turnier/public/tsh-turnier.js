@@ -91,7 +91,14 @@
     '.knopf.klein{padding:5px 12px;font-size:.8em}',
     '.leiste{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border-radius:var(--r);background:#e7f6ec;color:var(--gruen);font-weight:700;font-size:.88em}',
     '.dialog{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:16px;background:rgba(0,19,61,.55)}',
-    '.box{width:min(100%,420px);display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:calc(var(--r) + 4px);background:#fff;box-shadow:0 20px 50px rgba(0,0,0,.3)}',
+    '.box{width:min(100%,400px);padding:26px 24px 22px;border-radius:calc(var(--r) + 6px);background:#fff;box-shadow:0 24px 60px rgba(0,19,61,.35)}',
+    '.box form{display:flex;flex-direction:column;gap:16px}',
+    '.box .kopf{display:flex;flex-direction:column;gap:4px}',
+    '.box .icon{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:var(--hell);color:var(--blau);margin-bottom:6px}.box .icon svg{width:22px;height:22px}',
+    '.box .zeile .knopf{flex:1;justify-content:center;padding:11px 16px}',
+    'input.pin{letter-spacing:.5em;font-size:1.6em;padding:12px;text-indent:.5em}',
+    '.hinweis{font-size:.78em;color:var(--grau-2)}',
+    '.fehler:empty{display:none}',
     '.box .t{font-size:1.2em;font-weight:800;color:var(--blau)}',
     '.box small{color:var(--grau)}',
     '.eingabe{display:grid;grid-template-columns:1fr 4.5em;gap:8px 12px;align-items:center;font-weight:700}',
@@ -213,8 +220,11 @@
       .then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler || 'Fehler'); return j; }); });
   }
   function pinFragen() {
-    dialog('<form><div class="t">Ergebnisse eintragen</div><small>Bitte die PIN der Turnierleitung eingeben.</small><input type="password" inputmode="numeric" autocomplete="off" aria-label="PIN"><div class="fehler"></div>'
-      + '<div class="zeile"><button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Weiter</button></div></form>', function (d, zu) {
+    dialog('<form><div class="kopf"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>'
+      + '<div class="t">Ergebnisse eintragen</div><small>PIN der Turnierleitung eingeben</small></div>'
+      + '<input class="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="PIN"><div class="fehler"></div>'
+      + '<div class="zeile"><button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Anmelden</button></div>'
+      + '<div class="hinweis">Einmal reicht: Dieses Gerät bleibt angemeldet, bis du oben auf „Beenden“ tippst.</div></form>', function (d, zu) {
       var p = d.querySelector('input').value.trim();
       fetch(BASIS + 'api/pin', { method: 'POST', headers: { 'X-PIN': p } }).then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler); }); })
         .then(function () { pin = p; try { localStorage.setItem(SPEICHER, p); } catch (e) {} zu(); zeichnen(); })
@@ -228,7 +238,7 @@
       return;
     }
     var e = s.ergebnis || ['', ''];
-    dialog('<form><div class="t">Spiel ' + s.nr + (s.feld ? ' · Feld ' + s.feld : '') + '</div><small>' + h(s.zeit) + ' Uhr · ' + h(s.titel) + ' · 1 Satz auf 25</small>'
+    dialog('<form><div class="kopf"><div class="t">Spiel ' + s.nr + (s.feld ? ' · Feld ' + s.feld : '') + '</div><small>' + h(s.zeit) + ' Uhr · ' + h(s.titel) + ' · 1 Satz auf 25</small></div>'
       + '<div class="eingabe"><span>' + h(name(s.heim)) + '</span><input type="number" inputmode="numeric" min="0" max="60" value="' + e[0] + '" aria-label="Punkte ' + h(name(s.heim)) + '">'
       + '<span>' + h(name(s.gast)) + '</span><input type="number" inputmode="numeric" min="0" max="60" value="' + e[1] + '" aria-label="Punkte ' + h(name(s.gast)) + '"></div><div class="fehler"></div>'
       + '<div class="zeile">' + (s.ergebnis ? '<button type="button" class="knopf" data-loeschen>Löschen</button>' : '') + '<button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Speichern</button></div></form>', function (d, zu) {
