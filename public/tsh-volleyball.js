@@ -234,9 +234,7 @@
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
       + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><div class="t">Ergebnisse &amp; Termine' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div>'
       + (team ? kalenderHtml(teamVon(team)) : '') + '</div>'
-      + spieleHtml() + '</section>' + archivHtml(inhalt)
-      + '<p class="fuss">Stand ' + h(new Date(daten.stand).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))
-      + ' · Daten: vvv.volleynet.at, VolleyStation, Landesklasse</p></div>';
+      + spieleHtml() + '</section>' + archivHtml(inhalt) + '</div>';
     p = wurzel.querySelector('.pillen');
     if (p) {
       p.scrollLeft = scroll;
