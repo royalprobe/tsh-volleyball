@@ -75,14 +75,17 @@ function planRechnen() {
   neu(11, 2, 'kreuz', 'Überkreuz Platz 9–12', { g: 'B', p: 5 }, { g: 'A', p: 6 }, { g: 'B', p: 2 });  // S32
   neu(11, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 2 });   // S33
   neu(12, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { v: 'S31' });   // S34
-  neu(12, 2, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S31' });            // S35
+  neu(12, 2, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S32' });            // S35
   neu(12, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { v: 'S33' });            // S36
   neu(13, 1, 'platz', 'Spiel um Platz 11', { v: 'S31' }, { v: 'S32' }, { s: 'S33' });  // S37
-  neu(13, 2, 'platz', 'Spiel um Platz 9', { s: 'S31' }, { s: 'S32' }, { s: 'S34' });   // S38
-  neu(13, 3, 'platz', 'Spiel um Platz 7', { v: 'S33' }, { v: 'S34' }, { v: 'S35' });   // S39
+  neu(13, 2, 'platz', 'Spiel um Platz 9', { s: 'S31' }, { s: 'S32' }, { v: 'S35' });   // S38
+  neu(13, 3, 'platz', 'Spiel um Platz 7', { v: 'S33' }, { v: 'S34' }, { s: 'S34' });   // S39
   neu(14, null, 'platz', 'Spiel um Platz 5', { s: 'S33' }, { s: 'S34' }, { s: 'S37' });   // S40
   neu(14, null, 'platz', 'Spiel um Platz 3', { v: 'S35' }, { v: 'S36' }, { s: 'S39' }); // S41
   neu(14, null, 'platz', 'Finale', { s: 'S35' }, { s: 'S36' }, { s: 'S38' });          // S42
+  // Anzeige um 14:25: Finale zuerst, Platz 5 zuletzt – die Spielnummern bleiben
+  const i40 = spiele.findIndex((sp) => sp.id === 'S40'), i42 = spiele.findIndex((sp) => sp.id === 'S42');
+  [spiele[i40], spiele[i42]] = [spiele[i42], spiele[i40]];
   return spiele;
 }
 

@@ -24,7 +24,7 @@
   var TAGE_LANG = { Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag' };
 
   var CSS = [
-    ':host{all:initial;display:block;font-family:inherit;color:#1e293b;--blau:#002266;--blau-2:#0b3f8f;--akzent:#6592a7;--hell:#eef3f9;--flaeche:#f1f5f9;--rand:#e1e7ef;--grau:#64748b;--grau-2:#94a3b8;--gruen:#16803c;--rot:#c81e1e;--live:#e0001b;--r:14px}',
+    ':host{all:initial;display:block;font-family:inherit;color:#1e293b;--blau:#002266;--blau-2:#0b3f8f;--akzent:#6592a7;--hell:#eef3f9;--flaeche:#f1f5f9;--rand:#e1e7ef;--grau:#64748b;--grau-2:#7d8ca3;--gruen:#16803c;--rot:#c81e1e;--live:#e0001b;--r:14px}',
     '*{box-sizing:border-box}',
     '.w{container-type:inline-size;display:flex;flex-direction:column;gap:22px;font-size:15px;line-height:1.5}',
     'button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}',
@@ -34,7 +34,7 @@
     '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:center;padding:36px 36px 32px;border-radius:calc(var(--r) + 6px);color:#fff;',
     'background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
     // altes Vereinslogo (Ball mit Flammen) in Blautönen schimmert rechts durch
-    '.hero .zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none}',
+    '.hero .zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none;-webkit-mask:linear-gradient(to top,transparent 4%,#000 28%);mask:linear-gradient(to top,transparent 4%,#000 28%)}',
     '.h-spiel{z-index:1}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:18px;min-width:0}',
     '.heim{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;margin:-8px 0 2px -4px;padding:4px 10px 4px 6px;border-radius:999px;font-size:.8em;font-weight:700;color:rgba(255,255,255,.8)}',
@@ -46,16 +46,19 @@
     '.knopf{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-weight:700;font-size:.9em;transition:transform .15s,background .15s,box-shadow .15s}',
     '.knopf.voll{background:#fff;color:var(--blau)}.knopf.voll:hover{box-shadow:0 6px 18px rgba(0,0,0,.25);transform:translateY(-1px)}',
     '.knopf.rand{border:1px solid rgba(255,255,255,.35)}.knopf.rand:hover{background:rgba(255,255,255,.1)}',
-    '.knopf svg{width:16px;height:16px}',
+    '.knopf svg{width:16px;height:16px}.knopf .kurz{display:none}',
     '.h-spiel{position:relative;display:flex;flex-direction:column;gap:10px;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16)}',
     '.h-spiel[data-link]{cursor:pointer}.h-spiel[data-link]:hover{background:rgba(255,255,255,.12)}',
     '.h-titel{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.72em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}',
     '.h-wann{font-size:1.5em;font-weight:800;line-height:1.1}',
-    '.h-teams{display:flex;flex-direction:column;gap:2px;font-weight:600}',
-    '.h-teams .gg{font-size:.75em;color:rgba(255,255,255,.55)}',
+    '.h-teams{display:flex;flex-direction:column;border-top:1px solid rgba(255,255,255,.14)}',
+    '.h-team{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.14);font-weight:700;font-size:1.05em;line-height:1.25}',
+    '.h-team small{flex:none;font-size:.62em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)}',
+    '.h-rel{padding:2px 9px;border-radius:999px;background:#fff;color:var(--blau);letter-spacing:.06em}',
+    '.h-fuss{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}',
     '.h-stand em{font-style:normal;font-weight:800;color:#fff;background:var(--live);padding:0 6px;border-radius:5px}.h-stand{display:flex;align-items:baseline;gap:10px}.h-stand b{font-size:2.2em;line-height:1}.h-stand span{font-size:.85em;color:rgba(255,255,255,.75)}',
-    '.h-ort{font-size:.82em;color:rgba(255,255,255,.75)}.h-ort a{text-decoration:underline;text-underline-offset:2px}',
-    '.h-bewerb{align-self:flex-start;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.14);font-size:.72em;font-weight:700}',
+    '.h-ort{display:inline-flex;align-items:center;gap:5px;font-size:.82em;color:rgba(255,255,255,.8)}.h-ort svg{width:14px;height:14px;flex:none}a.h-ort:hover{color:#fff;text-decoration:underline;text-underline-offset:2px}',
+    '.h-bewerb{padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.14);font-size:.72em;font-weight:700}',
     // ---- Abschnitte
     '.abschnitt{display:flex;flex-direction:column;gap:16px;scroll-margin-top:90px;padding:28px 30px 30px;border-radius:calc(var(--r) + 6px);background:var(--flaeche)}',
     '.a-kopf{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px}',
@@ -78,7 +81,7 @@
     '.k-stand{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;font-variant-numeric:tabular-nums}',
     '.k-platz{font-size:.8em;color:var(--grau)}',
     '.k-platz b{font-size:1.9em;font-weight:800;color:var(--blau);line-height:1;margin-right:3px}',
-    '.k-bilanz{font-size:.8em;font-weight:600;color:#334155}',
+    '.k-bilanz{font-size:.8em;font-weight:600;color:#334155}.k-noch{font-size:.8em;color:var(--grau)}',
     '.form{display:inline-flex;gap:3px;margin-left:auto}',
     '.form i{width:18px;height:18px;display:inline-grid;place-items:center;border-radius:5px;font-style:normal;font-size:.62em;font-weight:800;color:#fff}',
     '.form .s{background:var(--gruen)}.form .n{background:var(--rot)}',
@@ -133,7 +136,7 @@
     'a.ort:hover{color:var(--blau);text-decoration:underline}',
     '.wt{text-align:right;white-space:nowrap}',
     '.erg{font-size:1.2em;font-weight:800;color:#0f172a;line-height:1}',
-    '.wt small{display:block;max-width:12em;margin-left:auto;white-space:normal;font-size:.68em;line-height:1.2;color:var(--grau-2)}',
+    '.wt small{display:block;max-width:12em;margin-left:auto;white-space:normal;font-size:.74em;line-height:1.25;color:var(--grau)}',
     '.wt small span{display:inline-block;white-space:nowrap}.wt small span+span{margin-left:.45em}',
     '.wt .ls{color:var(--live);font-weight:700}',
     '.sieg .erg{color:var(--gruen)}.nied .erg{color:var(--rot)}',
@@ -156,10 +159,10 @@
     '.tr-karte{display:flex;flex-direction:column;gap:10px;padding:16px 18px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     '.tr-kopf b{display:block;font-size:1.08em;font-weight:800;color:var(--blau);line-height:1.2}',
     '.tr-kopf span{font-size:.8em;color:var(--grau)}',
-    '.tr-zeiten{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}',
+    '.tr-zeiten{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(134px,1fr));gap:8px 10px}',
     '.tr-zeiten li{display:grid;grid-template-columns:2.6em 1fr auto;align-items:center;gap:10px;font-size:.88em}',
-    '.tr-tag{display:grid;place-items:center;height:2.1em;border-radius:8px;background:var(--hell);font-weight:800;font-size:.86em;color:var(--blau)}',
-    '.tr-zeiten li{grid-template-columns:2.6em 1fr}',
+    '.tr-tag{position:relative;display:grid;place-items:center;height:2.1em;border-radius:8px;background:var(--hell);font-weight:800;font-size:.86em;color:var(--blau)}',
+    '.tr-zeiten li{grid-template-columns:2.6em 1fr;gap:8px}',
     '.trainer{margin:-2px 0 2px;padding:8px 10px;border-radius:9px;background:var(--hell);font-size:.84em;font-weight:700;color:#0f172a;line-height:1.35}',
     '.trainer small{display:block;font-size:.78em;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--akzent)}',
     '.kachel .trainer{margin:0 0 10px;display:inline-block}',
@@ -167,7 +170,7 @@
     '.tr-zeit{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}',
     '.tr-halle{align-self:flex-start;font-size:.8em;color:var(--grau)}a.tr-halle:hover{color:var(--blau);text-decoration:underline}',
     '.tr-zeiten li.heute .tr-tag{background:var(--blau);color:#fff}',
-    '.tr-zeiten li.heute .tr-zeit::after{content:"heute";margin-left:7px;padding:1px 7px;border-radius:999px;background:#e7f6ec;color:var(--gruen);font-size:.72em;font-weight:800;letter-spacing:.04em;text-transform:uppercase;vertical-align:1px}',
+    '.tr-zeiten li.heute .tr-tag::after{content:"";position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid #fff}.tr-zeiten li.heute .tr-zeit{color:var(--gruen)}',
     // ---- Kontakt
     '.kontakt{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}',
     '.ko-mail{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:22px 24px;border-radius:var(--r);color:#fff;background:linear-gradient(120deg,var(--blau),var(--blau-2))}',
@@ -195,6 +198,8 @@
     '@container (max-width:720px){.spiele{grid-template-columns:1fr}}@container (max-width:640px){.karten{grid-template-columns:1fr 1fr}}',
     '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px 18px;border-radius:var(--r)}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .zeichen{width:230px;right:-70px;top:36%}.karten{grid-template-columns:1fr;gap:8px}',
     '.pillen{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:1px 2px}.pillen::-webkit-scrollbar{display:none}',
+    '.knoepfe{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.knoepfe .knopf{justify-content:center;padding:10px 6px}.knoepfe .knopf.voll{grid-column:1/-1}.knoepfe .knopf.rand svg,.knoepfe .lang{display:none}.knoepfe .kurz{display:inline}',
+    '.teamwahl{padding-right:28px;-webkit-mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}',
     '.kachel{padding:14px}.tm{flex-direction:column}.tm .gg{display:none}.tm>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wt small{max-width:6.2em}',
     'th.bl,td.bl{display:none}.d-kopf{padding:16px}.d-kopf .t{font-size:1.25em}.zahlen{gap:14px}.a-kopf .t{font-size:1.45em}}'
   ].join('\n');
@@ -250,6 +255,7 @@
   var INSTA_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>';
   var YT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.8z" fill="currentColor"/></svg>';
   var PFEIL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+  var ORT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
   var UHR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
   function heroHtml(inhalt) {
@@ -262,22 +268,30 @@
       var wert = l
         ? '<div class="h-stand"><b>' + live[s.vs].stand.gewonnen.home + ':' + live[s.vs].stand.gewonnen.away + '</b><span>' + live[s.vs].stand.liste.map(function (x) { return x.fertig ? x.h + ':' + x.a : '<em>' + x.h + ':' + x.a + '</em>'; }).join(' · ') + '</span></div>'
         : '<div class="h-wann">' + h(TAGE_LANG[d.tag] || d.tag) + ', ' + h(d.datum) + (s.zeit ? ' · ' + h(s.zeit) : '') + '</div>';
+      var rel = l ? '' : relativ(s);
       box = '<div class="h-spiel"' + (s.link ? ' data-link="' + h(s.link) + '" role="link" tabindex="0"' : '') + '>'
-        + '<div class="h-titel">' + (l ? 'Jetzt live' : eigen(s.heim) ? 'Nächstes Heimspiel' : 'Nächstes Spiel') + (l ? '<span class="live"><i></i>LIVE</span>' : '') + '</div>'
-        + wert + '<div class="h-teams"><span>' + h(s.heim) + '</span><span class="gg">gegen</span><span>' + h(s.gast) + '</span></div>'
-        + '<span class="h-bewerb">' + h(s.bewerb) + '</span>'
-        + (s.halle ? '<div class="h-ort"><a href="' + h(karte(s.halle + (s.adresse ? ', ' + s.adresse : ''))) + '" target="_blank" rel="noopener">' + h(s.halle) + '</a></div>' : '')
-        + '</div>';
+        + '<div class="h-titel">' + (l ? 'Jetzt live' : eigen(s.heim) ? 'Nächstes Heimspiel' : 'Nächstes Spiel') + (l ? '<span class="live"><i></i>LIVE</span>' : rel ? '<span class="h-rel">' + rel + '</span>' : '') + '</div>'
+        + wert + '<div class="h-teams"><div class="h-team"><span>' + h(s.heim) + '</span><small>Heim</small></div><div class="h-team"><span>' + h(s.gast) + '</span><small>Gast</small></div></div>'
+        + '<div class="h-fuss"><span class="h-bewerb">' + h(s.bewerb) + '</span>'
+        + (s.halle ? '<a class="h-ort" href="' + h(karte(s.halle + (s.adresse ? ', ' + s.adresse : ''))) + '" target="_blank" rel="noopener">' + ORT_ICON + h(s.halle) + '</a>' : '')
+        + '</div></div>';
     }
     return '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
       + (inhalt.startseite ? '<a class="heim" href="' + h(inhalt.startseite) + '">' + PFEIL_ICON + 'Turnerschaft Hohenems</a>' : '')
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<span class="saison">Saison ' + h(daten.saison) + '</span>'
       + '<div class="knoepfe">' + (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + 'Schreib uns</a>' : '')
-      + (inhalt.training ? '<button class="knopf rand" data-ziel="training">' + UHR_ICON + 'Trainingszeiten</button>' : '')
+      + (inhalt.training ? '<button class="knopf rand" data-ziel="training">' + UHR_ICON + '<span class="lang">Trainingszeiten</span><span class="kurz">Training</span></button>' : '')
       + '<button class="knopf rand" data-ziel="teams">Teams</button><button class="knopf rand" data-ziel="spiele">Spiele</button></div>'
       + '</div>' + box + '</header>';
   }
+
+  // „Heute“, „Morgen“, „In 3 Tagen“ – nur in der kommenden Woche
+  function relativ(s) {
+    var a = new Date(s.datum + 'T12:00:00'), b = new Date(heute() + 'T12:00:00'), n = Math.round((a - b) / 86400000);
+    return n === 0 ? 'Heute' : n === 1 ? 'Morgen' : n > 1 && n < 7 ? 'In ' + n + ' Tagen' : '';
+  }
+  function ohneAltersklasse(n) { return String(n).replace(/\s+U\d\d\s+(weiblich|männlich)$/i, ''); }
 
   function form(t) {
     return daten.spiele.filter(function (s) { return s.teams.indexOf(t.id) >= 0 && /^\d+:\d+$/.test(s.ergebnis || ''); }).slice(-5).map(function (s) {
@@ -293,15 +307,15 @@
       var p = t.platz, n = naechstes(t), f = form(t);
       var stand = p && p.sp > 0
         ? '<span class="k-platz"><b>' + h(p.platz) + '.</b> von ' + p.von + '</span><span class="k-bilanz">' + (p.pkt !== '' ? h(p.pkt) + ' Pkt · ' : '') + p.s + ' S, ' + p.n + ' N</span>'
-        : '<span class="k-bilanz">Saisonstart steht noch bevor</span>';
+        : '<span class="k-noch">Saisonstart steht noch bevor</span>';
       var nae = 'Kein Spiel mehr angesetzt';
       if (n) {
         var d = datumKurz(n), heim = klein(n.heim) === klein(t.name);
         nae = '<small>' + (laeuft(n) ? '<span class="live"><i></i>LIVE</span>' : 'Nächstes Spiel · ' + h(d.tag + ' ' + d.datum) + (n.zeit ? ' · ' + h(n.zeit) : '')) + '</small>'
-          + (heim ? 'Heim gegen ' : 'Auswärts bei ') + '<b>' + h(heim ? n.gast : n.heim) + '</b>';
+          + (heim ? 'Heim gegen ' : 'Auswärts bei ') + '<b>' + h(ohneAltersklasse(heim ? n.gast : n.heim)) + '</b>';
       }
       return '<button class="karte" data-team="' + h(t.id) + '"><span class="k-titel">' + h(t.titel) + '</span>'
-        + '<span class="k-bewerb">' + h(t.bewerbe.join(' · ')) + '</span>'
+        + (klein(t.bewerbe.join(' · ')) !== klein(t.titel) ? '<span class="k-bewerb">' + h(t.bewerbe.join(' · ')) + '</span>' : '')
         + '<span class="k-stand">' + stand + (f ? '<span class="form" aria-label="Letzte Spiele">' + f + '</span>' : '') + '</span>'
         + '<span class="k-naechstes">' + nae + '</span></button>';
     }).join('') + '</div>';
@@ -399,7 +413,7 @@
     var heuteTag = TAGE[new Date().getDay()];
     return '<ul class="tr-zeiten">' + zeiten.map(function (z) {
       var halle = (inhalt.hallen || {})[z[3]] || { name: z[3] };
-      return '<li' + (z[0] === heuteTag ? ' class="heute"' : '') + '><span class="tr-tag" title="' + h(TAGE_LANG[z[0]] || z[0]) + '">' + h(z[0]) + '</span>'
+      return '<li' + (z[0] === heuteTag ? ' class="heute"' : '') + '><span class="tr-tag" title="' + h(TAGE_LANG[z[0]] || z[0]) + (z[0] === heuteTag ? ' (heute)' : '') + '">' + h(z[0]) + '</span>'
         + '<span class="tr-info"><span class="tr-zeit">' + h(z[1]) + '–' + h(z[2]) + '</span>'
         + (halle.karte ? '<a class="tr-halle" href="' + h(karte(halle.karte)) + '" target="_blank" rel="noopener">' + h(halle.name) + '</a>' : '<span class="tr-halle">' + h(halle.name) + '</span>') + '</span></li>';
     }).join('') + '</ul>';
