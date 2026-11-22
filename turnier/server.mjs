@@ -1,0 +1,113 @@
+// Kleiner Server für das U14-Turnier: liefert das Widget (tsh-turnier.js), den Stand als JSON und nimmt Ergebnisse
+// und Teamnamen entgegen (nur mit PIN). Änderungen gehen per Server-Sent Events sofort an alle offenen Seiten.
+// Ohne Abhängigkeiten. Daten in $DATA_DIR/turnier-daten.json (Railway-Volume), Grundeinstellungen in turnier.json.
+//   PIN       – zum Eintragen (Pflicht, sonst ist Eintragen gesperrt)
+//   DATA_DIR  – Ablage der Ergebnisse (Standard: ./daten)
+//   PORT      – Port (Railway setzt ihn)
+import { createServer } from 'node:http';
+import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
+import { timingSafeEqual, createHash } from 'node:crypto';
+import path from 'node:path';
+import { stand, pruefen, spielplan } from './plan.mjs';
+
+const ORDNER = import.meta.dirname;
+const DATA_DIR = process.env.DATA_DIR || path.join(ORDNER, 'daten');
+const DATEI = path.join(DATA_DIR, 'turnier-daten.json');
+const PIN = process.env.PIN || '';
+const PORT = Number(process.env.PORT || 8098);
+
+const grund = JSON.parse(await readFile(path.join(ORDNER, 'turnier.json'), 'utf8'));
+let daten = { teams: {}, ergebnisse: {}, version: 0 };
+try { daten = { ...daten, ...JSON.parse(await readFile(DATEI, 'utf8')) }; } catch { /* noch nichts gespeichert */ }
+const SPIEL_IDS = new Set(spielplan().map((s) => s.id));
+const TEAM_IDS = new Set([...'AB'].flatMap((g) => [1, 2, 3, 4, 5, 6].map((i) => g + i)));
+
+async function speichern() {
+  await mkdir(DATA_DIR, { recursive: true });
+  await writeFile(DATEI + '.neu', JSON.stringify(daten));
+  await rename(DATEI + '.neu', DATEI);   // in einem Schritt ersetzen
+}
+const aktuell = () => ({ ...stand({ ...grund, teams: { ...grund.teams, ...daten.teams } }, daten.ergebnisse), version: daten.version });
+
+// ---- Live: Server-Sent Events
+const zuhoerer = new Set();
+function senden() {
+  const text = `data: ${JSON.stringify({ version: daten.version })}\n\n`;
+  for (const res of zuhoerer) res.write(text);
+}
+setInterval(() => { for (const res of zuhoerer) res.write(': ping\n\n'); }, 25000);
+
+const pinOk = (p) => {
+  if (!PIN || typeof p !== 'string') return false;
+  const a = createHash('sha256').update(p).digest(), b = createHash('sha256').update(PIN).digest();
+  return timingSafeEqual(a, b);
+};
+const fehlversuche = new Map();   // IP -> [Anzahl, seit]
+
+function json(res, code, obj) {
+  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' });
+  res.end(JSON.stringify(obj));
+}
+async function lesen(req) {
+  let s = '';
+  for await (const teil of req) { s += teil; if (s.length > 20000) throw new Error('zu groß'); }
+  return JSON.parse(s || '{}');
+}
+
+createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://x');
+  try {
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type, X-PIN', 'Access-Control-Max-Age': '86400' });
+      return res.end();
+    }
+    if (req.method === 'GET' && url.pathname === '/api/stand') return json(res, 200, aktuell());
+    if (req.method === 'GET' && url.pathname === '/api/live') {
+      res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store', Connection: 'keep-alive', 'Access-Control-Allow-Origin': '*' });
+      res.write(`data: ${JSON.stringify({ version: daten.version })}\n\n`);
+      zuhoerer.add(res);
+      req.on('close', () => zuhoerer.delete(res));
+      return;
+    }
+    if (req.method === 'POST' && url.pathname.startsWith('/api/')) {
+      const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(',')[0].trim();
+      const [n, seit] = fehlversuche.get(ip) || [0, Date.now()];
+      if (n >= 10 && Date.now() - seit < 10 * 60000) return json(res, 429, { fehler: 'Zu viele falsche PINs – bitte in 10 Minuten nochmal.' });
+      if (!pinOk(req.headers['x-pin'])) {
+        fehlversuche.set(ip, Date.now() - seit < 10 * 60000 ? [n + 1, seit] : [1, Date.now()]);
+        return json(res, 401, { fehler: PIN ? 'Falsche PIN.' : 'Eintragen ist nicht eingerichtet (keine PIN gesetzt).' });
+      }
+      fehlversuche.delete(ip);
+      const b = await lesen(req);
+      if (url.pathname === '/api/pin') return json(res, 200, { ok: true });
+      if (url.pathname === '/api/ergebnis') {
+        if (!SPIEL_IDS.has(b.spiel)) return json(res, 400, { fehler: 'Unbekanntes Spiel.' });
+        if (b.ergebnis === null) delete daten.ergebnisse[b.spiel];
+        else {
+          const e = Array.isArray(b.ergebnis) ? b.ergebnis.map(Number) : null, f = pruefen(e);
+          if (f) return json(res, 400, { fehler: f });
+          daten.ergebnisse[b.spiel] = e;
+        }
+      } else if (url.pathname === '/api/teams') {
+        for (const [id, name] of Object.entries(b.teams || {})) {
+          if (!TEAM_IDS.has(id)) continue;
+          const n = String(name || '').trim().slice(0, 40);
+          if (n) daten.teams[id] = n; else delete daten.teams[id];
+        }
+      } else return json(res, 404, { fehler: 'Unbekannt.' });
+      daten.version++;
+      await speichern();
+      senden();
+      return json(res, 200, aktuell());
+    }
+    if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/'].includes(url.pathname)) {
+      const datei = url.pathname === '/' ? 'vorschau.html' : url.pathname.slice(1);
+      const typ = { js: 'text/javascript; charset=utf-8', png: 'image/png', html: 'text/html; charset=utf-8' }[datei.split('.').pop()];
+      res.writeHead(200, { 'Content-Type': typ, 'Cache-Control': datei.endsWith('.js') ? 'no-cache' : 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' });
+      return res.end(await readFile(path.join(ORDNER, 'public', datei)));
+    }
+    json(res, 404, { fehler: 'Nicht gefunden.' });
+  } catch (e) {
+    json(res, 500, { fehler: 'Fehler: ' + e.message });
+  }
+}).listen(PORT, () => console.log(`U14-Turnier auf Port ${PORT}${PIN ? '' : ' (ohne PIN – Eintragen gesperrt)'}`));

@@ -1,0 +1,10 @@
+{
+  "name": "tsh-turnier",
+  "private": true,
+  "type": "module",
+  "description": "U14-Turnier der TS Hohenems: Spielplan, Ergebnisse mit PIN, live auf der Jimdo-Seite",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}
