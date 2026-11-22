@@ -1,5 +1,7 @@
 {
-  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. trainer: steht unter der Gruppe. fotos: Mannschaftsfoto je Team (Bezeichnung im Widget → Datei in public/fotos, Querformat 4:3). archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
+  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. trainer: steht unter der Gruppe. fotos: Mannschaftsfoto je Team (Bezeichnung im Widget → Datei in public/fotos, Querformat 4:3). startseite: Link oben im Kopf. jimdoKopfAusblenden: Kopfbild und Menü von Jimdo auf der Seite ausblenden (true/false). archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
+  "startseite": "https://www.ts-hohenems.at/",
+  "jimdoKopfAusblenden": true,
   "einladung": "Lust auf Volleyball? Dann melde dich bei Thomas oder Günther für Details.",
   "mail": "volleyball@ts-hohenems.at",
   "instagram": "https://www.instagram.com/tsh_volleyball/",

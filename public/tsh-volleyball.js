@@ -37,6 +37,8 @@
     '.hero .zeichen{position:absolute;right:-20px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%) rotate(-8deg);background:#fff;opacity:.1;pointer-events:none;-webkit-mask:var(--zeichen) center/contain no-repeat;mask:var(--zeichen) center/contain no-repeat}',
     '.h-spiel{z-index:1}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:18px;min-width:0}',
+    '.heim{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;margin:-8px 0 2px -4px;padding:4px 10px 4px 6px;border-radius:999px;font-size:.8em;font-weight:700;color:rgba(255,255,255,.8)}',
+    '.heim:hover{background:rgba(255,255,255,.1);color:#fff}.heim svg{width:16px;height:16px}',
     '.logo{display:block;width:min(100%,460px);aspect-ratio:640/115;background:#fff;-webkit-mask:var(--logo) left center/contain no-repeat;mask:var(--logo) left center/contain no-repeat}',
     '.saison{align-self:flex-start;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.78em;font-weight:700;letter-spacing:.08em;text-transform:uppercase}',
     '.einladung{margin:0;max-width:34em;font-size:1.08em;line-height:1.5;color:rgba(255,255,255,.88)}',
@@ -247,6 +249,7 @@
   var MAIL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
   var INSTA_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>';
   var YT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.8z" fill="currentColor"/></svg>';
+  var PFEIL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
   var UHR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
   function heroHtml(inhalt) {
@@ -267,6 +270,7 @@
         + '</div>';
     }
     return '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
+      + (inhalt.startseite ? '<a class="heim" href="' + h(inhalt.startseite) + '">' + PFEIL_ICON + 'Turnerschaft Hohenems</a>' : '')
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<span class="saison">Saison ' + h(daten.saison) + '</span>'
       + '<div class="knoepfe">' + (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + 'Schreib uns</a>' : '')
@@ -526,6 +530,7 @@
       return a.json();
     }).then(function (d) {
       daten = d;
+      jimdoKopf(d.inhalt || {});
       if (DEMO) demo();
       if (team && !teamVon(team)) team = null;
       zeichnen();
@@ -535,6 +540,19 @@
     });
   }
   function hin(id) { var el = wurzel.getElementById ? wurzel.getElementById(id) : wurzel.querySelector('#' + id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+  // Auf der Volleyball-Seite Kopfbild und Menü von Jimdo ausblenden – zurück geht es über den Link „Turnerschaft Hohenems“
+  // im Widget. Fuß mit Impressum und Datenschutz bleibt. Schalter: inhalt.json → jimdoKopfAusblenden
+  function jimdoKopf(inhalt) {
+    var id = 'tsh-volleyball-jimdo-kopf', alt = document.getElementById(id);
+    if (!inhalt.jimdoKopfAusblenden) { if (alt) alt.remove(); return; }
+    if (alt) return;
+    var st = document.createElement('style');
+    st.id = id;
+    st.textContent = '.jtpl-header,.jtpl-navigation,.jtpl-mobile-topbar,.jtpl-mobile-navigation{display:none!important}'
+      + '.jtpl-content{padding-top:24px!important}.jtpl-content__inner{padding-top:0!important}';
+    document.head.appendChild(st);
+  }
 
   function start() {
     host = document.getElementById('tsh-volleyball');
