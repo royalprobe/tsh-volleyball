@@ -158,7 +158,7 @@
       + '<div class="h-titel">' + h(daten.name) + '</div>'
       + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn + '–' + daten.ende + ' Uhr') + '</span>'
       + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">12 Teams · 3 Felder</span></div></div>'
-      + '<div class="jetzt"><div class="t">' + (daten.datum === heute() ? 'Jetzt · Runde ' + akt : 'Runde ' + akt) + '</div><div class="z">' + h(rundeSp[0].zeit) + ' Uhr</div><ul>'
+      + '<div class="jetzt"><div class="t">' + (daten.datum === heute() ? 'Jetzt' : 'Als Nächstes') + '</div><div class="z">' + h(rundeSp[0].zeit) + ' Uhr</div><ul>'
       + rundeSp.map(function (s) {
         return '<li><small>' + (s.feld ? 'Feld ' + s.feld : 'Feld offen') + '</small><span>' + h(name(s.heim) || s.heimText) + ' – ' + h(name(s.gast) || s.gastText) + '</span>'
           + (s.ergebnis ? '<b>' + s.ergebnis[0] + ':' + s.ergebnis[1] + '</b>' : '<span></span>') + '</li>'; }).join('')
@@ -179,7 +179,7 @@
   function rundeHtml(r, aktiv) {
     var sp = daten.spiele.filter(function (s) { return s.runde === r; });
     var phase = sp[0].phase === 'gruppe' ? 'Gruppe ' + (r % 2 ? 'A' : 'B') : sp[0].phase === 'kreuz' ? 'Überkreuz' : 'Platzierung';
-    return '<div class="runde' + (aktiv ? ' aktiv' : '') + '"><div class="r-zeit">' + h(sp[0].zeit) + '<small>Runde ' + r + '</small></div><div class="felder">'
+    return '<div class="runde' + (aktiv ? ' aktiv' : '') + '"><div class="r-zeit">' + h(sp[0].zeit) + '<small>Uhr</small></div><div class="felder">'
       + sp.map(function (s) {
         var spielt = mein && (s.heim === mein || s.gast === mein), pfeift = mein && s.schiri === mein;
         var art = !mein ? '' : spielt ? ' spielt' : pfeift ? ' pfeift' : ' anders';
