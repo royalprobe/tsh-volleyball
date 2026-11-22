@@ -167,7 +167,7 @@
     '.kontakt{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}',
     '.ko-mail{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:22px 24px;border-radius:var(--r);color:#fff;background:linear-gradient(120deg,var(--blau),var(--blau-2))}',
     '.ko-mail b{font-size:1.2em;line-height:1.25}.ko-mail p{margin:0;font-size:.88em;opacity:.85}',
-    '.ko-mail .knopf{align-self:flex-start}',
+    '.ko-mail .knopf{align-self:flex-start}.ko-mail .knopf.rand{color:#fff}',
     '.person{display:flex;align-items:center;gap:14px;padding:18px 20px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     '.initialen{flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:50%;background:var(--hell);color:var(--blau);font-weight:800;font-size:1.05em;letter-spacing:.02em}',
     '.person small{display:block;font-size:.72em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--akzent)}',
@@ -233,6 +233,7 @@
   function spaeter() { if (!zeichnenGeplant) { zeichnenGeplant = true; requestAnimationFrame(zeichnen); } }
 
   var MAIL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
+  var INSTA_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>';
   var UHR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
   function heroHtml(inhalt) {
@@ -395,7 +396,8 @@
     if (!inhalt.mail && !(inhalt.personen || []).length) return '';
     var initialen = function (n) { return n.split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); };
     return '<section class="abschnitt" id="kontakt"><div class="a-kopf"><div><div class="t">Kontakt</div></div></div><div class="kontakt">'
-      + (inhalt.mail ? '<div class="ko-mail"><b>Neu dabei oder Wiedereinstieg?</b><p>Schreib uns einfach – wir melden uns.</p><a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + h(inhalt.mail) + '</a></div>' : '')
+      + (inhalt.mail ? '<div class="ko-mail"><b>Neu dabei oder Wiedereinstieg?</b><p>Schreib uns einfach – wir melden uns.</p><div class="knoepfe"><a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + h(inhalt.mail) + '</a>'
+        + (inhalt.instagram ? '<a class="knopf rand" href="' + h(inhalt.instagram) + '" target="_blank" rel="noopener">' + INSTA_ICON + '@' + h(inhalt.instagram.replace(/\/+$/, '').split('/').pop()) + '</a>' : '') + '</div></div>' : '')
       + (inhalt.personen || []).map(function (p) {
         return '<div class="person"><span class="initialen">' + h(initialen(p.name)) + '</span><div><small>' + h(p.rolle) + '</small><b>' + h(p.name) + '</b>'
           + (p.mail ? '<a href="mailto:' + h(p.mail) + '">' + h(p.mail) + '</a>' : '') + '</div></div>';
