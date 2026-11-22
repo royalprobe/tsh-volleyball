@@ -31,25 +31,25 @@ export function spielplan() {
         { t: `${andere}${((r * 3 + feld) % 6) + 1}` }));
     }
   }
-  // Überkreuz (Runde 11 und 12) – von hinten nach vorne: zuerst um Platz 9–12, dann 5–8, die Halbfinale zuletzt
-  neu(11, 1, 'kreuz', 'Überkreuz Platz 9–12', { g: 'A', p: 5 }, { g: 'B', p: 6 }, { g: 'A', p: 4 });  // S31
-  neu(11, 2, 'kreuz', 'Überkreuz Platz 9–12', { g: 'B', p: 5 }, { g: 'A', p: 6 }, { g: 'B', p: 3 });  // S32
-  neu(11, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'B', p: 1 });   // S33
-  neu(12, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 3 });            // S34
-  neu(12, 2, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 4 });            // S35
-  neu(12, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'A', p: 5 });   // S36
-  // Platzierungsspiele (Runde 13 und 14) – ebenfalls von hinten: Platz 11, 9, 7, dann 5, 3 und das Finale zuletzt auf Feld 1
-  neu(13, 1, 'platz', 'Spiel um Platz 7', { v: 'S33' }, { v: 'S36' }, { s: 'S33' });   // S37
-  neu(13, 2, 'platz', 'Spiel um Platz 9', { s: 'S31' }, { s: 'S32' }, { v: 'S35' });   // S38
-  neu(13, 3, 'platz', 'Spiel um Platz 11', { v: 'S31' }, { v: 'S32' }, { v: 'S34' });  // S39
-  neu(14, 1, 'platz', 'Finale', { s: 'S34' }, { s: 'S35' }, { s: 'S38' });             // S40
-  neu(14, 2, 'platz', 'Spiel um Platz 3', { v: 'S34' }, { v: 'S35' }, { s: 'S37' });   // S41
-  neu(14, 3, 'platz', 'Spiel um Platz 5', { s: 'S33' }, { s: 'S36' }, { s: 'S39' });   // S42
+  // Überkreuz und Platzierung streng von hinten nach vorne: Platz 9–12, 5–8, Halbfinale, dann um Platz 11, 9, 7, 5, 3, Finale.
+  // Finale und Spiel um Platz 3 ohne Feld – das wird am Turniertag spontan entschieden.
+  neu(11, 1, 'kreuz', 'Überkreuz Platz 9–12', { g: 'A', p: 5 }, { g: 'B', p: 6 }, { g: 'B', p: 3 });  // S31
+  neu(11, 2, 'kreuz', 'Überkreuz Platz 9–12', { g: 'B', p: 5 }, { g: 'A', p: 6 }, { g: 'A', p: 4 });  // S32
+  neu(11, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 2 });   // S33
+  neu(12, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'A', p: 5 });   // S34
+  neu(12, 2, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 3 });            // S35
+  neu(12, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 4 });            // S36
+  neu(13, 1, 'platz', 'Spiel um Platz 11', { v: 'S31' }, { v: 'S32' }, { s: 'S33' });  // S37
+  neu(13, 2, 'platz', 'Spiel um Platz 9', { s: 'S31' }, { s: 'S32' }, { s: 'S34' });   // S38
+  neu(13, 3, 'platz', 'Spiel um Platz 7', { v: 'S33' }, { v: 'S34' }, { v: 'S35' });   // S39
+  neu(14, 1, 'platz', 'Spiel um Platz 5', { s: 'S33' }, { s: 'S34' }, { s: 'S37' });   // S40
+  neu(14, null, 'platz', 'Spiel um Platz 3', { v: 'S35' }, { v: 'S36' }, { s: 'S39' }); // S41
+  neu(14, null, 'platz', 'Finale', { s: 'S35' }, { s: 'S36' }, { s: 'S38' });          // S42
   return spiele;
 }
 
 /** Rangfolge der Plätze aus den Platzierungsspielen: Spiel-ID -> [Platz Sieger, Platz Verlierer] */
-const PLAETZE = { S40: [1, 2], S41: [3, 4], S42: [5, 6], S37: [7, 8], S38: [9, 10], S39: [11, 12] };
+const PLAETZE = { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] };
 
 const fertig = (e) => Array.isArray(e) && e.length === 2 && Number.isInteger(e[0]) && Number.isInteger(e[1]) && e[0] !== e[1];
 
