@@ -90,11 +90,17 @@ const PLAETZE = { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 1
 
 const fertig = (e) => Array.isArray(e) && e.length === 2 && Number.isInteger(e[0]) && Number.isInteger(e[1]) && e[0] !== e[1];
 
-/** Tabelle einer Gruppe: Siege, dann Ballpunkte-Differenz, dann erzielte Bälle, dann direkter Vergleich */
+/**
+ * Tabelle einer Gruppe. Reihung: Siege, dann direkter Vergleich, dann Ballpunkt-Differenz.
+ * Direkter Vergleich auch bei 3 oder mehr Teams mit gleich vielen Siegen: Es zählen nur die Spiele dieser Teams
+ * untereinander (Siege in dieser „Mini-Tabelle“). Trennt das nur einen Teil, wird für die übrigen gleichauf liegenden
+ * Teams wieder ihr direkter Vergleich genommen; bleibt es gleich (z. B. A schlägt B, B schlägt C, C schlägt A),
+ * entscheidet die Ballpunkt-Differenz aus allen Gruppenspielen, danach erzielte Bälle.
+ */
 export function tabelle(g, spiele, ergebnisse, teams) {
   const z = {};
   for (let i = 1; i <= 6; i++) z[`${g}${i}`] = { id: `${g}${i}`, name: teams[`${g}${i}`] || `Team ${g}${i}`, sp: 0, s: 0, n: 0, bp: 0, bm: 0 };
-  const direkt = {};
+  const sieg = {};   // „Sieger>Verlierer“
   for (const sp of spiele) {
     if (sp.phase !== 'gruppe' || sp.titel !== `Gruppe ${g}`) continue;
     const e = ergebnisse[sp.id];
@@ -103,11 +109,19 @@ export function tabelle(g, spiele, ergebnisse, teams) {
     h.sp++; a.sp++; h.bp += e[0]; h.bm += e[1]; a.bp += e[1]; a.bm += e[0];
     const sieger = e[0] > e[1] ? h : a, verlierer = sieger === h ? a : h;
     sieger.s++; verlierer.n++;
-    direkt[`${sieger.id}>${verlierer.id}`] = true;
+    sieg[`${sieger.id}>${verlierer.id}`] = true;
   }
-  const liste = Object.values(z);
-  liste.sort((x, y) => y.s - x.s || (y.bp - y.bm) - (x.bp - x.bm) || y.bp - x.bp
-    || (direkt[`${x.id}>${y.id}`] ? -1 : direkt[`${y.id}>${x.id}`] ? 1 : 0) || x.id.localeCompare(y.id));
+  const balle = (x, y) => (y.bp - y.bm) - (x.bp - x.bm) || y.bp - x.bp || x.id.localeCompare(y.id);
+  // Teams mit gleich vielen Siegen: direkter Vergleich (rekursiv), sonst Bälle
+  const reihen = (gruppe) => {
+    if (gruppe.length < 2) return gruppe;
+    const mini = new Map(gruppe.map((t) => [t.id, gruppe.filter((o) => o !== t && sieg[`${t.id}>${o.id}`]).length]));
+    const stufen = [...new Set(mini.values())].sort((a, b) => b - a);
+    if (stufen.length === 1) return [...gruppe].sort(balle);   // direkter Vergleich trennt nicht
+    return stufen.flatMap((w) => reihen(gruppe.filter((t) => mini.get(t.id) === w)));
+  };
+  const nachSiegen = [...new Set(Object.values(z).map((t) => t.s))].sort((a, b) => b - a);
+  const liste = nachSiegen.flatMap((w) => reihen(Object.values(z).filter((t) => t.s === w)));
   const komplett = spiele.filter((sp) => sp.titel === `Gruppe ${g}`).every((sp) => fertig(ergebnisse[sp.id]));
   return { komplett, zeilen: liste.map((t, i) => ({ ...t, platz: i + 1 })) };
 }

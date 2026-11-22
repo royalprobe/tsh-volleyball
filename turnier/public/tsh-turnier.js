@@ -150,7 +150,7 @@
       + '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<div class="h-titel">' + h(daten.name) + '</div>'
-      + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.beginn) + '–' + h(daten.ende) + ' Uhr</span>'
+      + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn + '–' + daten.ende + ' Uhr') + '</span>'
       + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">12 Teams · 3 Felder</span></div></div>'
       + '<div class="jetzt"><div class="t">' + (daten.datum === heute() ? 'Jetzt · Runde ' + akt : 'Runde ' + akt) + '</div><div class="z">' + h(rundeSp[0].zeit) + ' Uhr</div><ul>'
       + rundeSp.map(function (s) {
@@ -164,7 +164,7 @@
       + '<div class="runden">'
       + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(function (r) { return rundeHtml(r, r === akt); }).join('') + '</div></section>'
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Gruppen</div></div><div class="gruppen">' + tabelleHtml('A') + tabelleHtml('B') + '</div>'
-      + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, dann Ballpunkte-Differenz, erzielte Bälle, direkter Vergleich. Danach Überkreuz: 1. gegen 2., 3. gegen 4., 5. gegen 6. der anderen Gruppe.</p></section>'
+      + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Überkreuz: 1. gegen 2., 3. gegen 4., 5. gegen 6. der anderen Gruppe. Die Endrunde wird erst eingetragen, wenn eine Gruppe ganz fertig ist.</p></section>'
       + (pin ? '' : '<div class="fuss"><span></span><button class="knopf klein" data-ein>Ergebnisse eintragen</button></div>')
       + '</div>';
     wurzel.querySelector('.inhalt').innerHTML = html;
