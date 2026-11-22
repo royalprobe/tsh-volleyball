@@ -195,7 +195,6 @@
           + '<div class="s-kopf"><span>' + (s.feld ? 'Feld ' + s.feld + ' · ' : '') + 'Spiel ' + s.nr + '</span><span class="ph">' + h(s.phase === 'gruppe' ? '' : s.titel) + '</span></div>'
           + team(s.heim, s.heimText, 0) + team(s.gast, s.gastText, 1)
           + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + '</div>'
-          + (spielt ? '<span class="marke">Spielt</span>' : pfeift ? '<span class="marke">Pfeift</span>' : '')
           + '</' + (pin ? 'button' : 'div') + '>';
       }).join('') + '</div></div>';
   }
