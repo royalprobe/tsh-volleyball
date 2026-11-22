@@ -168,6 +168,16 @@
     '.ko-mail{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:22px 24px;border-radius:var(--r);color:#fff;background:linear-gradient(120deg,var(--blau),var(--blau-2))}',
     '.ko-mail b{font-size:1.2em;line-height:1.25}.ko-mail p{margin:0;font-size:.88em;opacity:.85}',
     '.ko-mail .knopf{align-self:flex-start}.ko-mail .knopf.rand{color:#fff}',
+    '.ko-karte{display:grid;grid-template-columns:1fr auto;gap:20px 32px;align-items:center;padding:24px 28px;border-radius:var(--r);color:#fff;background:linear-gradient(120deg,var(--blau),var(--blau-2))}',
+    '.ko-text>b{display:block;font-size:1.35em;line-height:1.2}',
+    '.ko-text>p{margin:4px 0 0;font-size:.95em;color:rgba(255,255,255,.85)}',
+    '.ko-personen{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:16px}',
+    '.ko-person{display:flex;align-items:center;gap:10px}',
+    '.ko-person .initialen{width:40px;height:40px;font-size:.85em;background:rgba(255,255,255,.14);color:#fff}',
+    '.ko-person b{display:block;font-size:.98em}.ko-person small{display:block;font-size:.72em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.65)}',
+    '.ko-knoepfe{display:flex;flex-direction:column;align-items:stretch;gap:8px}',
+    '.ko-knoepfe .knopf{justify-content:center}.ko-knoepfe .knopf.rand{color:#fff}',
+    '@container (max-width:540px){.ko-karte{padding:20px 18px}.ko-knoepfe{flex-direction:column}.ko-knoepfe .knopf{width:100%}.ko-personen{flex-direction:column;gap:10px}}',
     '.person{display:flex;align-items:center;gap:14px;padding:18px 20px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     '.initialen{flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:50%;background:var(--hell);color:var(--blau);font-weight:800;font-size:1.05em;letter-spacing:.02em}',
     '.person small{display:block;font-size:.72em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--akzent)}',
@@ -176,12 +186,12 @@
     '.fuss{margin:-8px 4px 0 0;font-size:.72em;color:var(--grau-2);text-align:right}',
     '.fehler{padding:16px 18px;border-radius:var(--r);background:var(--hell);color:var(--grau)}',
     '@media (prefers-reduced-motion:reduce){.live i{animation:none}.karte,.knopf{transition:none}}',
-    '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.ko-mail{grid-column:1/-1}.d-raster{grid-template-columns:1fr}}',
+    '@container (max-width:860px){.ko-karte{grid-template-columns:1fr}.ko-knoepfe{flex-direction:row;flex-wrap:wrap}.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.d-raster{grid-template-columns:1fr}}',
     '@container (max-width:720px){.spiele{grid-template-columns:1fr}}@container (max-width:640px){.karten{grid-template-columns:1fr 1fr}}',
     '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px 18px;border-radius:var(--r)}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .zeichen{width:230px;right:-70px;top:36%}.karten{grid-template-columns:1fr;gap:8px}',
     '.pillen{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:1px 2px}.pillen::-webkit-scrollbar{display:none}',
     '.kachel{padding:14px}.tm{flex-direction:column}.tm .gg{display:none}.tm>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wt small{max-width:6.2em}',
-    'th.bl,td.bl{display:none}.d-kopf{padding:16px}.d-kopf .t{font-size:1.25em}.zahlen{gap:14px}.kontakt{grid-template-columns:1fr}.a-kopf .t{font-size:1.45em}}'
+    'th.bl,td.bl{display:none}.d-kopf{padding:16px}.d-kopf .t{font-size:1.25em}.zahlen{gap:14px}.a-kopf .t{font-size:1.45em}}'
   ].join('\n');
 
   // ------------------------------------------------------------------ Zustand
@@ -257,7 +267,6 @@
     return '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<span class="saison">Saison ' + h(daten.saison) + '</span>'
-      + (inhalt.einladung ? '<p class="einladung">' + h(inhalt.einladung) + '</p>' : '')
       + '<div class="knoepfe">' + (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + 'Schreib uns</a>' : '')
       + (inhalt.training ? '<button class="knopf rand" data-ziel="training">' + UHR_ICON + 'Trainingszeiten</button>' : '')
       + '<button class="knopf rand" data-ziel="teams">Teams</button><button class="knopf rand" data-ziel="spiele">Spiele</button></div>'
@@ -393,17 +402,19 @@
           + trainerHtml(g) + zeitenHtml(g.zeiten, inhalt) + '</div>';
       }).join('') + '</div></section>';
   }
+  // Kontakt in einer Karte: Einladung, die Riegenleiter darunter, rechts Mail, Instagram, YouTube
   function kontaktHtml(inhalt) {
     if (!inhalt.mail && !(inhalt.personen || []).length) return '';
     var initialen = function (n) { return n.split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); };
-    return '<section class="abschnitt" id="kontakt"><div class="a-kopf"><div><div class="t">Kontakt</div></div></div><div class="kontakt">'
-      + (inhalt.mail ? '<div class="ko-mail"><b>Neu dabei oder Wiedereinstieg?</b><p>Schreib uns einfach – wir melden uns.</p><div class="knoepfe"><a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + h(inhalt.mail) + '</a>'
-        + (inhalt.instagram ? '<a class="knopf rand" href="' + h(inhalt.instagram) + '" target="_blank" rel="noopener">' + INSTA_ICON + '@' + h(inhalt.instagram.replace(/\/+$/, '').split('/').pop()) + '</a>' : '')
-        + (inhalt.youtube ? '<a class="knopf rand" href="' + h(inhalt.youtube) + '" target="_blank" rel="noopener">' + YT_ICON + 'YouTube</a>' : '') + '</div></div>' : '')
-      + (inhalt.personen || []).map(function (p) {
-        return '<div class="person"><span class="initialen">' + h(initialen(p.name)) + '</span><div><small>' + h(p.rolle) + '</small><b>' + h(p.name) + '</b>'
-          + (p.mail ? '<a href="mailto:' + h(p.mail) + '">' + h(p.mail) + '</a>' : '') + '</div></div>';
-      }).join('') + '</div></section>';
+    var e = String(inhalt.einladung || '').match(/^(.*?\?)\s*(.*)$/) || [null, inhalt.einladung || 'Kontakt', ''];
+    var knoepfe = (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + h(inhalt.mail) + '</a>' : '')
+      + (inhalt.instagram ? '<a class="knopf rand" href="' + h(inhalt.instagram) + '" target="_blank" rel="noopener">' + INSTA_ICON + '@' + h(inhalt.instagram.replace(/\/+$/, '').split('/').pop()) + '</a>' : '')
+      + (inhalt.youtube ? '<a class="knopf rand" href="' + h(inhalt.youtube) + '" target="_blank" rel="noopener">' + YT_ICON + 'YouTube</a>' : '');
+    return '<section class="abschnitt" id="kontakt"><div class="a-kopf"><div><div class="t">Kontakt</div></div></div>'
+      + '<div class="ko-karte"><div class="ko-text"><b>' + h(e[1]) + '</b>' + (e[2] ? '<p>' + h(e[2]) + '</p>' : '')
+      + '<div class="ko-personen">' + (inhalt.personen || []).map(function (p) {
+        return '<div class="ko-person"><span class="initialen">' + h(initialen(p.name)) + '</span><span><b>' + h(p.name) + '</b><small>' + h(p.rolle) + '</small></span></div>';
+      }).join('') + '</div></div><div class="ko-knoepfe">' + knoepfe + '</div></div></section>';
   }
 
   function archivHtml(inhalt) {
