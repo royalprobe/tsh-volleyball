@@ -99,6 +99,12 @@
     'input.pin{letter-spacing:.5em;font-size:1.6em;padding:12px;text-indent:.5em}',
     '.hinweis{font-size:.78em;color:var(--grau-2)}',
     '.fehler:empty{display:none}',
+    '.box input.name{font-size:1em;text-align:left;font-weight:600}',
+    '.dialog.breit .box{width:min(100%,640px)}',
+    '.protokoll{list-style:none;margin:0;padding:0;max-height:60vh;overflow:auto;display:flex;flex-direction:column}',
+    '.protokoll li{display:grid;grid-template-columns:5.6em 8em 1fr;gap:4px 10px;padding:8px 0;border-top:1px solid var(--rand);font-size:.84em;line-height:1.35}',
+    '.p-zeit{color:var(--grau);font-variant-numeric:tabular-nums}.p-wer{font-weight:700}.p-wer small{font-weight:400;color:var(--grau-2)}.rot{color:var(--rot)}',
+    '@media (max-width:540px){.protokoll li{grid-template-columns:5.6em 1fr}.p-was{grid-column:1/-1}}',
     '.box .t{font-size:1.2em;font-weight:800;color:var(--blau)}',
     '.box small{color:var(--grau)}',
     '.eingabe{display:grid;grid-template-columns:1fr 4.5em;gap:8px 12px;align-items:center;font-weight:700}',
@@ -157,14 +163,14 @@
         return '<li><small>' + (s.feld ? 'Feld ' + s.feld : 'Feld offen') + '</small><span>' + h(name(s.heim) || s.heimText) + ' – ' + h(name(s.gast) || s.gastText) + '</span>'
           + (s.ergebnis ? '<b>' + s.ergebnis[0] + ':' + s.ergebnis[1] + '</b>' : '<span></span>') + '</li>'; }).join('')
       + '</ul></div></header>'
-      + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
+      + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div>'
       + (mein ? '<div class="legende"><span><i style="background:#dbe7f8;border:2px solid #002266"></i>' + h(name(mein)) + ' spielt</span><span><i style="background:#fff;border:2px solid #002266"></i>' + h(name(mein)) + ' pfeift</span></div>' : '')
       + '<div class="runden">'
       + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(function (r) { return rundeHtml(r, r === akt); }).join('') + '</div></section>'
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Gruppen</div></div><div class="gruppen">' + tabelleHtml('A') + tabelleHtml('B') + '</div>'
-      + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz (bei mehreren Teams im Kreis: zuerst aus den Spielen untereinander). Danach Überkreuz: 1. gegen 2., 3. gegen 4., 5. gegen 6. der anderen Gruppe. Die Endrunde wird erst eingetragen, wenn eine Gruppe ganz fertig ist.</p></section>'
+      + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz (bei mehreren Teams im Kreis: zuerst aus den Spielen untereinander). Danach Überkreuz: 5. gegen 6., 3. gegen 4., 1. gegen 2. der anderen Gruppe. Die Endrunde wird erst eingetragen, wenn eine Gruppe ganz fertig ist.</p></section>'
       + (pin ? '' : '<div class="fuss"><span></span><button class="knopf klein" data-ein>Ergebnisse eintragen</button></div>')
       + '</div>';
     wurzel.querySelector('.inhalt').innerHTML = html;
@@ -211,22 +217,30 @@
     wurzel.appendChild(d);
     var zu = function () { d.remove(); };
     d.addEventListener('click', function (e) { if (e.target === d || e.target.hasAttribute('data-zu')) zu(); });
-    var f = d.querySelector('input'); if (f) setTimeout(function () { f.focus(); f.select && f.select(); }, 50);
+    var f = [].filter.call(d.querySelectorAll('input'), function (i) { return !i.value; })[0] || d.querySelector('input'); if (f) setTimeout(function () { f.focus(); f.select && f.select(); }, 50);
     d.querySelector('form').addEventListener('submit', function (e) { e.preventDefault(); fertig(d, zu); });
     return d;
   }
+  // fürs Protokoll: wer einträgt (Name aus der Anmeldung) und eine zufällige Kennung dieses Geräts
+  var wer = '', geraet = '';
+  try { wer = localStorage.getItem('tsh-turnier-name') || ''; geraet = localStorage.getItem('tsh-turnier-geraet') || ''; } catch (e) {}
+  if (!geraet) { geraet = Math.random().toString(36).slice(2, 8); try { localStorage.setItem('tsh-turnier-geraet', geraet); } catch (e) {} }
+  function kopf(p) { return { 'Content-Type': 'application/json', 'X-PIN': p, 'X-Name': encodeURIComponent(wer), 'X-Geraet': geraet }; }
   function senden(pfad, body) {
-    return fetch(BASIS + 'api/' + pfad, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-PIN': pin }, body: JSON.stringify(body || {}) })
+    return fetch(BASIS + 'api/' + pfad, { method: 'POST', headers: kopf(pin), body: JSON.stringify(body || {}) })
       .then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler || 'Fehler'); return j; }); });
   }
   function pinFragen() {
     dialog('<form><div class="kopf"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>'
-      + '<div class="t">Ergebnisse eintragen</div><small>PIN der Turnierleitung eingeben</small></div>'
-      + '<input class="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="PIN"><div class="fehler"></div>'
+      + '<div class="t">Ergebnisse eintragen</div><small>Dein Name (fürs Protokoll) und die PIN der Turnierleitung</small></div>'
+      + '<input class="name" type="text" maxlength="40" autocomplete="name" placeholder="Dein Name" aria-label="Dein Name" value="' + h(wer) + '">'
+      + '<input class="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="PIN" aria-label="PIN"><div class="fehler"></div>'
       + '<div class="zeile"><button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Anmelden</button></div>'
       + '</form>', function (d, zu) {
-      var p = d.querySelector('input').value.trim();
-      fetch(BASIS + 'api/pin', { method: 'POST', headers: { 'X-PIN': p } }).then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler); }); })
+      var p = d.querySelector('input.pin').value.trim();
+      wer = d.querySelector('input.name').value.trim();
+      try { localStorage.setItem('tsh-turnier-name', wer); } catch (e) {}
+      fetch(BASIS + 'api/pin', { method: 'POST', headers: kopf(p) }).then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler); }); })
         .then(function () { pin = p; try { localStorage.setItem(SPEICHER, p); } catch (e) {} zu(); zeichnen(); })
         .catch(function (e) { d.querySelector('.fehler').textContent = e.message; });
     });
@@ -263,6 +277,27 @@
       senden('teams', { teams: t }).then(function (j) { daten = j; zu(); zeichnen(); }).catch(function (x) { d.querySelector('.fehler').textContent = x.message; });
     });
   }
+  function protokollZeigen() {
+    senden('protokoll').then(function (j) {
+      var heuteText = new Date().toDateString();
+      var zeit = function (iso) { var d = new Date(iso); return (d.toDateString() === heuteText ? '' : d.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' }) + ' ') + d.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); };
+      var erg = function (e) { return e ? e[0] + ':' + e[1] : '–'; };
+      var text = function (e) {
+        if (e.art === 'anmeldung') return e.ok ? 'angemeldet' : '<b class="rot">falsche PIN</b>';
+        if (e.art === 'ergebnis') return 'Spiel ' + h(e.spiel.nr) + ' (' + h(e.spiel.heim) + ' – ' + h(e.spiel.gast) + '): '
+          + (!e.vorher ? 'eingetragen <b>' + erg(e.nachher) + '</b>' : !e.nachher ? '<b class="rot">gelöscht</b> (war ' + erg(e.vorher) + ')' : 'geändert ' + erg(e.vorher) + ' → <b>' + erg(e.nachher) + '</b>');
+        if (e.art === 'teams') return 'Teamnamen: ' + e.aenderungen.map(function (a) { return h(a.team) + ' „' + h(a.vorher || 'Team ' + a.team) + '“ → „' + h(a.nachher || 'Team ' + a.team) + '“'; }).join(', ');
+        return h(e.art);
+      };
+      var zeilen = j.eintraege.map(function (e) {
+        var name = ''; try { name = decodeURIComponent(e.wer || ''); } catch (x) { name = e.wer; }
+        return '<li><span class="p-zeit">' + h(zeit(e.zeit)) + '</span><span class="p-wer">' + h(name || 'ohne Name') + ' <small>' + h(e.geraet || '') + '</small></span><span class="p-was">' + text(e) + '</span></li>';
+      }).join('');
+      dialog('<form><div class="kopf"><div class="t">Protokoll</div><small>Alle Anmeldungen und Änderungen, neueste zuerst</small></div>'
+        + (zeilen ? '<ul class="protokoll">' + zeilen + '</ul>' : '<small>Noch keine Einträge.</small>')
+        + '<div class="zeile"><button class="knopf voll">Schließen</button></div></form>', function (d, zu) { zu(); }).classList.add('breit');
+    }).catch(function (x) { if (/PIN/.test(x.message)) abmelden(); });
+  }
   function abmelden() { pin = ''; try { localStorage.removeItem(SPEICHER); } catch (e) {} zeichnen(); }
 
   // ------------------------------------------------------------------ Laden und live bleiben
@@ -283,12 +318,13 @@
     wurzel = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
     wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ts-zeichen.png")}</style><div class="inhalt"><p>Spielplan wird geladen …</p></div>';
     wurzel.addEventListener('click', function (e) {
-      var z = e.target.closest('[data-spiel],[data-ein],[data-aus],[data-teams]');
+      var z = e.target.closest('[data-spiel],[data-ein],[data-aus],[data-teams],[data-protokoll]');
       if (!z) return;
       if (z.hasAttribute('data-spiel')) ergebnisEintragen(z.getAttribute('data-spiel'));
       else if (z.hasAttribute('data-ein')) pinFragen();
       else if (z.hasAttribute('data-aus')) abmelden();
       else if (z.hasAttribute('data-teams')) teamsAendern();
+      else if (z.hasAttribute('data-protokoll')) protokollZeigen();
     });
     wurzel.addEventListener('change', function (e) {
       if (e.target.hasAttribute('data-mein')) { mein = e.target.value; try { localStorage.setItem('tsh-turnier-team', mein); } catch (x) {} zeichnen(); }

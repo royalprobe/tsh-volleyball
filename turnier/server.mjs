@@ -5,7 +5,7 @@
 //   DATA_DIR  – Ablage der Ergebnisse (Standard: ./daten)
 //   PORT      – Port (Railway setzt ihn)
 import { createServer } from 'node:http';
-import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rename, appendFile } from 'node:fs/promises';
 import { timingSafeEqual, createHash } from 'node:crypto';
 import path from 'node:path';
 import { stand, pruefen, spielplan } from './plan.mjs';
@@ -13,6 +13,7 @@ import { stand, pruefen, spielplan } from './plan.mjs';
 const ORDNER = import.meta.dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ORDNER, 'daten');
 const DATEI = path.join(DATA_DIR, 'turnier-daten.json');
+const PROTOKOLL = path.join(DATA_DIR, 'protokoll.jsonl');   // jede Änderung und jede Anmeldung, eine Zeile je Eintrag
 const PIN = process.env.PIN || '';
 const PORT = Number(process.env.PORT || 8098);
 
@@ -27,6 +28,13 @@ async function speichern() {
   await writeFile(DATEI + '.neu', JSON.stringify(daten));
   await rename(DATEI + '.neu', DATEI);   // in einem Schritt ersetzen
 }
+/** Eintrag ins Protokoll: Zeit, wer (Name/Gerät vom Widget), was, vorher, nachher */
+async function protokoll(req, eintrag) {
+  const wer = String(req.headers['x-name'] || '').trim().slice(0, 40), geraet = String(req.headers['x-geraet'] || '').slice(0, 12);
+  await mkdir(DATA_DIR, { recursive: true });
+  await appendFile(PROTOKOLL, JSON.stringify({ zeit: new Date().toISOString(), wer, geraet, ...eintrag }) + '\n');
+}
+const spielText = (id) => { const sp = aktuell().spiele.find((s) => s.id === id); return sp ? { nr: sp.nr, titel: sp.titel, heim: sp.heim ? aktuell().teams[sp.heim] : sp.heimText, gast: sp.gast ? aktuell().teams[sp.gast] : sp.gastText } : { nr: id }; };
 const aktuell = () => ({ ...stand({ ...grund, teams: { ...grund.teams, ...daten.teams } }, daten.ergebnisse), version: daten.version });
 
 // ---- Live: Server-Sent Events
@@ -58,7 +66,7 @@ createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   try {
     if (req.method === 'OPTIONS') {
-      res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type, X-PIN', 'Access-Control-Max-Age': '86400' });
+      res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type, X-PIN, X-Name, X-Geraet', 'Access-Control-Max-Age': '86400' });
       return res.end();
     }
     if (req.method === 'GET' && url.pathname === '/api/stand') return json(res, 200, aktuell());
@@ -75,25 +83,40 @@ createServer(async (req, res) => {
       if (n >= 10 && Date.now() - seit < 10 * 60000) return json(res, 429, { fehler: 'Zu viele falsche PINs – bitte in 10 Minuten nochmal.' });
       if (!pinOk(req.headers['x-pin'])) {
         fehlversuche.set(ip, Date.now() - seit < 10 * 60000 ? [n + 1, seit] : [1, Date.now()]);
+        if (url.pathname === '/api/pin') await protokoll(req, { art: 'anmeldung', ok: false });
         return json(res, 401, { fehler: PIN ? 'Falsche PIN.' : 'Eintragen ist nicht eingerichtet (keine PIN gesetzt).' });
       }
       fehlversuche.delete(ip);
       const b = await lesen(req);
-      if (url.pathname === '/api/pin') return json(res, 200, { ok: true });
+      if (url.pathname === '/api/pin') { await protokoll(req, { art: 'anmeldung', ok: true }); return json(res, 200, { ok: true }); }
+      if (url.pathname === '/api/protokoll') {
+        let zeilen = [];
+        try { zeilen = (await readFile(PROTOKOLL, 'utf8')).split('\n').filter(Boolean).map((z) => JSON.parse(z)); } catch { /* noch leer */ }
+        return json(res, 200, { eintraege: zeilen.reverse() });
+      }
       if (url.pathname === '/api/ergebnis') {
         if (!SPIEL_IDS.has(b.spiel)) return json(res, 400, { fehler: 'Unbekanntes Spiel.' });
-        if (b.ergebnis === null) delete daten.ergebnisse[b.spiel];
-        else {
-          const e = Array.isArray(b.ergebnis) ? b.ergebnis.map(Number) : null, f = pruefen(e);
+        const vorher = daten.ergebnisse[b.spiel] || null;
+        let nachher = null;
+        if (b.ergebnis !== null) {
+          nachher = Array.isArray(b.ergebnis) ? b.ergebnis.map(Number) : null;
+          const f = pruefen(nachher);
           if (f) return json(res, 400, { fehler: f });
-          daten.ergebnisse[b.spiel] = e;
         }
+        if (JSON.stringify(vorher) === JSON.stringify(nachher)) return json(res, 200, aktuell());   // nichts geändert
+        await protokoll(req, { art: 'ergebnis', spiel: spielText(b.spiel), vorher, nachher });
+        if (nachher) daten.ergebnisse[b.spiel] = nachher; else delete daten.ergebnisse[b.spiel];
       } else if (url.pathname === '/api/teams') {
+        const aenderungen = [];
         for (const [id, name] of Object.entries(b.teams || {})) {
           if (!TEAM_IDS.has(id)) continue;
-          const n = String(name || '').trim().slice(0, 40);
+          const n = String(name || '').trim().slice(0, 40), alt = daten.teams[id] || '';
+          if (n === alt) continue;
+          aenderungen.push({ team: id, vorher: alt || null, nachher: n || null });
           if (n) daten.teams[id] = n; else delete daten.teams[id];
         }
+        if (!aenderungen.length) return json(res, 200, aktuell());
+        await protokoll(req, { art: 'teams', aenderungen });
       } else return json(res, 404, { fehler: 'Unbekannt.' });
       daten.version++;
       await speichern();
