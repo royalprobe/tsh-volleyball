@@ -95,12 +95,13 @@ const fertig = (e) => Array.isArray(e) && e.length === 2 && Number.isInteger(e[0
  * Direkter Vergleich auch bei 3 oder mehr Teams mit gleich vielen Siegen: Es zählen nur die Spiele dieser Teams
  * untereinander (Siege in dieser „Mini-Tabelle“). Trennt das nur einen Teil, wird für die übrigen gleichauf liegenden
  * Teams wieder ihr direkter Vergleich genommen; bleibt es gleich (z. B. A schlägt B, B schlägt C, C schlägt A),
- * entscheidet die Ballpunkt-Differenz aus allen Gruppenspielen, danach erzielte Bälle.
+ * entscheidet die Ballpunkt-Differenz aus den Spielen dieser Teams untereinander, danach die aus allen Gruppenspielen.
  */
 export function tabelle(g, spiele, ergebnisse, teams) {
   const z = {};
   for (let i = 1; i <= 6; i++) z[`${g}${i}`] = { id: `${g}${i}`, name: teams[`${g}${i}`] || `Team ${g}${i}`, sp: 0, s: 0, n: 0, bp: 0, bm: 0 };
   const sieg = {};   // „Sieger>Verlierer“
+  const baelle = {};   // „X>Y“ = Bälle von X im Spiel gegen Y
   for (const sp of spiele) {
     if (sp.phase !== 'gruppe' || sp.titel !== `Gruppe ${g}`) continue;
     const e = ergebnisse[sp.id];
@@ -110,6 +111,7 @@ export function tabelle(g, spiele, ergebnisse, teams) {
     const sieger = e[0] > e[1] ? h : a, verlierer = sieger === h ? a : h;
     sieger.s++; verlierer.n++;
     sieg[`${sieger.id}>${verlierer.id}`] = true;
+    baelle[`${h.id}>${a.id}`] = e[0]; baelle[`${a.id}>${h.id}`] = e[1];
   }
   const balle = (x, y) => (y.bp - y.bm) - (x.bp - x.bm) || y.bp - x.bp || x.id.localeCompare(y.id);
   // Teams mit gleich vielen Siegen: direkter Vergleich (rekursiv), sonst Bälle
@@ -117,7 +119,10 @@ export function tabelle(g, spiele, ergebnisse, teams) {
     if (gruppe.length < 2) return gruppe;
     const mini = new Map(gruppe.map((t) => [t.id, gruppe.filter((o) => o !== t && sieg[`${t.id}>${o.id}`]).length]));
     const stufen = [...new Set(mini.values())].sort((a, b) => b - a);
-    if (stufen.length === 1) return [...gruppe].sort(balle);   // direkter Vergleich trennt nicht
+    if (stufen.length === 1) {   // Kreis: Ballpunkt-Differenz aus den Spielen untereinander, dann aus allen Spielen
+      const diff = (t) => gruppe.reduce((n, o) => n + (o === t ? 0 : (baelle[`${t.id}>${o.id}`] || 0) - (baelle[`${o.id}>${t.id}`] || 0)), 0);
+      return [...gruppe].sort((x, y) => diff(y) - diff(x) || balle(x, y));
+    }
     return stufen.flatMap((w) => reihen(gruppe.filter((t) => mini.get(t.id) === w)));
   };
   const nachSiegen = [...new Set(Object.values(z).map((t) => t.s))].sort((a, b) => b - a);
