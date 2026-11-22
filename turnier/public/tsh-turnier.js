@@ -165,7 +165,7 @@
       + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(function (r) { return rundeHtml(r, r === akt); }).join('') + '</div></section>'
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Gruppen</div></div><div class="gruppen">' + tabelleHtml('A') + tabelleHtml('B') + '</div>'
       + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, dann Ballpunkte-Differenz, erzielte Bälle, direkter Vergleich. Danach Überkreuz: 1. gegen 2., 3. gegen 4., 5. gegen 6. der anderen Gruppe.</p></section>'
-      + '<div class="fuss"><span>Aktualisiert sich von selbst.</span>' + (pin ? '' : '<button class="knopf klein" data-ein>Ergebnisse eintragen</button>') + '</div>'
+      + (pin ? '' : '<div class="fuss"><span></span><button class="knopf klein" data-ein>Ergebnisse eintragen</button></div>')
       + '</div>';
     wurzel.querySelector('.inhalt').innerHTML = html;
   }
