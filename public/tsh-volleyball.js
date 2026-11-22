@@ -21,25 +21,27 @@
              token: 'PhodQuahof1ShmunWoifdedgasvuipki',   // steht offen im Widget-Bundle von VolleyStation
              dienst: 'widget/play-by-play' };
   var TAGE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  var MONATE = ['Jän', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
   var TAGE_LANG = { Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag' };
 
   var CSS = [
-    ':host{all:initial;display:block;font-family:inherit;color:#1e293b;--blau:#002266;--blau-2:#0b3f8f;--akzent:#6592a7;--hell:#eef3f9;--flaeche:#f1f5f9;--rand:#e1e7ef;--grau:#64748b;--grau-2:#7d8ca3;--gruen:#16803c;--rot:#c81e1e;--live:#e0001b;--r:14px}',
+    ':host{all:initial;display:block;font-family:inherit;color:#1e293b;--blau:#002266;--blau-2:#0b3f8f;--hellblau:#2f6fe4;--akzent:#6592a7;--hell:#eef3f9;--flaeche:#f1f5f9;--rand:#e1e7ef;--grau:#64748b;--grau-2:#7d8ca3;--gruen:#16803c;--rot:#c81e1e;--live:#e0001b;--r:14px}',
     '*{box-sizing:border-box}',
-    '.w{container-type:inline-size;display:flex;flex-direction:column;gap:22px;font-size:15px;line-height:1.5}',
+    '.w{container-type:inline-size;display:flex;flex-direction:column;gap:28px;font-size:15px;line-height:1.5}',
     'button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}',
     'a{color:inherit;text-decoration:none}',
     'b,strong{font-weight:700}',
     // ---- Kopf
-    '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:center;padding:36px 36px 32px;border-radius:calc(var(--r) + 6px);color:#fff;',
-    'background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
-    // altes Vereinslogo (Ball mit Flammen) in Blautönen schimmert rechts durch
-    '.hero .zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none;-webkit-mask:linear-gradient(to top,transparent 4%,#000 28%);mask:linear-gradient(to top,transparent 4%,#000 28%)}',
+    '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.25fr 1fr;gap:36px;align-items:center;min-height:360px;padding:44px 44px 40px;border-radius:calc(var(--r) + 10px);color:#fff;box-shadow:0 24px 60px -24px rgba(0,20,70,.55);',
+    // feine schräge Streifen + Lichtschein rechts oben über dem Blau
+    'background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 26px),radial-gradient(60% 80% at 92% 0%,rgba(59,130,246,.45),transparent 70%),radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
+    // altes Vereinslogo (Ball mit Flammen) in Blautönen schimmert durch – zwischen Logo und Spielkarte
+    '.hero .zeichen{position:absolute;left:38%;bottom:-70px;width:420px;aspect-ratio:1;background:var(--zeichen) center/contain no-repeat;opacity:.13;pointer-events:none;-webkit-mask:linear-gradient(to top,transparent 4%,#000 28%);mask:linear-gradient(to top,transparent 4%,#000 28%)}',
     '.h-spiel{z-index:1}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:18px;min-width:0}',
     '.heim{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;margin:-8px 0 2px -4px;padding:4px 10px 4px 6px;border-radius:999px;font-size:.8em;font-weight:700;color:rgba(255,255,255,.8)}',
     '.heim:hover{background:rgba(255,255,255,.1);color:#fff}.heim svg{width:16px;height:16px}',
-    '.logo{display:block;width:min(100%,460px);aspect-ratio:640/115;background:#fff;-webkit-mask:var(--logo) left center/contain no-repeat;mask:var(--logo) left center/contain no-repeat}',
+    '.logo{display:block;width:min(100%,520px);aspect-ratio:640/115;background:#fff;-webkit-mask:var(--logo) left center/contain no-repeat;mask:var(--logo) left center/contain no-repeat}',
     '.saison{align-self:flex-start;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.78em;font-weight:700;letter-spacing:.08em;text-transform:uppercase}',
     '.einladung{margin:0;max-width:34em;font-size:1.08em;line-height:1.5;color:rgba(255,255,255,.88)}',
     '.knoepfe{display:flex;flex-wrap:wrap;gap:8px}',
@@ -47,23 +49,29 @@
     '.knopf.voll{background:#fff;color:var(--blau)}.knopf.voll:hover{box-shadow:0 6px 18px rgba(0,0,0,.25);transform:translateY(-1px)}',
     '.knopf.rand{border:1px solid rgba(255,255,255,.35)}.knopf.rand:hover{background:rgba(255,255,255,.1)}',
     '.knopf svg{width:16px;height:16px}.knopf .kurz{display:none}',
-    '.h-spiel{position:relative;display:flex;flex-direction:column;gap:10px;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16)}',
-    '.h-spiel[data-link]{cursor:pointer}.h-spiel[data-link]:hover{background:rgba(255,255,255,.12)}',
-    '.h-titel{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.72em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}',
-    '.h-wann{font-size:1.5em;font-weight:800;line-height:1.1}',
-    '.h-teams{display:flex;flex-direction:column;border-top:1px solid rgba(255,255,255,.14)}',
-    '.h-team{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.14);font-weight:700;font-size:1.05em;line-height:1.25}',
-    '.h-team small{flex:none;font-size:.62em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)}',
-    '.h-rel{padding:2px 9px;border-radius:999px;background:#fff;color:var(--blau);letter-spacing:.06em}',
-    '.h-fuss{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}',
-    '.h-stand em{font-style:normal;font-weight:800;color:#fff;background:var(--live);padding:0 6px;border-radius:5px}.h-stand{display:flex;align-items:baseline;gap:10px}.h-stand b{font-size:2.2em;line-height:1}.h-stand span{font-size:.85em;color:rgba(255,255,255,.75)}',
-    '.h-ort{display:inline-flex;align-items:center;gap:5px;font-size:.82em;color:rgba(255,255,255,.8)}.h-ort svg{width:14px;height:14px;flex:none}a.h-ort:hover{color:#fff;text-decoration:underline;text-underline-offset:2px}',
-    '.h-bewerb{padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.14);font-size:.72em;font-weight:700}',
+    // Spielkarte im Kopf: weiß wie ein Ticket, links das Datum als Block
+    '.h-spiel{position:relative;display:flex;flex-direction:column;gap:14px;padding:22px 24px;border-radius:calc(var(--r) + 4px);background:#fff;color:#0f172a;box-shadow:0 18px 40px -12px rgba(0,8,40,.5);transition:transform .2s,box-shadow .2s}',
+    '.h-spiel[data-link]{cursor:pointer}.h-spiel[data-link]:hover{transform:translateY(-3px);box-shadow:0 26px 50px -14px rgba(0,8,40,.6)}',
+    '.h-titel{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.72em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--grau)}',
+    '.h-haupt{display:flex;align-items:stretch;gap:16px}',
+    '.h-datum{flex:none;width:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 0;border-radius:12px;color:#fff;line-height:1;background:linear-gradient(160deg,var(--blau-2),var(--blau))}',
+    '.h-datum b{font-size:2.1em;font-weight:800;letter-spacing:-.02em}.h-datum small{font-size:.68em;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.8}',
+    '.h-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}',
+    '.h-wann{font-size:1.45em;font-weight:800;line-height:1.1;color:var(--blau)}.h-wann small{font-size:.55em;font-weight:700;color:var(--grau)}',
+    '.h-teams{display:flex;flex-direction:column;margin-top:6px}',
+    '.h-team{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 0;font-weight:700;font-size:1em;line-height:1.25}.h-team+.h-team{border-top:1px solid var(--rand)}',
+    '.h-team small{flex:none;font-size:.62em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--grau-2)}',
+    '.h-rel{padding:3px 10px;border-radius:999px;background:var(--hellblau);color:#fff;letter-spacing:.06em}',
+    '.h-fuss{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding-top:12px;border-top:1px solid var(--rand)}',
+    '.h-stand em{font-style:normal;font-weight:800;color:#fff;background:var(--live);padding:0 6px;border-radius:5px}.h-stand{display:flex;align-items:baseline;gap:10px;color:var(--blau)}.h-stand b{font-size:2.2em;line-height:1}.h-stand span{font-size:.85em;color:var(--grau)}',
+    '.h-ort{display:inline-flex;align-items:center;gap:5px;font-size:.82em;color:var(--grau)}.h-ort svg{width:14px;height:14px;flex:none}a.h-ort:hover{color:var(--blau);text-decoration:underline;text-underline-offset:2px}',
+    '.h-bewerb{padding:3px 10px;border-radius:999px;background:var(--hell);color:var(--blau);font-size:.72em;font-weight:800}',
     // ---- Abschnitte
-    '.abschnitt{display:flex;flex-direction:column;gap:16px;scroll-margin-top:90px;padding:28px 30px 30px;border-radius:calc(var(--r) + 6px);background:var(--flaeche)}',
+    '.abschnitt{display:flex;flex-direction:column;gap:20px;scroll-margin-top:90px;padding:34px 36px 36px;border-radius:calc(var(--r) + 10px);background:linear-gradient(180deg,#eef3f9,#f5f8fb)}',
     '.a-kopf{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px}',
     '.a-kopf small{display:block;font-size:.72em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--akzent)}',
-    '.a-kopf .t{font-size:1.75em;font-weight:800;line-height:1.1;color:var(--blau);letter-spacing:-.01em}',
+    '.a-kopf .t{display:flex;align-items:center;gap:12px;font-size:2em;font-weight:800;line-height:1.1;color:var(--blau);letter-spacing:-.02em}',
+    '.a-kopf .t::before{content:"";flex:none;width:6px;height:.85em;border-radius:3px;background:linear-gradient(var(--hellblau),var(--blau))}',
     '.a-kopf p{margin:0;font-size:.85em;color:var(--grau)}',
     // ---- Teams
     '.pillen{display:flex;flex-wrap:wrap;gap:6px}',
@@ -71,8 +79,9 @@
     '.pille:hover{border-color:var(--blau);color:var(--blau)}',
     '.pille[aria-pressed=true]{background:var(--blau);border-color:var(--blau);color:#fff}',
     '.karten{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}',
-    '.karte{position:relative;display:flex;flex-direction:column;gap:10px;padding:16px 18px;text-align:left;background:#fff;border:1px solid transparent;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06);transition:box-shadow .2s,transform .2s,border-color .2s}',
-    '.karte:hover{border-color:#c9d6e6;box-shadow:0 10px 26px rgba(0,34,102,.10);transform:translateY(-2px)}',
+    '.karte{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;padding:18px 20px;text-align:left;background:#fff;border:1px solid transparent;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06);transition:box-shadow .2s,transform .2s,border-color .2s}',
+    '.karte::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--blau),var(--hellblau));transform:scaleX(0);transform-origin:left;transition:transform .25s}',
+    '.karte:hover{border-color:#c9d6e6;box-shadow:0 14px 30px rgba(0,34,102,.12);transform:translateY(-3px)}.karte:hover::before{transform:none}',
     '.karte::after{content:"";position:absolute;right:16px;top:18px;width:8px;height:8px;border-top:2px solid var(--grau-2);border-right:2px solid var(--grau-2);transform:rotate(45deg);transition:transform .2s,border-color .2s}',
     '.karte:hover::after{border-color:var(--blau);transform:translateX(3px) rotate(45deg)}',
     '.karte:focus-visible,.pille:focus-visible,.zeile:focus-visible,.knopf:focus-visible,.h-spiel:focus-visible{outline:2px solid var(--akzent);outline-offset:2px}',
@@ -125,7 +134,7 @@
     '.zeile+.zeile{border-top:1px solid var(--rand);border-radius:0}',
     '.zeile[data-link]{cursor:pointer}.zeile[data-link]:hover{background:var(--hell);border-radius:10px}',
     '.zeile[data-link]:hover+.zeile{border-top-color:transparent}',
-    '.dt{display:flex;flex-direction:column;align-items:center;justify-content:center;height:3em;border-radius:9px;background:var(--hell);line-height:1.15;font-size:.78em;color:var(--grau);font-variant-numeric:tabular-nums}',
+    '.dt{display:flex;flex-direction:column;align-items:center;justify-content:center;height:3.2em;border-radius:10px;background:var(--hell);line-height:1.15;font-size:.78em;color:var(--grau);font-variant-numeric:tabular-nums}',
     '.dt b{font-size:1.05em;color:var(--blau)}',
     '.mi{min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px}',
     '.tm{flex:1 1 100%;min-width:0;display:flex;flex-wrap:wrap;column-gap:5px;font-weight:600;color:#0f172a}',
@@ -135,12 +144,12 @@
     '.ort{font-size:.75em;color:var(--grau)}',
     'a.ort:hover{color:var(--blau);text-decoration:underline}',
     '.wt{text-align:right;white-space:nowrap}',
-    '.erg{font-size:1.2em;font-weight:800;color:#0f172a;line-height:1}',
+    '.erg{display:inline-block;min-width:2.6em;padding:4px 8px;border-radius:8px;text-align:center;font-size:1.1em;font-weight:800;color:#0f172a;background:var(--flaeche);line-height:1.1}',
     '.wt small{display:block;max-width:12em;margin-left:auto;white-space:normal;font-size:.74em;line-height:1.25;color:var(--grau)}',
     '.wt small span{display:inline-block;white-space:nowrap}.wt small span+span{margin-left:.45em}',
     '.wt .ls{color:var(--live);font-weight:700}',
-    '.sieg .erg{color:var(--gruen)}.nied .erg{color:var(--rot)}',
-    '.zt{font-weight:700;color:var(--blau)}',
+    '.sieg .erg{color:var(--gruen);background:#e5f5ea}.nied .erg{color:var(--rot);background:#fdeaea}.wt small{margin-top:4px}',
+    '.zt{display:inline-block;padding:4px 9px;border-radius:8px;font-weight:800;color:var(--blau);background:var(--hell)}',
     '.fehlt{font-size:.8em;color:var(--grau-2)}',
     '.live{display:inline-flex;align-items:center;gap:5px;padding:1px 8px;border-radius:999px;font-size:.68em;font-weight:800;letter-spacing:.08em;color:#fff;background:var(--live)}',
     '.live i{width:6px;height:6px;border-radius:50%;background:#fff;animation:p 1.4s ease-in-out infinite}',
@@ -148,7 +157,7 @@
     '.leer{margin:6px 0;color:var(--grau-2)}',
     '.mehr{margin-top:10px}',
     // Teamauswahl am PC in einer Reihe: Knöpfe teilen sich die Breite
-    '@container (min-width:860px){.teamwahl{flex-wrap:nowrap;gap:5px}.teamwahl .pille{flex:1 1 auto;padding:7px 8px;text-align:center;font-size:.84em}}',
+    '@container (min-width:860px){.teamwahl{flex-wrap:nowrap;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}.teamwahl .pille{flex:1 1 auto;padding:8px;border-color:transparent;background:none;text-align:center;font-size:.84em}.teamwahl .pille:hover{background:var(--hell);border-color:transparent}.teamwahl .pille[aria-pressed=true]{background:var(--blau);color:#fff;box-shadow:0 4px 12px rgba(0,34,102,.3)}}',
     // Archiv: am PC alle Saisonen in einer Reihe, mittel 2 × 5, am Handy 2 Spalten
     '.pillen.archiv{display:grid !important;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;overflow:visible !important;margin:0;padding:0}',
     '.archiv .pille{text-align:center;padding:7px 4px;font-size:.84em}',
@@ -156,14 +165,14 @@
     '@container (max-width:540px){.pillen.archiv{grid-template-columns:repeat(2,minmax(0,1fr))}}',
     // ---- Training
     '.training{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}',
-    '.tr-karte{display:flex;flex-direction:column;gap:10px;padding:16px 18px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
-    '.tr-kopf b{display:block;font-size:1.08em;font-weight:800;color:var(--blau);line-height:1.2}',
+    '.tr-karte{display:flex;flex-direction:column;gap:12px;padding:18px 20px;background:#fff;border-top:4px solid var(--blau);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
+    '.tr-kopf b{display:block;font-size:1.15em;font-weight:800;color:var(--blau);line-height:1.2}',
     '.tr-kopf span{font-size:.8em;color:var(--grau)}',
     '.tr-zeiten{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(134px,1fr));gap:8px 10px}',
     '.tr-zeiten li{display:grid;grid-template-columns:2.6em 1fr auto;align-items:center;gap:10px;font-size:.88em}',
     '.tr-tag{position:relative;display:grid;place-items:center;height:2.1em;border-radius:8px;background:var(--hell);font-weight:800;font-size:.86em;color:var(--blau)}',
     '.tr-zeiten li{grid-template-columns:2.6em 1fr;gap:8px}',
-    '.trainer{margin:-2px 0 2px;padding:8px 10px;border-radius:9px;background:var(--hell);font-size:.84em;font-weight:700;color:#0f172a;line-height:1.35}',
+    '.trainer{margin:-2px 0 2px;padding:8px 10px;border-radius:9px;background:var(--hell);border-left:3px solid var(--hellblau);font-size:.84em;font-weight:700;color:#0f172a;line-height:1.35}',
     '.trainer small{display:block;font-size:.78em;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--akzent)}',
     '.kachel .trainer{margin:0 0 10px;display:inline-block}',
     '.tr-info{display:flex;flex-direction:column;line-height:1.25;min-width:0}',
@@ -176,7 +185,7 @@
     '.ko-mail{display:flex;flex-direction:column;justify-content:center;gap:10px;padding:22px 24px;border-radius:var(--r);color:#fff;background:linear-gradient(120deg,var(--blau),var(--blau-2))}',
     '.ko-mail b{font-size:1.2em;line-height:1.25}.ko-mail p{margin:0;font-size:.88em;opacity:.85}',
     '.ko-mail .knopf{align-self:flex-start}.ko-mail .knopf.rand{color:#fff}',
-    '.ko-karte{display:grid;grid-template-columns:1fr auto;gap:20px 32px;align-items:center;padding:24px 28px;border-radius:var(--r);color:#fff;background:linear-gradient(120deg,var(--blau),var(--blau-2))}',
+    '.ko-karte{display:grid;grid-template-columns:1fr auto;gap:20px 32px;align-items:center;padding:30px 32px;border-radius:calc(var(--r) + 4px);color:#fff;background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 26px),radial-gradient(60% 120% at 100% 0%,rgba(59,130,246,.4),transparent 70%),linear-gradient(120deg,var(--blau),var(--blau-2))}',
     '.ko-text>b{display:block;font-size:1.35em;line-height:1.2}',
     '.ko-text>p{margin:4px 0 0;font-size:.95em;color:rgba(255,255,255,.85)}',
     '.ko-personen{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:16px}',
@@ -194,9 +203,9 @@
     '.fuss{margin:-8px 4px 0 0;font-size:.72em;color:var(--grau-2);text-align:right}',
     '.fehler{padding:16px 18px;border-radius:var(--r);background:var(--hell);color:var(--grau)}',
     '@media (prefers-reduced-motion:reduce){.live i{animation:none}.karte,.knopf{transition:none}}',
-    '@container (max-width:860px){.ko-karte{grid-template-columns:1fr}.ko-knoepfe{flex-direction:row;flex-wrap:wrap}.hero{grid-template-columns:1fr;padding:28px 24px 24px}.kontakt{grid-template-columns:1fr 1fr}.d-raster,.d-raster.mitfoto{grid-template-columns:1fr}}',
+    '@container (max-width:860px){.ko-karte{grid-template-columns:1fr}.ko-knoepfe{flex-direction:row;flex-wrap:wrap}.hero{grid-template-columns:1fr;min-height:0;padding:30px 26px 26px}.hero .zeichen{left:auto;right:-60px;bottom:auto;top:20px;width:300px}.kontakt{grid-template-columns:1fr 1fr}.d-raster,.d-raster.mitfoto{grid-template-columns:1fr}}',
     '@container (max-width:720px){.spiele{grid-template-columns:1fr}}@container (max-width:640px){.karten{grid-template-columns:1fr 1fr}}',
-    '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px 18px;border-radius:var(--r)}.hero{padding:24px 18px 20px;border-radius:var(--r)}.hero .zeichen{width:230px;right:-70px;top:36%}.karten{grid-template-columns:1fr;gap:8px}',
+    '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px 18px;border-radius:var(--r)}.hero{padding:24px 18px 18px;border-radius:var(--r)}.hero .zeichen{width:230px;right:-70px;top:150px}.h-spiel{padding:18px}.h-datum{width:62px}.h-datum b{font-size:1.8em}.h-wann{font-size:1.3em}.a-kopf .t::before{width:5px}.karten{grid-template-columns:1fr;gap:8px}',
     '.pillen{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:1px 2px}.pillen::-webkit-scrollbar{display:none}',
     '.knoepfe{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.knoepfe .knopf{justify-content:center;padding:10px 6px}.knoepfe .knopf.voll{grid-column:1/-1}.knoepfe .knopf.rand svg,.knoepfe .lang{display:none}.knoepfe .kurz{display:inline}',
     '.teamwahl{padding-right:28px;-webkit-mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}',
@@ -264,14 +273,16 @@
     var s = offen.filter(laeuft)[0] || offen.filter(function (x) { return eigen(x.heim); })[0] || offen[0];
     var box = '';
     if (s) {
-      var l = laeuft(s), d = datumKurz(s);
+      var l = laeuft(s), d = datumKurz(s), tg = new Date(s.datum + 'T12:00:00');
+      // links das Datum als Block, rechts Uhrzeit bzw. Live-Stand und die beiden Teams
       var wert = l
         ? '<div class="h-stand"><b>' + live[s.vs].stand.gewonnen.home + ':' + live[s.vs].stand.gewonnen.away + '</b><span>' + live[s.vs].stand.liste.map(function (x) { return x.fertig ? x.h + ':' + x.a : '<em>' + x.h + ':' + x.a + '</em>'; }).join(' · ') + '</span></div>'
-        : '<div class="h-wann">' + h(TAGE_LANG[d.tag] || d.tag) + ', ' + h(d.datum) + (s.zeit ? ' · ' + h(s.zeit) : '') + '</div>';
+        : '<div class="h-wann">' + h(TAGE_LANG[d.tag] || d.tag) + (s.zeit ? ', ' + h(s.zeit) + ' <small>Uhr</small>' : '') + '</div>';
       var rel = l ? '' : relativ(s);
       box = '<div class="h-spiel"' + (s.link ? ' data-link="' + h(s.link) + '" role="link" tabindex="0"' : '') + '>'
         + '<div class="h-titel">' + (l ? 'Jetzt live' : eigen(s.heim) ? 'Nächstes Heimspiel' : 'Nächstes Spiel') + (l ? '<span class="live"><i></i>LIVE</span>' : rel ? '<span class="h-rel">' + rel + '</span>' : '') + '</div>'
-        + wert + '<div class="h-teams"><div class="h-team"><span>' + h(s.heim) + '</span><small>Heim</small></div><div class="h-team"><span>' + h(s.gast) + '</span><small>Gast</small></div></div>'
+        + '<div class="h-haupt"><div class="h-datum"><small>' + h(d.tag) + '</small><b>' + tg.getDate() + '</b><small>' + MONATE[tg.getMonth()] + '</small></div>'
+        + '<div class="h-info">' + wert + '<div class="h-teams"><div class="h-team"><span>' + h(s.heim) + '</span><small>Heim</small></div><div class="h-team"><span>' + h(s.gast) + '</span><small>Gast</small></div></div></div></div>'
         + '<div class="h-fuss"><span class="h-bewerb">' + h(s.bewerb) + '</span>'
         + (s.halle ? '<a class="h-ort" href="' + h(karte(s.halle + (s.adresse ? ', ' + s.adresse : ''))) + '" target="_blank" rel="noopener">' + ORT_ICON + h(s.halle) + '</a>' : '')
         + '</div></div>';
