@@ -68,14 +68,15 @@ function planRechnen() {
   for (const sp of gruppenSpiele) {
     neu(sp.runde, sp.feld, 'gruppe', `Gruppe ${sp.g}`, { t: sp.heim }, { t: sp.gast }, sp.runde < 10 ? { t: wahl[i++] } : NACH_RUNDE_10[sp.feld]);
   }
+  // Schiedsgericht in Runde 11 und 12 wie in der Vorrunde: ein Team, das danach auf demselben Feld spielt.
   // Überkreuz und Platzierung streng von hinten nach vorne: Platz 9–12, 5–8, Halbfinale, dann um Platz 11, 9, 7, 5, 3, Finale.
   // Runde 14 (Platz 5, Platz 3, Finale) ohne Feld – das wird am Turniertag spontan entschieden.
   neu(11, 1, 'kreuz', 'Überkreuz Platz 9–12', { g: 'A', p: 5 }, { g: 'B', p: 6 }, { g: 'B', p: 3 });  // S31
-  neu(11, 2, 'kreuz', 'Überkreuz Platz 9–12', { g: 'B', p: 5 }, { g: 'A', p: 6 }, { g: 'A', p: 4 });  // S32
+  neu(11, 2, 'kreuz', 'Überkreuz Platz 9–12', { g: 'B', p: 5 }, { g: 'A', p: 6 }, { g: 'B', p: 2 });  // S32
   neu(11, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 2 });   // S33
-  neu(12, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'A', p: 5 });   // S34
-  neu(12, 2, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 3 });            // S35
-  neu(12, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 4 });            // S36
+  neu(12, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { v: 'S31' });   // S34
+  neu(12, 2, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S31' });            // S35
+  neu(12, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { v: 'S33' });            // S36
   neu(13, 1, 'platz', 'Spiel um Platz 11', { v: 'S31' }, { v: 'S32' }, { s: 'S33' });  // S37
   neu(13, 2, 'platz', 'Spiel um Platz 9', { s: 'S31' }, { s: 'S32' }, { s: 'S34' });   // S38
   neu(13, 3, 'platz', 'Spiel um Platz 7', { v: 'S33' }, { v: 'S34' }, { v: 'S35' });   // S39

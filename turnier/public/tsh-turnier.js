@@ -70,7 +70,7 @@
     '.s-team span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
     '.s-team b{font-size:1.1em;font-variant-numeric:tabular-nums}',
     '.s-team.sieger{color:var(--blau);font-weight:800}.s-team.verlierer{color:var(--grau)}',
-    '.s-team .offen{color:var(--grau-2);font-weight:500;font-style:italic}',
+    '.s-team .offen{color:var(--grau-2);font-weight:500;font-style:italic;padding-right:.25em}',
     '.s-schiri{margin-top:2px;font-size:.72em;color:var(--grau)}',
     // Tabellen
     '.gruppen{display:grid;grid-template-columns:1fr 1fr;gap:12px}',
