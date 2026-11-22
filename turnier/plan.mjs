@@ -165,7 +165,7 @@ export function stand(turnier, ergebnisse) {
     endstand.push({ platz: p1, team: s }, { platz: p2, team: v });
   }
   endstand.sort((a, b) => a.platz - b.platz);
-  return { name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: zeit(15), zeitraum: turnier.zeitraum || null, minuten: takt,
+  return { name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: zeit(15), zeitraum: turnier.zeitraum || null, zurueck: turnier.zurueck || null, jimdoKopfAusblenden: !!turnier.jimdoKopfAusblenden, minuten: takt,
     modus: turnier.modus, teams: Object.fromEntries(Object.keys(tab.A.zeilen.concat(tab.B.zeilen).reduce((o, z) => (o[z.id] = 1, o), {})).map((id) => [id, teams[id] || `Team ${id}`])),
     spiele: raus, tabellen: tab, endstand };
 }

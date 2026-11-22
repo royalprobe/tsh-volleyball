@@ -28,6 +28,8 @@
     // altes Vereinslogo (Ball mit Flammen) in Blautönen, schimmert rechts durch
     '.zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:12px;min-width:0}',
+    '.heim{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;margin:-8px 0 2px -4px;padding:4px 10px 4px 6px;border-radius:999px;font-size:.8em;font-weight:700;color:rgba(255,255,255,.8);text-decoration:none}',
+    '.heim:hover{background:rgba(255,255,255,.1);color:#fff}.heim svg{width:16px;height:16px}',
     '.logo{display:block;width:min(100%,360px);aspect-ratio:640/115;background:#fff;-webkit-mask:var(--logo) left center/contain no-repeat;mask:var(--logo) left center/contain no-repeat}',
     '.h-titel{font-size:2.2em;font-weight:800;line-height:1.05;letter-spacing:-.01em}',
     '.h-info{display:flex;flex-wrap:wrap;gap:6px}',
@@ -155,6 +157,7 @@
         return '<option value="' + h(id) + '"' + (id === mein ? ' selected' : '') + '>' + h(name(id)) + '</option>'; }).join('') + '</select>';
     var html = '<div class="w">'
       + '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
+      + (daten.zurueck ? '<a class="heim" href="' + h(daten.zurueck.link) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' + h(daten.zurueck.text) + '</a>' : '')
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<div class="h-titel">' + h(daten.name) + '</div>'
       + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn + '–' + daten.ende + ' Uhr') + '</span>'
@@ -304,13 +307,25 @@
   // ------------------------------------------------------------------ Laden und live bleiben
   var version = -1;
   function laden() {
-    return fetch(BASIS + 'api/stand', { cache: 'no-store' }).then(function (a) { return a.json(); }).then(function (j) { daten = j; version = j.version; zeichnen(); })
+    return fetch(BASIS + 'api/stand', { cache: 'no-store' }).then(function (a) { return a.json(); }).then(function (j) { daten = j; version = j.version; jimdoKopf(j); zeichnen(); })
       .catch(function () { if (!daten) wurzel.querySelector('.inhalt').innerHTML = '<p>Der Spielplan konnte gerade nicht geladen werden. Bitte gleich nochmal versuchen.</p>'; });
   }
   function live() {
     if (!window.EventSource) { setInterval(laden, 20000); return; }
     var es = new EventSource(BASIS + 'api/live');
     es.onmessage = function (e) { try { if (JSON.parse(e.data).version !== version) laden(); } catch (x) {} };
+  }
+
+  // Kopfbild und Menü von Jimdo auf dieser Seite ausblenden (turnier.json: jimdoKopfAusblenden); Fuß mit Impressum bleibt
+  function jimdoKopf(d) {
+    var id = 'tsh-turnier-jimdo-kopf', alt = document.getElementById(id);
+    if (!d.jimdoKopfAusblenden) { if (alt) alt.remove(); return; }
+    if (alt) return;
+    var st = document.createElement('style');
+    st.id = id;
+    st.textContent = '.jtpl-header,.jtpl-navigation,.jtpl-mobile-topbar,.jtpl-mobile-navigation{display:none!important}'
+      + '.jtpl-content{padding-top:24px!important}.jtpl-content__inner{padding-top:0!important}';
+    document.head.appendChild(st);
   }
 
   function start() {

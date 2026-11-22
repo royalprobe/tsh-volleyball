@@ -6,5 +6,7 @@
   "zeitraum": "9–15 Uhr",
   "minuten": 25,
   "modus": "1 Satz auf 25",
+  "zurueck": { "text": "TS Hohenems Volleyball", "link": "https://www.ts-hohenems.at/sparten/volleyball/" },
+  "jimdoKopfAusblenden": true,
   "teams": {}
 }
