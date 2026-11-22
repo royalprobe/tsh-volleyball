@@ -201,7 +201,7 @@
 
   function tabelleHtml(g) {
     var t = daten.tabellen[g];
-    return '<div class="kachel schatten"><div class="k-kopf">Gruppe ' + g + '<span>' + (t.komplett ? 'abgeschlossen' : 'läuft') + '</span></div><table><thead><tr><th></th><th class="tm">Team</th><th>Sp</th><th>S</th><th>N</th><th>Bälle</th></tr></thead><tbody>'
+    return '<div class="kachel schatten"><div class="k-kopf">Gruppe ' + g + '<span>' + (t.komplett ? 'abgeschlossen' : t.zeilen.some(function (z) { return z.sp > 0; }) ? 'läuft' : '') + '</span></div><table><thead><tr><th></th><th class="tm">Team</th><th>Sp</th><th>S</th><th>N</th><th>Bälle</th></tr></thead><tbody>'
       + t.zeilen.map(function (z) {
         return '<tr' + (z.id === mein ? ' class="mein"' : '') + '><td class="pl">' + z.platz + '</td><td class="tm">' + h(name(z.id)) + '</td><td>' + z.sp + '</td><td class="pk">' + z.s + '</td><td>' + z.n + '</td><td>' + z.bp + ':' + z.bm + '</td></tr>';
       }).join('') + '</tbody></table></div>';
