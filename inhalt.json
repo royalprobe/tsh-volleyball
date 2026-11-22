@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
+  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. trainer: steht unter der Gruppe. archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
   "einladung": "Lust auf Volleyball? Dann melde dich bei Thomas oder Günther für Details.",
   "mail": "volleyball@ts-hohenems.at",
   "personen": [
@@ -13,6 +13,7 @@
   "training": [
     {
       "gruppe": "Herren 1",
+      "trainer": "Christof Zvokelj",
       "zusatz": "Landesliga",
       "team": "Herren 1",
       "zeiten": [
@@ -23,6 +24,7 @@
     },
     {
       "gruppe": "Herren 2",
+      "trainer": "Frank Brandenburg",
       "zusatz": "Landesliga",
       "team": "Herren 2",
       "zeiten": [
@@ -31,6 +33,7 @@
     },
     {
       "gruppe": "Herren 3",
+      "trainer": "Günther Amann / Brian Martetschläger",
       "zusatz": "Jugend",
       "team": "Herren 3",
       "zeiten": [
@@ -41,6 +44,7 @@
     },
     {
       "gruppe": "Damen",
+      "trainer": "Volker Troy / Stefan Mittwoch",
       "zusatz": "und Jugend weiblich",
       "team": "Damen",
       "zeiten": [
@@ -50,6 +54,7 @@
     },
     {
       "gruppe": "Jungs",
+      "trainer": "Günther Amann / Nikolas Milito",
       "zusatz": "Jahrgang 2014 und jünger",
       "zeiten": [
         ["Mo", "17:00", "18:30", "SMS"],
@@ -58,6 +63,7 @@
     },
     {
       "gruppe": "Mädchen",
+      "trainer": "Stefan Mittwoch / Daniel Lenz",
       "zusatz": "Jahrgang 2014 und jünger",
       "zeiten": [
         ["Di", "17:00", "19:00", "SMS"],

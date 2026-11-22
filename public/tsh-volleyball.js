@@ -151,6 +151,9 @@
     '.tr-zeiten li{display:grid;grid-template-columns:2.6em 1fr auto;align-items:center;gap:10px;font-size:.88em}',
     '.tr-tag{display:grid;place-items:center;height:2.1em;border-radius:8px;background:var(--hell);font-weight:800;font-size:.86em;color:var(--blau)}',
     '.tr-zeiten li{grid-template-columns:2.6em 1fr}',
+    '.trainer{margin:-2px 0 2px;padding:8px 10px;border-radius:9px;background:var(--hell);font-size:.84em;font-weight:700;color:#0f172a;line-height:1.35}',
+    '.trainer small{display:block;font-size:.78em;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--akzent)}',
+    '.kachel .trainer{margin:0 0 10px;display:inline-block}',
     '.tr-info{display:flex;flex-direction:column;line-height:1.25;min-width:0}',
     '.tr-zeit{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}',
     '.tr-halle{align-self:flex-start;font-size:.8em;color:var(--grau)}a.tr-halle:hover{color:var(--blau);text-decoration:underline}',
@@ -311,7 +314,7 @@
       }).join('') + '</ul>' + (t.kader.betreuer.length ? '<p class="betreuer">' + t.kader.betreuer.map(function (b) { return h(b[0]) + (b[1] ? ' (' + h(b[1]) + ')' : ''); }).join(' · ') + '</p>' : '') + '</div>';
     }
     var tr = trainingVon(t, inhalt);
-    if (tr.length) out += '<div class="kachel voll"><div class="k-kopf">Training</div>' + zeitenHtml(tr[0].zeiten, inhalt) + '</div>';
+    if (tr.length) out += '<div class="kachel voll"><div class="k-kopf">Training</div>' + trainerHtml(tr[0]) + zeitenHtml(tr[0].zeiten, inhalt) + '</div>';
     out += '</div>';
     var ics = new URL(t.kalender, BASIS).href, webcal = ics.replace(/^https?:/, 'webcal:');
     out += '<div class="kal">Spieltermine in den eigenen Kalender: <a href="' + h(webcal) + '">iPhone / Outlook</a>'
@@ -365,11 +368,16 @@
         + (halle.karte ? '<a class="tr-halle" href="' + h(karte(halle.karte)) + '" target="_blank" rel="noopener">' + h(halle.name) + '</a>' : '<span class="tr-halle">' + h(halle.name) + '</span>') + '</span></li>';
     }).join('') + '</ul>';
   }
+  function trainerHtml(g) {
+    if (!g.trainer) return '';
+    return '<p class="trainer"><small>' + 'Trainer' + '</small>' + h(g.trainer).replace(/ \/ /g, ' · ') + '</p>';
+  }
   function trainingHtml(inhalt) {
     if (!inhalt.training || !inhalt.training.length) return '';
     return '<section class="abschnitt" id="training"><div class="a-kopf"><div><div class="t">Trainingszeiten</div></div></div>'
       + '<div class="training">' + inhalt.training.map(function (g) {
-        return '<div class="tr-karte"><div class="tr-kopf"><b>' + h(g.gruppe) + '</b>' + (g.zusatz ? '<span>' + h(g.zusatz) + '</span>' : '') + '</div>' + zeitenHtml(g.zeiten, inhalt) + '</div>';
+        return '<div class="tr-karte"><div class="tr-kopf"><b>' + h(g.gruppe) + '</b>' + (g.zusatz ? '<span>' + h(g.zusatz) + '</span>' : '') + '</div>'
+          + trainerHtml(g) + zeitenHtml(g.zeiten, inhalt) + '</div>';
       }).join('') + '</div></section>';
   }
   function kontaktHtml(inhalt) {
