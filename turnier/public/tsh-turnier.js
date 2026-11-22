@@ -52,7 +52,15 @@
     '.felder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}',
     '.spiel{position:relative;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:#fff;text-align:left;border:2px solid transparent;min-width:0}',
     '.spiel.kann{cursor:pointer}.spiel.kann:hover{border-color:var(--akzent)}',
-    '.spiel.mein{border-color:var(--blau)}',
+    // „Mein Team“: eigene Spiele blau, Schiri-Einsätze gelb, alles andere tritt zurück
+    '.spiel.spielt{background:#dbe7f8;border-color:var(--blau)}',
+    '.spiel.pfeift{background:#fff3cd;border-color:#d4a017}',
+    '.spiel.pfeift .s-schiri{color:#7a5800;font-weight:800}',
+    '.spiel.anders{opacity:.45}',
+    '.s-team .ich{color:var(--blau);font-weight:800}',
+    '.marke{align-self:flex-start;margin-top:2px;padding:1px 8px;border-radius:999px;font-size:.66em;font-weight:800;letter-spacing:.06em;text-transform:uppercase}',
+    '.spielt .marke{background:var(--blau);color:#fff}.pfeift .marke{background:#d4a017;color:#fff}',
+    '.legende{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8em;color:var(--grau)}.legende i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}',
     '.s-kopf{display:flex;justify-content:space-between;gap:6px;font-size:.68em;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--grau-2)}',
     '.s-kopf .ph{color:var(--akzent)}',
     '.s-team{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:600;line-height:1.25}',
@@ -144,7 +152,9 @@
       + '</ul></div></header>'
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
-      + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div><div class="runden">'
+      + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div>'
+      + (mein ? '<div class="legende"><span><i style="background:#dbe7f8;border:2px solid #002266"></i>' + h(name(mein)) + ' spielt</span><span><i style="background:#fff3cd;border:2px solid #d4a017"></i>' + h(name(mein)) + ' pfeift</span></div>' : '')
+      + '<div class="runden">'
       + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(function (r) { return rundeHtml(r, r === akt); }).join('') + '</div></section>'
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Gruppen</div></div><div class="gruppen">' + tabelleHtml('A') + tabelleHtml('B') + '</div>'
       + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, dann Ballpunkte-Differenz, erzielte Bälle, direkter Vergleich. Danach Überkreuz: 1. gegen 2., 3. gegen 4., 5. gegen 6. der anderen Gruppe.</p></section>'
@@ -158,15 +168,17 @@
     var phase = sp[0].phase === 'gruppe' ? 'Gruppe ' + (r % 2 ? 'A' : 'B') : sp[0].phase === 'kreuz' ? 'Überkreuz' : 'Platzierung';
     return '<div class="runde' + (aktiv ? ' aktiv' : '') + '"><div class="r-zeit">' + h(sp[0].zeit) + '<small>Runde ' + r + '</small></div><div class="felder">'
       + sp.map(function (s) {
-        var istMein = mein && (s.heim === mein || s.gast === mein || s.schiri === mein);
+        var spielt = mein && (s.heim === mein || s.gast === mein), pfeift = mein && s.schiri === mein;
+        var art = !mein ? '' : spielt ? ' spielt' : pfeift ? ' pfeift' : ' anders';
         var team = function (id, text, i) {
           var cls = s.ergebnis ? ((s.ergebnis[i] > s.ergebnis[1 - i]) ? ' sieger' : ' verlierer') : '';
-          return '<div class="s-team' + cls + '"><span' + (id ? '' : ' class="offen"') + '>' + h(id ? name(id) : text) + '</span>' + (s.ergebnis ? '<b>' + s.ergebnis[i] + '</b>' : '') + '</div>';
+          return '<div class="s-team' + cls + '"><span' + (id ? (id === mein ? ' class="ich"' : '') : ' class="offen"') + '>' + h(id ? name(id) : text) + '</span>' + (s.ergebnis ? '<b>' + s.ergebnis[i] + '</b>' : '') + '</div>';
         };
-        return '<' + (pin ? 'button' : 'div') + ' class="spiel schatten' + (pin ? ' kann' : '') + (istMein ? ' mein' : '') + '"' + (pin ? ' data-spiel="' + s.id + '"' : '') + '>'
+        return '<' + (pin ? 'button' : 'div') + ' class="spiel schatten' + (pin ? ' kann' : '') + art + '"' + (pin ? ' data-spiel="' + s.id + '"' : '') + '>'
           + '<div class="s-kopf"><span>Feld ' + s.feld + ' · Spiel ' + s.nr + '</span><span class="ph">' + h(s.phase === 'gruppe' ? '' : s.titel) + '</span></div>'
           + team(s.heim, s.heimText, 0) + team(s.gast, s.gastText, 1)
-          + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + (s.schiri === mein && mein ? ' ⟵' : '') + '</div>'
+          + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + '</div>'
+          + (spielt ? '<span class="marke">Spielt</span>' : pfeift ? '<span class="marke">Pfeift</span>' : '')
           + '</' + (pin ? 'button' : 'div') + '>';
       }).join('') + '</div></div>';
   }
