@@ -32,7 +32,7 @@
     'a{color:inherit;text-decoration:none}',
     'b,strong{font-weight:700}',
     // ---- Kopf
-    '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.25fr 1fr;gap:36px;align-items:center;min-height:360px;padding:44px 44px 40px;border-radius:calc(var(--r) + 10px);color:#fff;box-shadow:0 24px 60px -24px rgba(0,20,70,.55);',
+    '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr;gap:36px;align-items:center;min-height:360px;padding:44px 44px 40px;border-radius:calc(var(--r) + 10px);color:#fff;box-shadow:0 24px 60px -24px rgba(0,20,70,.55);',
     // feine schräge Streifen + Lichtschein rechts oben über dem Blau
     'background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 26px),radial-gradient(60% 80% at 92% 0%,rgba(59,130,246,.45),transparent 70%),radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
     // altes Vereinslogo (Ball mit Flammen) in Blautönen schimmert durch – zwischen Logo und Spielkarte
@@ -294,7 +294,7 @@
       + '<div class="knoepfe">' + (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + 'Schreib uns</a>' : '')
       + (inhalt.training ? '<button class="knopf rand" data-ziel="training">' + UHR_ICON + '<span class="lang">Trainingszeiten</span><span class="kurz">Training</span></button>' : '')
       + '<button class="knopf rand" data-ziel="teams">Teams</button><button class="knopf rand" data-ziel="spiele">Spiele</button></div>'
-      + '</div>' + box + '</header>';
+      + '</div></header>';   // die Kachel „Nächstes Heimspiel“ (box) zeigt der Kopf nicht mehr
   }
 
   // „Heute“, „Morgen“, „In 3 Tagen“ – nur in der kommenden Woche
