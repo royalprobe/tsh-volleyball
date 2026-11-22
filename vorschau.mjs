@@ -8,7 +8,7 @@ import path from 'node:path';
 const PORT = Number(process.env.PORT || 8097);
 const OEFFENTLICH = path.join(import.meta.dirname, 'public');
 const SEITE = 'https://www.ts-hohenems.at/sparten/volleyball/';
-const TYPEN = { '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.ics': 'text/calendar', '.html': 'text/html' };
+const TYPEN = { '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.ics': 'text/calendar', '.html': 'text/html' };
 let jimdo = null;
 
 // Adresse, unter der die Seite aufgerufen wurde – so geht die Vorschau auch vom Handy aus (http://<IP des PCs>:8097/)

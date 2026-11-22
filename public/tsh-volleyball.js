@@ -92,6 +92,9 @@
     '.zahlen small{font-size:.64em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75}',
     '.d-raster{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;align-items:start}',
     '.d-raster>.voll{grid-column:1/-1}',
+    '.foto{margin:0;overflow:hidden;border-radius:var(--r);background:var(--hell);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
+    '.foto img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 0%}',
+    '@container (max-width:540px){.foto img{aspect-ratio:4/3}}',
     '.kachel{min-width:0;padding:16px 18px;background:#fff;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     '.k-kopf{display:flex;justify-content:space-between;gap:10px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--rand);font-size:.74em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blau)}',
     '.k-kopf span{color:var(--grau-2);letter-spacing:.04em}',
@@ -320,6 +323,8 @@
         + '<span><b>' + p.s + ':' + p.n + '</b><small>Siege</small></span></div>';
     }
     out += '</div><div class="d-raster">';
+    var foto = (inhalt.fotos || {})[t.titel];
+    if (foto) out += '<figure class="foto voll"><img src="' + h(new URL(foto, BASIS).href) + '" alt="Mannschaftsfoto ' + h(t.titel) + '" loading="lazy" decoding="async"></figure>';
     if (t.tabelle) {
       var tb = t.tabelle, ende = tb.endstand;
       var titel = t.quelle === 'lk' ? tb.name : t.bewerbe[0] + (/^(Meisterschaftsphase|Landesmeisterschaft|Nachwuchsliga)$/.test(tb.name) ? '' : ' · ' + tb.name);
