@@ -224,7 +224,7 @@
       + '<div class="t">Ergebnisse eintragen</div><small>PIN der Turnierleitung eingeben</small></div>'
       + '<input class="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="PIN"><div class="fehler"></div>'
       + '<div class="zeile"><button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Anmelden</button></div>'
-      + '<div class="hinweis">Einmal reicht: Dieses Gerät bleibt angemeldet, bis du oben auf „Beenden“ tippst.</div></form>', function (d, zu) {
+      + '</form>', function (d, zu) {
       var p = d.querySelector('input').value.trim();
       fetch(BASIS + 'api/pin', { method: 'POST', headers: { 'X-PIN': p } }).then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler); }); })
         .then(function () { pin = p; try { localStorage.setItem(SPEICHER, p); } catch (e) {} zu(); zeichnen(); })
