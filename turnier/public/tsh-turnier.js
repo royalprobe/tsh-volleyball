@@ -25,7 +25,8 @@
     '.schatten{box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     // Kopf
     '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:center;padding:32px 34px;border-radius:calc(var(--r) + 6px);color:#fff;background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
-    '.zeichen{position:absolute;right:-20px;top:50%;width:300px;aspect-ratio:1;transform:translateY(-50%) rotate(-8deg);background:#fff;opacity:.1;pointer-events:none;-webkit-mask:var(--zeichen) center/contain no-repeat;mask:var(--zeichen) center/contain no-repeat}',
+    // altes Vereinslogo (Ball mit Flammen) in Blautönen, schimmert rechts durch
+    '.zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:12px;min-width:0}',
     '.logo{display:block;width:min(100%,360px);aspect-ratio:640/115;background:#fff;-webkit-mask:var(--logo) left center/contain no-repeat;mask:var(--logo) left center/contain no-repeat}',
     '.h-titel{font-size:2.2em;font-weight:800;line-height:1.05;letter-spacing:-.01em}',
@@ -316,7 +317,7 @@
     host = document.getElementById('tsh-turnier');
     if (!host) { host = document.createElement('div'); host.id = 'tsh-turnier'; skript.parentNode.insertBefore(host, skript); }
     wurzel = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-    wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ts-zeichen.png")}</style><div class="inhalt"><p>Spielplan wird geladen …</p></div>';
+    wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ball-zeichen.png")}</style><div class="inhalt"><p>Spielplan wird geladen …</p></div>';
     wurzel.addEventListener('click', function (e) {
       var z = e.target.closest('[data-spiel],[data-ein],[data-aus],[data-teams],[data-protokoll]');
       if (!z) return;

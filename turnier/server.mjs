@@ -123,7 +123,7 @@ createServer(async (req, res) => {
       senden();
       return json(res, 200, aktuell());
     }
-    if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/'].includes(url.pathname)) {
+    if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/ball-zeichen.png', '/'].includes(url.pathname)) {
       const datei = url.pathname === '/' ? 'vorschau.html' : url.pathname.slice(1);
       const typ = { js: 'text/javascript; charset=utf-8', png: 'image/png', html: 'text/html; charset=utf-8' }[datei.split('.').pop()];
       res.writeHead(200, { 'Content-Type': typ, 'Cache-Control': datei.endsWith('.js') ? 'no-cache' : 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' });
