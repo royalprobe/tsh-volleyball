@@ -425,6 +425,8 @@
         return '<span' + (x.fertig ? '' : ' class="ls"') + '>' + x.h + ':' + x.a + '</span>'; }).join('') + '</small>';
     } else if (s.ergebnis) {
       var e = s.ergebnis.split(':').map(Number), ichHeim = eigen(s.heim), ichGast = eigen(s.gast);
+      // Vereinsduell (beide Teams eigene): Farbe nur aus Sicht des gewählten Teams, sonst neutral
+      if (ichHeim && ichGast && team) { var t = teamVon(team); ichHeim = klein(s.heim) === klein(t.name); ichGast = !ichHeim; }
       if (ichHeim !== ichGast) klasse = (ichHeim ? e[0] > e[1] : e[1] > e[0]) ? ' sieg' : ' nied';
       wert = '<b class="erg">' + h(s.ergebnis) + '</b>' + (s.saetze ? '<small>' + s.saetze.split(',').map(function (x) { return '<span>' + h(x.trim()) + '</span>'; }).join('') + '</small>' : '');
     } else if (s.datum < heute() || (l && l.aus)) {
