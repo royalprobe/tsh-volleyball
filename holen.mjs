@@ -197,7 +197,8 @@ const name = (s) => s.trim().split(/\s+/).map((w) => {
 async function landesklasse(vorher) {
   const roh = await holen(LK_API);
   let d;
-  try { d = JSON.parse(roh); } catch { return vorher?.lk ?? null; }
+  try { d = JSON.parse(roh); } catch { d = null; }
+  if (!d || !Array.isArray(d.bewerbe)) { console.warn('Landesklasse: keine Antwort, alter Stand bleibt'); return vorher?.lk ?? null; }
   const spiele = [], tabellen = {};
   for (const b of d.bewerbe ?? []) {
     const team = Object.fromEntries(b.teams.map((t) => [t.id, t]));
@@ -454,5 +455,5 @@ if (process.env.GITHUB_OUTPUT) await writeFile(process.env.GITHUB_OUTPUT, `geaen
 await writeFile(path.join(AUSGABE, 'daten.json'), JSON.stringify(daten));
 // interner Stand für den nächsten Lauf (alle Spiele der Phasen, Kader, VolleyStation-IDs) – nicht fürs Widget
 const { geholt, ...vnStand } = vn;
-await writeFile(path.join(AUSGABE, 'stand.json'), JSON.stringify({ volleynet: vnStand, kader: kd, vs }));
+await writeFile(path.join(AUSGABE, 'stand.json'), JSON.stringify({ volleynet: vnStand, kader: kd, vs, lk }));
 console.log(`${d.verein}: ${d.teams.length} Teams, ${d.spiele.length} Spiele`);
