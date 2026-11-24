@@ -11,5 +11,5 @@
   "modus": "1 Satz auf 25",
   "zurueck": { "text": "TS Hohenems Volleyball", "link": "https://www.ts-hohenems.at/sparten/volleyball/" },
   "jimdoKopfAusblenden": true,
-  "teams": {}
+  "teams": {"A1": "VC Dornbirn 1", "A2": "VC Dornbirn 2", "A3": "VC Dornbirn Jungs", "A4": "TS Hohenems 1", "A5": "TS Hohenems 2", "A6": "VC Montafon 1", "A7": "VC Montafon 2", "A8": "VC Egg", "A9": "VC Wolfurt"}
 }

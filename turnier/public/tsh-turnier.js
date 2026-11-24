@@ -156,7 +156,7 @@
     var d = new Date(daten.datum + 'T12:00:00');
     var datum = TAGE[d.getDay()] + ', ' + d.getDate() + '. ' + MONATE[d.getMonth()] + ' ' + d.getFullYear();
     var rundeSp = daten.spiele.filter(function (s) { return s.runde === akt; });
-    var teamWahl = '<select data-mein aria-label="Mein Team hervorheben"><option value="">Mein Team …</option>'
+    var teamWahl = '<select data-mein aria-label="Mein Team hervorheben"><option value="">' + (mein ? 'Alle Teams' : 'Mein Team …') + '</option>'
       + Object.keys(daten.teams).sort(function (a, b) { return name(a).localeCompare(name(b), 'de'); }).map(function (id) {
         return '<option value="' + h(id) + '"' + (id === mein ? ' selected' : '') + '>' + h(name(id)) + '</option>'; }).join('') + '</select>';
     var html = '<div class="w">'

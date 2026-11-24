@@ -5,16 +5,21 @@
 // Die 3 Teams ohne Spiel pfeifen (jedes Team pfeift damit genau 4-mal).
 // Bewertet wird: höchstens 2 Spiele hintereinander, keine langen Wartezeiten, und möglichst oft pfeift ein Team auf dem
 // Feld, auf dem es in der nächsten Runde selbst spielt (Felder und Schiris werden dafür je Runde passend verteilt).
-let seed = 20261128;
+let seed = 3333;
 const zufall = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
 const N = 9, RUNDEN = 12, PAUSE_NACH = 6;
 const paare = [];
 for (let a = 1; a <= N; a++) for (let b = a + 1; b <= N; b++) paare.push([a, b]);
+// Vereinsduelle zuerst (Simons Wunsch): Teams A1 Dornbirn 1, A2 Dornbirn 2, A3 Dornbirn Jungs, A4/A5 Hohenems 1/2,
+// A6/A7 Montafon 1/2, A8 Egg, A9 Wolfurt. Runde 1: alle drei Zweier-Duelle, Runde 2 und 3: die übrigen Dornbirner Duelle.
+const FEST = [[0, [1, 2]], [0, [4, 5]], [0, [6, 7]], [1, [1, 3]], [2, [2, 3]]];
+const istFest = (p) => FEST.some(([, q]) => q[0] === p[0] && q[1] === p[1]);
 
 /** zufällige gültige Verteilung der 36 Paare auf 12 Runden (Backtracking) */
 function verteilen() {
   const runden = Array.from({ length: RUNDEN }, () => []);
-  const offen = [...paare].sort(() => zufall() - 0.5);
+  for (const [r, p] of FEST) runden[r].push(p);
+  const offen = paare.filter((p) => !istFest(p)).sort(() => zufall() - 0.5);
   const zahl = (t, haelfte) => runden.slice(haelfte * PAUSE_NACH, (haelfte + 1) * PAUSE_NACH).flat().filter((p) => p.includes(t)).length;
   let schritte = 0;
   const versuch = (i) => {
@@ -81,6 +86,7 @@ function verbessern(runden) {
     if (r1 === r2) continue;
     const i1 = Math.floor(zufall() * 3), i2 = Math.floor(zufall() * 3);
     const a = runden[r1][i1], b = runden[r2][i2];
+    if (istFest(a) || istFest(b)) continue;   // Vereinsduelle bleiben, wo sie sind
     const passt = (r, raus, rein) => runden[r].every((q) => q === raus || !(q.includes(rein[0]) || q.includes(rein[1])));
     if (!passt(r1, a, b) || !passt(r2, b, a)) continue;
     runden[r1][i1] = b; runden[r2][i2] = a;
