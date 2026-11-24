@@ -24,7 +24,7 @@
     'a{color:inherit}',
     '.schatten{box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     // Kopf
-    '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:center;padding:32px 34px;border-radius:calc(var(--r) + 6px);color:#fff;background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
+    '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr;gap:24px;align-items:center;padding:32px 34px;border-radius:calc(var(--r) + 6px);color:#fff;background:radial-gradient(120% 140% at 0% 0%,#123f8c 0%,var(--blau) 55%,#00133d 100%)}',
     // altes Vereinslogo (Ball mit Flammen) in Blautönen, schimmert rechts durch
     '.zeichen{position:absolute;right:-10px;top:50%;width:330px;aspect-ratio:1;transform:translateY(-50%);background:var(--zeichen) center/contain no-repeat;opacity:.16;pointer-events:none}',
     '.h-links{position:relative;display:flex;flex-direction:column;gap:12px;min-width:0}',
@@ -166,11 +166,7 @@
       + '<div class="h-titel">' + h(daten.name) + '</div>'
       + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn + '–' + daten.ende + ' Uhr') + '</span>'
       + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">' + Object.keys(daten.teams).length + ' Teams · 3 Felder</span></div></div>'
-      + '<div class="jetzt"><div class="t">' + (daten.datum === heute() ? 'Jetzt' : 'Als Nächstes') + '</div><div class="z">' + h(rundeSp[0].zeit) + ' Uhr</div><ul>'
-      + rundeSp.map(function (s) {
-        return '<li><small>' + (s.feld ? 'Feld ' + s.feld : '') + '</small><span>' + h(name(s.heim) || s.heimText) + ' – ' + h(name(s.gast) || s.gastText) + '</span>'
-          + (s.ergebnis ? '<b>' + s.ergebnis[0] + ':' + s.ergebnis[1] + '</b>' : '<span></span>') + '</li>'; }).join('')
-      + '</ul></div></header>'
+      + '</header>'
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div>'
