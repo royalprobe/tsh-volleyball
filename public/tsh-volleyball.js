@@ -153,6 +153,12 @@
     '.ak-programm{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}',
     '.ak-programm li{display:grid;grid-template-columns:5.2em 1fr;gap:10px;align-items:baseline;padding:10px 14px;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
     '.ak-programm b{color:var(--blau);font-variant-numeric:tabular-nums}',
+    '.ak-programm li.spiel{display:block;padding:0}',
+    '.ak-programm li.spiel a{display:grid;grid-template-columns:5.2em 1fr auto auto;gap:10px;align-items:center;padding:10px 14px;border-radius:12px;color:inherit;text-decoration:none;transition:background .15s}',
+    '.ak-programm li.spiel a:hover{background:var(--hell)}',
+    '.ak-programm small{display:block;font-size:.72em;font-weight:700;color:var(--akzent)}',
+    '.ak-programm em{font-style:normal;font-weight:800;color:var(--blau)}',
+    '.ak-programm .pfeil{font-style:normal;font-size:1.4em;line-height:1;color:var(--grau-2)}',
     '.ak-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}',
     '.knopf.blau{background:var(--blau);color:#fff}.knopf.blau:hover{background:var(--blau-2)}',
     '.knopf.zart{border:1px solid #d6dee8;background:#fff;color:var(--blau)}',
@@ -336,10 +342,24 @@
         + (bild ? '<a class="ak-bild" href="' + h(bild) + '" target="_blank" rel="noopener"><img src="' + h(bild) + '" alt="' + h(a.titel || 'Flyer') + '" loading="lazy" decoding="async"></a>' : '')
         + '<div class="ak-text"><small>Aktuell</small><div class="t">' + h(a.titel || '') + '</div>'
         + (a.text ? '<p>' + h(a.text) + '</p>' : '')
-        + (a.programm ? '<ul class="ak-programm">' + a.programm.map(function (z) { return '<li><b>' + h(z[0]) + '</b><span>' + h(z[1]) + '</span></li>'; }).join('') + '</ul>' : '')
+        + programmHtml(a)
         + (a.links ? '<div class="ak-links">' + a.links.map(function (l, i) { return '<a class="knopf ' + (i ? 'zart' : 'blau') + '" href="' + h(l.link) + '">' + h(l.text) + '</a>'; }).join('') + '</div>' : '')
         + '</div></div></section>';
     }).join('');
+  }
+
+  // Programm eines Aktuell-Eintrags: feste Zeilen (z. B. Turnier) plus die Heimspiele des Tages „spieleAm“ aus den Spieldaten –
+  // die sind anklickbar und führen auf die Spielseite von volley-ball.at
+  function programmHtml(a) {
+    var zeilen = (a.programm || []).map(function (z) { return { zeit: z[0], html: '<li><b>' + h(z[0]) + '</b><span>' + h(z[1]) + '</span></li>' }; });
+    if (a.spieleAm) daten.spiele.filter(function (s) { return s.datum === a.spieleAm && eigen(s.heim); }).forEach(function (s) {
+      var stand = s.ergebnis ? '<em>' + h(s.ergebnis) + '</em>' : laeuft(s) ? '<span class="live"><i></i>LIVE</span>' : '';
+      var inhaltZ = '<b>' + h(s.zeit || '–') + '</b><span><small>' + h(s.bewerb) + '</small>' + h(s.heim) + ' – ' + h(s.gast) + '</span>' + stand;
+      zeilen.push({ zeit: s.zeit, html: s.link ? '<li class="spiel"><a href="' + h(s.link) + '" target="_blank" rel="noopener">' + inhaltZ + '<i class="pfeil" aria-hidden="true">›</i></a></li>' : '<li>' + inhaltZ + '</li>' });
+    });
+    var minuten = function (z) { var m = String(z || '').match(/(\d{1,2})(?::(\d\d))?/); return m ? +m[1] * 60 + +(m[2] || 0) : 9999; };
+    zeilen.sort(function (x, y) { return minuten(x.zeit) - minuten(y.zeit); });
+    return zeilen.length ? '<ul class="ak-programm">' + zeilen.map(function (z) { return z.html; }).join('') + '</ul>' : '';
   }
 
   function trainingVon(t, inhalt) {

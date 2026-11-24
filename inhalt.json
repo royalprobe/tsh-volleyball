@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. trainer: steht unter der Gruppe. fotos: Mannschaftsfoto je Team (Bezeichnung im Widget → Datei in public/fotos, Querformat 4:3). startseite: Link oben im Kopf. jimdoKopfAusblenden: Kopfbild und Menü von Jimdo auf der Seite ausblenden (true/false). aktuell: Flyer/Hinweise oben auf der Seite, verschwinden nach „bis“ von selbst. archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
+  "_hinweis": "Texte der Volleyball-Seite. Nach dem Ändern committen und pushen – der Workflow veröffentlicht es in ein, zwei Minuten. Tage: Mo Di Mi Do Fr Sa So. Halle: Schlüssel aus \"hallen\". team: Bezeichnung des Teams im Widget (Herren 1, Damen …), dann stehen die Zeiten auch bei diesem Team. trainer: steht unter der Gruppe. fotos: Mannschaftsfoto je Team (Bezeichnung im Widget → Datei in public/fotos, Querformat 4:3). startseite: Link oben im Kopf. jimdoKopfAusblenden: Kopfbild und Menü von Jimdo auf der Seite ausblenden (true/false). aktuell: Flyer/Hinweise oben auf der Seite, verschwinden nach „bis“ von selbst; spieleAm hängt die Heimspiele dieses Tages klickbar an. archiv: frühere Saisonen (Jimdo-Unterseiten), stehen ganz unten auf der Seite.",
   "startseite": "https://www.ts-hohenems.at/",
   "jimdoKopfAusblenden": true,
   "einladung": "Lust auf Volleyball? Dann melde dich bei Thomas oder Günther für Details.",
@@ -13,10 +13,9 @@
       "bis": "2026-11-28",
       "bild": "fotos/heimspieltag-2026-11-28.jpg",
       "programm": [
-        ["9–15 Uhr", "U14-Turnier weiblich"],
-        ["16:00", "2. Landesliga, zeitgleich: Damen gegen VC Dornbirn 2 und Herren 3 gegen VC Dornbirn 2"],
-        ["18:30", "1. Landesliga Herren: TS Hohenems 1 gegen VC Dornbirn"]
-      ]
+        ["9–15 Uhr", "U14-Turnier weiblich"]
+      ],
+      "spieleAm": "2026-11-28"
     }
   ],
   "fotos": { "Mixed 1": "fotos/mixed-1.webp" },
