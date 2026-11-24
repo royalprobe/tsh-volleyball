@@ -73,7 +73,9 @@
     '.s-team .offen{color:var(--grau-2);font-weight:500;font-style:italic;padding-right:.25em}',
     '.s-schiri{margin-top:2px;font-size:.72em;color:var(--grau)}',
     // Tabellen
-    '.gruppen{display:grid;grid-template-columns:1fr 1fr;gap:12px}',
+    '.gruppen{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gruppen.eine{grid-template-columns:minmax(0,640px)}',
+    '.runde.pause .r-zeit{background:transparent;color:var(--grau)}.runde.pause .r-zeit small{color:var(--grau-2)}',
+    '.p-text{display:flex;align-items:center;padding:12px 16px;border-radius:12px;border:2px dashed #cfd8e3;color:var(--grau);font-weight:700}',
     '.kachel{min-width:0;padding:16px 18px;background:#fff;border-radius:var(--r)}',
     '.k-kopf{display:flex;justify-content:space-between;gap:10px;margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--rand);font-size:.74em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blau)}',
     '.k-kopf span{color:var(--grau-2);letter-spacing:.04em}',
@@ -132,18 +134,20 @@
   function heute() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function minuten(z) { var p = z.split(':'); return +p[0] * 60 + +p[1]; }
   /** laufende Runde nach der Uhr (nur am Turniertag), sonst die erste Runde ohne alle Ergebnisse */
+  function runden() { var r = []; daten.spiele.forEach(function (s) { if (r.indexOf(s.runde) < 0) r.push(s.runde); }); return r.sort(function (a, b) { return a - b; }); }
   function aktiveRunde() {
     if (!daten) return 1;
+    var letzte = runden().slice(-1)[0];
     if (daten.datum === heute()) {
       var jetzt = new Date().getHours() * 60 + new Date().getMinutes();
-      for (var r = 14; r >= 1; r--) {
+      for (var r = letzte; r >= 1; r--) {
         var sp = daten.spiele.filter(function (s) { return s.runde === r; })[0];
         if (jetzt >= minuten(sp.zeit)) return r;
       }
       return 1;
     }
-    for (var r2 = 1; r2 <= 14; r2++) if (daten.spiele.some(function (s) { return s.runde === r2 && !s.ergebnis; })) return r2;
-    return 14;
+    for (var r2 = 1; r2 <= letzte; r2++) if (daten.spiele.some(function (s) { return s.runde === r2 && !s.ergebnis; })) return r2;
+    return letzte;
   }
 
   function zeichnen() {
@@ -161,7 +165,7 @@
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<div class="h-titel">' + h(daten.name) + '</div>'
       + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn + '–' + daten.ende + ' Uhr') + '</span>'
-      + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">12 Teams · 3 Felder</span></div></div>'
+      + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">' + Object.keys(daten.teams).length + ' Teams · 3 Felder</span></div></div>'
       + '<div class="jetzt"><div class="t">' + (daten.datum === heute() ? 'Jetzt' : 'Als Nächstes') + '</div><div class="z">' + h(rundeSp[0].zeit) + ' Uhr</div><ul>'
       + rundeSp.map(function (s) {
         return '<li><small>' + (s.feld ? 'Feld ' + s.feld : '') + '</small><span>' + h(name(s.heim) || s.heimText) + ' – ' + h(name(s.gast) || s.gastText) + '</span>'
@@ -172,9 +176,13 @@
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div>'
       + (mein ? '<div class="legende"><span><i style="background:#dbe7f8;border:2px solid #002266"></i>' + h(name(mein)) + ' spielt</span><span><i style="background:#fff;border:2px solid #002266"></i>' + h(name(mein)) + ' pfeift</span></div>' : '')
       + '<div class="runden">'
-      + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(function (r) { return rundeHtml(r, r === akt); }).join('') + '</div></section>'
-      + '<section class="abschnitt"><div class="a-kopf"><div class="t">Gruppen</div></div><div class="gruppen">' + tabelleHtml('A') + tabelleHtml('B') + '</div>'
-      + '<p style="margin:0;font-size:.78em;color:var(--grau)">Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Überkreuz: 5. gegen 6., 3. gegen 4., 1. gegen 2. der anderen Gruppe.</p></section>'
+      + runden().map(function (r) {
+        return rundeHtml(r, r === akt) + (daten.pause && r === daten.pause.nach
+          ? '<div class="runde pause"><div class="r-zeit">' + h(daten.pause.von) + '<small>Uhr</small></div><div class="p-text">Mittagspause bis ' + h(daten.pause.bis) + ' Uhr</div></div>' : '');
+      }).join('') + '</div></section>'
+      + '<section class="abschnitt"><div class="a-kopf"><div class="t">' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppen' : 'Tabelle') + '</div></div>'
+      + '<div class="gruppen' + (Object.keys(daten.tabellen).length > 1 ? '' : ' eine') + '">' + Object.keys(daten.tabellen).map(tabelleHtml).join('') + '</div>'
+      + '<p style="margin:0;font-size:.78em;color:var(--grau)">' + h(daten.erklaerung || 'Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Überkreuz: 5. gegen 6., 3. gegen 4., 1. gegen 2. der anderen Gruppe.') + '</p></section>'
       + (pin ? '' : '<div class="fuss"><span></span><button class="knopf klein" data-ein>Ergebnisse eintragen</button></div>')
       + '</div>';
     wurzel.querySelector('.inhalt').innerHTML = html;
@@ -182,7 +190,6 @@
 
   function rundeHtml(r, aktiv) {
     var sp = daten.spiele.filter(function (s) { return s.runde === r; });
-    var phase = sp[0].phase === 'gruppe' ? 'Gruppe ' + (r % 2 ? 'A' : 'B') : sp[0].phase === 'kreuz' ? 'Überkreuz' : 'Platzierung';
     return '<div class="runde' + (aktiv ? ' aktiv' : '') + '"><div class="r-zeit">' + h(sp[0].zeit) + '<small>Uhr</small></div><div class="felder">'
       + sp.map(function (s) {
         var spielt = mein && (s.heim === mein || s.gast === mein), pfeift = mein && s.schiri === mein;
@@ -201,7 +208,7 @@
 
   function tabelleHtml(g) {
     var t = daten.tabellen[g];
-    return '<div class="kachel schatten"><div class="k-kopf">Gruppe ' + g + '<span>' + (t.komplett ? 'abgeschlossen' : t.zeilen.some(function (z) { return z.sp > 0; }) ? 'läuft' : '') + '</span></div><table><thead><tr><th></th><th class="tm">Team</th><th>Sp</th><th>S</th><th>N</th><th>Bälle</th></tr></thead><tbody>'
+    return '<div class="kachel schatten"><div class="k-kopf">' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppe ' + g : 'Gruppenphase') + '<span>' + (t.komplett ? 'abgeschlossen' : t.zeilen.some(function (z) { return z.sp > 0; }) ? 'läuft' : '') + '</span></div><table><thead><tr><th></th><th class="tm">Team</th><th>Sp</th><th>S</th><th>N</th><th>Bälle</th></tr></thead><tbody>'
       + t.zeilen.map(function (z) {
         return '<tr' + (z.id === mein ? ' class="mein"' : '') + '><td class="pl">' + z.platz + '</td><td class="tm">' + h(name(z.id)) + '</td><td>' + z.sp + '</td><td class="pk">' + z.s + '</td><td>' + z.n + '</td><td>' + z.bp + ':' + z.bm + '</td></tr>';
       }).join('') + '</tbody></table></div>';
@@ -273,7 +280,7 @@
     var felder = Object.keys(daten.teams).map(function (id) {
       return '<label>' + h(id) + '<input name="' + h(id) + '" value="' + h(daten.teams[id] === 'Team ' + id ? '' : daten.teams[id]) + '" placeholder="Team ' + h(id) + '" maxlength="40"></label>';
     }).join('');
-    dialog('<form><div class="t">Teamnamen</div><small>Gruppe A: A1–A6, Gruppe B: B1–B6. Leer = „Team A1“ usw.</small><div class="teams-form">' + felder + '</div><div class="fehler"></div>'
+    dialog('<form><div class="t">Teamnamen</div><small>' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppe A: A1–A6, Gruppe B: B1–B6.' : 'Teams A1–A' + Object.keys(daten.teams).length + '.') + ' Leer = „Team A1“ usw.</small><div class="teams-form">' + felder + '</div><div class="fehler"></div>'
       + '<div class="zeile"><button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Speichern</button></div></form>', function (d, zu) {
       var t = {};
       d.querySelectorAll('input').forEach(function (i) { t[i.name] = i.value; });

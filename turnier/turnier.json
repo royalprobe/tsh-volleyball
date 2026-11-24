@@ -1,10 +1,13 @@
 {
   "name": "U14-Turnier",
+  "format": "9",
   "datum": "2026-11-28",
   "ort": "",
   "beginn": "09:00",
   "zeitraum": "9–15 Uhr",
   "minuten": 25,
+  "pause": { "nach": 6, "minuten": 30 },
+  "erklaerung": "Jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Finale: 1. gegen 2.",
   "modus": "1 Satz auf 25",
   "zurueck": { "text": "TS Hohenems Volleyball", "link": "https://www.ts-hohenems.at/sparten/volleyball/" },
   "jimdoKopfAusblenden": true,

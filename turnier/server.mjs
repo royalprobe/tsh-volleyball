@@ -8,7 +8,7 @@ import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir, rename, appendFile } from 'node:fs/promises';
 import { timingSafeEqual, createHash } from 'node:crypto';
 import path from 'node:path';
-import { stand, pruefen, spielplan } from './plan.mjs';
+import { stand, pruefen, spielplan, format } from './plan.mjs';
 
 const ORDNER = import.meta.dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ORDNER, 'daten');
@@ -20,8 +20,9 @@ const PORT = Number(process.env.PORT || 8098);
 const grund = JSON.parse(await readFile(path.join(ORDNER, 'turnier.json'), 'utf8'));
 let daten = { teams: {}, ergebnisse: {}, version: 0 };
 try { daten = { ...daten, ...JSON.parse(await readFile(DATEI, 'utf8')) }; } catch { /* noch nichts gespeichert */ }
+format(grund.format || '12');   // "12" oder "9" Teams (plan.mjs)
 const SPIEL_IDS = new Set(spielplan().map((s) => s.id));
-const TEAM_IDS = new Set([...'AB'].flatMap((g) => [1, 2, 3, 4, 5, 6].map((i) => g + i)));
+const TEAM_IDS = new Set(spielplan().flatMap((s) => [s.heim.t, s.gast.t]).filter(Boolean));
 
 async function speichern() {
   await mkdir(DATA_DIR, { recursive: true });

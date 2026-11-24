@@ -1,6 +1,8 @@
-// Spielplan und Wertung des U14-Turniers: 12 Teams in zwei 6er-Gruppen (jeder gegen jeden), danach Überkreuz-Spiele
-// (1./2., 3./4., 5./6. der Gruppen) und alle Platzierungsspiele – 42 Spiele, 14 Runden, 3 Felder.
-// Ein Spiel = 1 Satz auf 25. Schiedsgericht in der Gruppenphase: ein Team, das danach auf demselben Feld spielt.
+// Spielplan und Wertung des U14-Turniers. Zwei Formate (turnier.json → "format"):
+//  "12": 12 Teams in zwei 6er-Gruppen (jeder gegen jeden), danach Überkreuz-Spiele (1./2., 3./4., 5./6. der Gruppen)
+//        und alle Platzierungsspiele – 42 Spiele, 14 Runden, 3 Felder. (Stand 22.11.2026, auch als Git-Tag u14-12-teams)
+//  "9":  9 Teams jeder gegen jeden (36 Spiele, 12 Runden, Mittagspause nach Runde 6), danach Finale 1. gegen 2.
+// Ein Spiel = 1 Satz auf 25. Schiedsgericht: möglichst ein Team, das danach auf demselben Feld spielt.
 //
 // Teilnehmer eines Spiels sind Platzhalter: { g: 'A', p: 1 } = 1. der Gruppe A (erst bekannt, wenn die Gruppe fertig ist),
 // { s: 'S31' } / { v: 'S31' } = Sieger / Verlierer von Spiel 31, { t: 'A3' } = Team A3 direkt (Gruppenphase).
@@ -39,11 +41,30 @@ function schiriWahl(kandidaten) {
   return raus;
 }
 
-/** Alle 42 Spiele mit Runde, Feld, Phase, Teilnehmern und Schiedsgericht (einmal gerechnet, danach aus dem Speicher) */
+/** Format wählen ("12" oder "9"); ohne Wert: das aktuelle */
+let FORMAT = '12';
+export function format(f) { if (f && String(f) !== FORMAT) { FORMAT = String(f); plan = null; } return FORMAT; }
+
+/** Alle Spiele mit Runde, Feld, Phase, Teilnehmern und Schiedsgericht (einmal gerechnet, danach aus dem Speicher) */
 let plan = null;
 export function spielplan() {
-  if (!plan) plan = planRechnen();
+  if (!plan) plan = FORMAT === '9' ? planNeun() : planRechnen();
   return plan.map((sp) => ({ ...sp }));
+}
+
+// 9 Teams: Runden, Felder und Schiedsgericht von werkzeuge/plan9-erzeugen.mjs gesucht (jedes Team 4 Spiele vor und 4 nach
+// der Pause, höchstens einmal 3 Spiele in Folge, die 3 freien Teams pfeifen – meist dort, wo sie danach spielen).
+// Je Runde: spiele = [[Heim, Gast] auf Feld 1, 2, 3], schiri = [Team auf Feld 1, 2, 3]; Zahlen = Team A1 … A9.
+const PLAN_9 = [{"runde":1,"spiele":[[8,9],[5,6],[4,7]],"schiri":[1,2,3]},{"runde":2,"spiele":[[1,9],[2,8],[3,6]],"schiri":[5,4,7]},{"runde":3,"spiele":[[2,5],[1,4],[3,7]],"schiri":[6,8,9]},{"runde":4,"spiele":[[6,8],[3,5],[4,9]],"schiri":[1,2,7]},{"runde":5,"spiele":[[1,8],[2,9],[6,7]],"schiri":[4,5,3]},{"runde":6,"spiele":[[1,7],[4,5],[2,3]],"schiri":[6,9,8]},{"runde":7,"spiele":[[1,3],[6,9],[5,8]],"schiri":[7,2,4]},{"runde":8,"spiele":[[7,9],[2,6],[3,4]],"schiri":[1,8,5]},{"runde":9,"spiele":[[2,4],[7,8],[1,5]],"schiri":[3,9,6]},{"runde":10,"spiele":[[3,8],[5,9],[1,6]],"schiri":[2,4,7]},{"runde":11,"spiele":[[3,9],[4,6],[2,7]],"schiri":[5,8,1]},{"runde":12,"spiele":[[5,7],[4,8],[1,2]],"schiri":[3,6,9]}];
+function planNeun() {
+  const spiele = [];
+  let nr = 0;
+  for (const r of PLAN_9) {
+    r.spiele.forEach(([a, b], f) => { nr++; spiele.push({ id: `S${nr}`, nr, runde: r.runde, feld: f + 1, phase: 'gruppe', titel: 'Gruppe A', heim: { t: `A${a}` }, gast: { t: `A${b}` }, schiri: { t: `A${r.schiri[f]}` } }); });
+  }
+  nr++;
+  spiele.push({ id: `S${nr}`, nr, runde: PLAN_9.length + 1, feld: null, phase: 'platz', titel: 'Finale', heim: { g: 'A', p: 1 }, gast: { g: 'A', p: 2 }, schiri: { g: 'A', p: 3 } });
+  return spiele;
 }
 function planRechnen() {
   const spiele = [];
@@ -92,7 +113,7 @@ function planRechnen() {
 }
 
 /** Rangfolge der Plätze aus den Platzierungsspielen: Spiel-ID -> [Platz Sieger, Platz Verlierer] */
-const PLAETZE = { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] };
+const PLAETZE = { '12': { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] }, '9': { S37: [1, 2] } };
 
 const fertig = (e) => Array.isArray(e) && e.length === 2 && Number.isInteger(e[0]) && Number.isInteger(e[1]) && e[0] !== e[1];
 
@@ -105,7 +126,8 @@ const fertig = (e) => Array.isArray(e) && e.length === 2 && Number.isInteger(e[0
  */
 export function tabelle(g, spiele, ergebnisse, teams) {
   const z = {};
-  for (let i = 1; i <= 6; i++) z[`${g}${i}`] = { id: `${g}${i}`, name: teams[`${g}${i}`] || `Team ${g}${i}`, sp: 0, s: 0, n: 0, bp: 0, bm: 0 };
+  const ids = [...new Set(spiele.filter((sp) => sp.titel === `Gruppe ${g}`).flatMap((sp) => [sp.heim.t, sp.gast.t]))].sort((a, b) => a.localeCompare(b, 'de', { numeric: true }));
+  for (const id of ids) z[id] = { id, name: teams[id] || `Team ${id}`, sp: 0, s: 0, n: 0, bp: 0, bm: 0 };
   const sieg = {};   // „Sieger>Verlierer“
   const baelle = {};   // „X>Y“ = Bälle von X im Spiel gegen Y
   for (const sp of spiele) {
@@ -141,7 +163,8 @@ export function tabelle(g, spiele, ergebnisse, teams) {
 export function stand(turnier, ergebnisse) {
   const teams = turnier.teams || {};
   const spiele = spielplan();
-  const tab = { A: tabelle('A', spiele, ergebnisse, teams), B: tabelle('B', spiele, ergebnisse, teams) };
+  const gruppen = [...new Set(spiele.filter((sp) => sp.phase === 'gruppe').map((sp) => sp.titel.replace('Gruppe ', '')))];
+  const tab = Object.fromEntries(gruppen.map((g) => [g, tabelle(g, spiele, ergebnisse, teams)]));
   const aufloesen = (x) => {
     if (!x) return null;
     if (x.t) return x.t;
@@ -152,10 +175,14 @@ export function stand(turnier, ergebnisse) {
     if (!h || !a) return null;
     return (e[0] > e[1]) === !!x.s ? h : a;
   };
-  const text = (x) => x.t ? null : x.g ? `${x.p}. Gruppe ${x.g}` : `${x.s ? 'Sieger' : 'Verlierer'} Spiel ${x.s ? x.s.slice(1) : x.v.slice(1)}`;
+  const text = (x) => x.t ? null : x.g ? (gruppen.length > 1 ? `${x.p}. Gruppe ${x.g}` : `${x.p}. der Tabelle`) : `${x.s ? 'Sieger' : 'Verlierer'} Spiel ${x.s ? x.s.slice(1) : x.v.slice(1)}`;
   const [hh, mm] = String(turnier.beginn || '09:00').split(':').map(Number);
   const takt = turnier.minuten || 25;
-  const zeit = (runde) => { const m = hh * 60 + mm + (runde - 1) * takt; return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+  const pause = turnier.pause && turnier.pause.nach ? turnier.pause : null;   // { nach: Runde, minuten }
+  const uhr = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  const minute = (runde) => hh * 60 + mm + (runde - 1) * takt + (pause && runde > pause.nach ? pause.minuten : 0);
+  const zeit = (runde) => uhr(minute(runde));
+  const letzte = Math.max(...spiele.map((sp) => sp.runde));
   const raus = spiele.map((sp) => {
     const heim = aufloesen(sp.heim), gast = aufloesen(sp.gast), schiri = aufloesen(sp.schiri);
     return { id: sp.id, nr: sp.nr, runde: sp.runde, feld: sp.feld, zeit: zeit(sp.runde), phase: sp.phase, titel: sp.titel,
@@ -164,15 +191,19 @@ export function stand(turnier, ergebnisse) {
   });
   // Endstand: Plätze aus den Platzierungsspielen
   const endstand = [];
-  for (const [id, [p1, p2]] of Object.entries(PLAETZE)) {
+  for (const [id, [p1, p2]] of Object.entries(PLAETZE[FORMAT])) {
     const sp = raus.find((s) => s.id === id);
     if (!sp.ergebnis || !sp.heim || !sp.gast) continue;
     const [s, v] = sp.ergebnis[0] > sp.ergebnis[1] ? [sp.heim, sp.gast] : [sp.gast, sp.heim];
     endstand.push({ platz: p1, team: s }, { platz: p2, team: v });
   }
+  // 9 Teams: ab Platz 3 zählt die Tabelle (sobald alle Gruppenspiele gespielt sind)
+  if (FORMAT === '9' && tab.A.komplett) tab.A.zeilen.slice(2).forEach((z) => endstand.push({ platz: z.platz, team: z.id }));
   endstand.sort((a, b) => a.platz - b.platz);
-  return { name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: zeit(15), zeitraum: turnier.zeitraum || null, zurueck: turnier.zurueck || null, jimdoKopfAusblenden: !!turnier.jimdoKopfAusblenden, minuten: takt,
-    modus: turnier.modus, teams: Object.fromEntries(Object.keys(tab.A.zeilen.concat(tab.B.zeilen).reduce((o, z) => (o[z.id] = 1, o), {})).map((id) => [id, teams[id] || `Team ${id}`])),
+  return { format: FORMAT, name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: uhr(minute(letzte) + takt),
+    pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + takt), bis: uhr(minute(pause.nach) + takt + pause.minuten) } : null,
+    erklaerung: turnier.erklaerung || null, zeitraum: turnier.zeitraum || null, zurueck: turnier.zurueck || null, jimdoKopfAusblenden: !!turnier.jimdoKopfAusblenden, minuten: takt,
+    modus: turnier.modus, teams: Object.fromEntries(Object.values(tab).flatMap((t) => t.zeilen).map((z) => z.id).sort((a, b) => a.localeCompare(b, 'de', { numeric: true })).map((id) => [id, teams[id] || `Team ${id}`])),
     spiele: raus, tabellen: tab, endstand };
 }
 
