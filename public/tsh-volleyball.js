@@ -144,6 +144,19 @@
     '@keyframes p{50%{opacity:.25}}',
     '.leer{margin:6px 0;color:var(--grau-2)}',
     '.mehr{margin-top:10px}',
+    '.ak-raster{display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:26px;align-items:center}',
+    '.ak-bild{display:block;border-radius:var(--r);overflow:hidden;box-shadow:0 10px 30px rgba(0,34,102,.18)}.ak-bild img{display:block;width:100%;height:auto}',
+    '.ak-text{display:flex;flex-direction:column;gap:10px}',
+    '.ak-text small{font-size:.72em;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--akzent)}',
+    '.ak-text .t{font-size:1.75em;font-weight:800;line-height:1.1;color:var(--blau)}',
+    '.ak-text p{margin:0;color:var(--grau)}',
+    '.ak-programm{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}',
+    '.ak-programm li{display:grid;grid-template-columns:5.2em 1fr;gap:10px;align-items:baseline;padding:10px 14px;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(0,34,102,.06),0 6px 16px rgba(0,34,102,.06)}',
+    '.ak-programm b{color:var(--blau);font-variant-numeric:tabular-nums}',
+    '.ak-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}',
+    '.knopf.blau{background:var(--blau);color:#fff}.knopf.blau:hover{background:var(--blau-2)}',
+    '.knopf.zart{border:1px solid #d6dee8;background:#fff;color:var(--blau)}',
+    '@container (max-width:720px){.ak-raster{grid-template-columns:1fr}.ak-bild{max-width:420px;margin:0 auto}}',
     // Teamauswahl am PC in einer Reihe: Knöpfe teilen sich die Breite
     '@container (min-width:860px){.teamwahl{flex-wrap:nowrap;gap:5px}.teamwahl .pille{flex:1 1 auto;padding:7px 8px;text-align:center;font-size:.84em}}',
     // Archiv: am PC alle Saisonen in einer Reihe, mittel 2 × 5, am Handy 2 Spalten
@@ -227,7 +240,7 @@
     var p = wurzel.querySelector('.pillen'), scroll = p ? p.scrollLeft : 0;
     var inhalt = daten.inhalt || {};
     wurzel.querySelector('.inhalt').innerHTML = '<div class="w">'
-      + heroHtml(inhalt) + trainingHtml(inhalt) + kontaktHtml(inhalt)
+      + heroHtml(inhalt) + aktuellHtml(inhalt) + trainingHtml(inhalt) + kontaktHtml(inhalt)
       + '<section class="abschnitt" id="teams"><div class="a-kopf"><div><div class="t">Unsere Teams</div></div>'
       + '</div>'
       + '<div class="pillen teamwahl" role="group" aria-label="Team wählen">'
@@ -314,6 +327,21 @@
     return t.kader.betreuer.map(function (b, i) { return [b, i]; })
       .sort(function (x, y) { return rang(x[0]) - rang(y[0]) || x[1] - y[1]; }).map(function (x) { return x[0]; });
   }
+  // „Aktuell“: Flyer zu einem Spieltag o. Ä. (inhalt.json → aktuell), verschwindet nach dem Datum „bis“ von selbst
+  function aktuellHtml(inhalt) {
+    var liste = (inhalt.aktuell || []).filter(function (a) { return !a.bis || a.bis >= heute(); });
+    return liste.map(function (a) {
+      var bild = a.bild ? new URL(a.bild, BASIS).href : '';
+      return '<section class="abschnitt aktuell"><div class="ak-raster">'
+        + (bild ? '<a class="ak-bild" href="' + h(bild) + '" target="_blank" rel="noopener"><img src="' + h(bild) + '" alt="' + h(a.titel || 'Flyer') + '" loading="lazy" decoding="async"></a>' : '')
+        + '<div class="ak-text"><small>Aktuell</small><div class="t">' + h(a.titel || '') + '</div>'
+        + (a.text ? '<p>' + h(a.text) + '</p>' : '')
+        + (a.programm ? '<ul class="ak-programm">' + a.programm.map(function (z) { return '<li><b>' + h(z[0]) + '</b><span>' + h(z[1]) + '</span></li>'; }).join('') + '</ul>' : '')
+        + (a.links ? '<div class="ak-links">' + a.links.map(function (l, i) { return '<a class="knopf ' + (i ? 'zart' : 'blau') + '" href="' + h(l.link) + '">' + h(l.text) + '</a>'; }).join('') + '</div>' : '')
+        + '</div></div></section>';
+    }).join('');
+  }
+
   function trainingVon(t, inhalt) {
     return (inhalt.training || []).filter(function (g) { return g.team && klein(g.team) === klein(t.titel); });
   }
