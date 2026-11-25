@@ -23,7 +23,7 @@ try { daten = { ...daten, ...JSON.parse(await readFile(DATEI, 'utf8')) }; } catc
 // Varianten (turnier.json „varianten“): mehrere Formate gleichzeitig, im Widget per Umschalter wählbar.
 // Gruppenspiele teilen sich die Ergebnisse, KO-Spiele werden je Variante gespeichert („10v:S21“).
 const STANDARD = process.env.FORMAT || grund.format || '12';   // FORMAT=10v zum lokalen Ansehen einer Variante
-const VARIANTEN = (grund.varianten || [{ format: STANDARD, name: '' }]).map((v) => ({ format: String(v.format), name: v.name || '', pause: v.pause, erklaerung: v.erklaerung }));
+const VARIANTEN = (grund.varianten || [{ format: STANDARD, name: '' }]).map((v) => ({ format: String(v.format), name: v.name || '', pause: v.pause, erklaerung: v.erklaerung, modus: v.modus }));
 if (!VARIANTEN.some((v) => v.format === STANDARD)) VARIANTEN.unshift({ format: STANDARD, name: '' });
 const FORMATE = new Set(VARIANTEN.map((v) => v.format));
 const wahl = (f) => FORMATE.has(String(f)) ? String(f) : STANDARD;
@@ -56,7 +56,7 @@ const aktuell = (f = STANDARD) => {
   const pause = grund.pause && v.pause !== undefined ? { ...grund.pause, minuten: v.pause } : grund.pause;
   const ergebnisse = ergebnisseVon(f);
   format(f);
-  return { ...stand({ ...grund, pause, erklaerung: v.erklaerung || grund.erklaerung, teams: { ...grund.teams, ...daten.teams } }, ergebnisse), version: daten.version,
+  return { ...stand({ ...grund, pause, erklaerung: v.erklaerung || grund.erklaerung, modus: v.modus || grund.modus, teams: { ...grund.teams, ...daten.teams } }, ergebnisse), version: daten.version,
     variante: f, varianten: VARIANTEN.length > 1 ? VARIANTEN.map((x) => ({ format: x.format, name: x.name, ende: ENDE[x.format] })) : [] };
 };
 

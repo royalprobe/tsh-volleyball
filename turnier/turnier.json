@@ -4,7 +4,9 @@
   "varianten": [
     {
       "format": "10",
-      "name": "Standardvariante"
+      "name": "Standardvariante",
+      "pause": 10,
+      "modus": "Vorrunde 1 Satz auf 25 – ab KO-Phase 2 Gewinnsätze"
     },
     {
       "format": "10v",
@@ -22,7 +24,7 @@
     "minuten": 20,
     "text": "Vorrunde beendet"
   },
-  "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 20 Minuten Pause für die Auswertung. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze.",
+  "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 10 Minuten Pause. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale. Ab der KO-Phase alle Spiele auf 2 Gewinnsätze.",
   "modus": "1 Satz auf 25 – Platzierungsspiele 2 Gewinnsätze",
   "zurueck": {
     "text": "TS Hohenems Volleyball",

@@ -110,21 +110,17 @@ function planZehn() {
   // Runden mit nur zwei Spielen laufen auf Feld 1 und 3, Feld 2 bleibt frei (Simons Wunsch 25.11.)
   const FELD_ZU_ZWEIT = [1, 3];
   for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, r.spiele.length === 2 ? FELD_ZU_ZWEIT[f] : f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
-  // Nach der Vorrunde 20 min Pause für die Auswertung (turnier.json „pause“), dann Überkreuz 3./4. und Halbfinale auf Feld 1+3.
-  // Halbfinalisten haben bis zum Halbfinale frei, Überkreuz-Teams danach. Schiri: Überkreuz die Gruppenfünften,
-  // Halbfinale die Überkreuz-Sieger (bleiben auf ihrem Feld, Simons Wunsch 25.11.).
-  neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 5 });   // S21
-  neu(8, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 });   // S22
-  neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S21' });                // S23
-  neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { s: 'S22' });                // S24
-  // Platzierung auf 2 Gewinnsätze: um Platz 9, 7, 5, dann um Platz 3 und Finale
-  neu(10, 1, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S23' }, 2);       // S25
-  neu(10, 2, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);               // S26
-  neu(10, 3, 'platz', 'Spiel um Platz 5', { s: 'S21' }, { s: 'S22' }, { s: 'S24' }, 2);               // S27
-  neu(11, 3, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S24' }, { s: 'S26' }, 2);               // S28
-  neu(11, 1, 'platz', 'Finale', { s: 'S23' }, { s: 'S24' }, { s: 'S27' }, 2);                         // S29
-  // Anzeige um 14:00: Finale zuerst
-  spiele.push(spiele.splice(spiele.findIndex((sp) => sp.id === 'S28'), 1)[0]);
+  // Seit 26.11. (Simons Wunsch): ab der KO-Phase alles auf 2 Gewinnsätze (Runden à 50 min). Überkreuz 3./4.; dann Halbfinale
+  // auf Feld 1+3 und daneben Platz 9 auf Feld 2; dann Platz 7, 5, 3 gleichzeitig; zum Schluss das Finale allein.
+  neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 5 }, 2);   // S21
+  neu(8, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 }, 2);   // S22
+  neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S21' }, 2);                // S23
+  neu(9, 2, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S21' }, 2);          // S24
+  neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { s: 'S22' }, 2);                // S25
+  neu(10, 1, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);                 // S26
+  neu(10, 2, 'platz', 'Spiel um Platz 5', { s: 'S21' }, { s: 'S22' }, { s: 'S24' }, 2);                 // S27
+  neu(10, 3, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S25' }, { s: 'S23' }, 2);                 // S28
+  neu(11, 1, 'platz', 'Finale', { s: 'S23' }, { s: 'S25' }, { s: 'S27' }, 2);                           // S29
   return spiele;
 }
 
@@ -176,7 +172,7 @@ function planRechnen() {
 
 /** Rangfolge der Plätze aus den Platzierungsspielen: Spiel-ID -> [Platz Sieger, Platz Verlierer] */
 const PLAETZE = { '12': { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] }, '9': { S37: [1, 2] },
-  '10': { S29: [1, 2], S28: [3, 4], S27: [5, 6], S26: [7, 8], S25: [9, 10] },
+  '10': { S29: [1, 2], S28: [3, 4], S27: [5, 6], S26: [7, 8], S24: [9, 10] },
   '10v': { S33: [1, 2], S31: [3, 4], S32: [5, 6], S28: [7, 8], S24: [9, 10] } };
 // Formate im 25-min-Raster: Spiele auf 2 Gewinnsätze laufen über mehrere Zeilen, die Zeile selbst bleibt 25 min
 const RASTER = { '10v': true };
