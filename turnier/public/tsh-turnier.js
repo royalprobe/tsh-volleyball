@@ -219,7 +219,9 @@
       + '<div class="runden">'
       + runden().map(function (r) {
         return rundeHtml(r, r === akt) + (daten.pause && r === daten.pause.nach
-          ? '<div class="runde pause"><div class="r-zeit">' + h(daten.pause.von) + '<small>Uhr</small></div><div class="p-text">' + h(daten.pause.text || 'Mittagspause') + ' bis ' + h(daten.pause.bis) + ' Uhr</div></div>' : '');
+          ? (daten.pause.text   // eigener Text (z. B. „Vorrunde beendet“): ohne Uhrzeit
+            ? '<div class="runde pause"><div class="r-zeit"></div><div class="p-text">' + h(daten.pause.text) + '</div></div>'
+            : '<div class="runde pause"><div class="r-zeit">' + h(daten.pause.von) + '<small>Uhr</small></div><div class="p-text">Mittagspause bis ' + h(daten.pause.bis) + ' Uhr</div></div>') : '');
       }).join('') + '</div></section>'
       + (pin ? '' : '<div class="fuss"><span></span><button class="knopf klein" data-ein>Ergebnisse eintragen</button></div>')
       + '</div>';

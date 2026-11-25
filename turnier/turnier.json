@@ -21,7 +21,7 @@
   "pause": {
     "nach": 7,
     "minuten": 20,
-    "text": "Pause – Auswertung der Vorrunde"
+    "text": "Vorrunde beendet"
   },
   "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 20 Minuten Pause für die Auswertung. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze.",
   "modus": "Gruppen 1 Satz auf 25, Platzierung 2 Gewinnsätze",

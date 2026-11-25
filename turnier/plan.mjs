@@ -282,7 +282,7 @@ export function stand(turnier, ergebnisse) {
   if (FORMAT === '9' && tab.A.komplett) tab.A.zeilen.slice(2).forEach((z) => endstand.push({ platz: z.platz, team: z.id }));
   endstand.sort((a, b) => a.platz - b.platz);
   return { format: FORMAT, name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: uhr(Math.max(...spiele.map(spielEnde))),
-    pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + dauer(pause.nach)), bis: uhr(minute(pause.nach) + dauer(pause.nach) + pause.minuten), text: pause.text || 'Mittagspause' } : null,
+    pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + dauer(pause.nach)), bis: uhr(minute(pause.nach) + dauer(pause.nach) + pause.minuten), text: pause.text || null } : null,
     erklaerung: turnier.erklaerung || null, zeitraum: turnier.zeitraum || null, zurueck: turnier.zurueck || null, jimdoKopfAusblenden: !!turnier.jimdoKopfAusblenden, minuten: takt,
     modus: turnier.modus, teams: Object.fromEntries(Object.values(tab).flatMap((t) => t.zeilen).map((z) => z.id).sort((a, b) => a.localeCompare(b, 'de', { numeric: true })).map((id) => [id, teams[id] || `Team ${id}`])),
     spiele: raus, tabellen: tab, endstand };
