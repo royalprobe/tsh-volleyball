@@ -95,7 +95,7 @@
     '.s-schiri{margin-top:2px;font-size:.72em;color:var(--grau)}',
     // Tabellen
     '.gruppen{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gruppen.eine{grid-template-columns:minmax(0,640px)}',
-    '.runde.pause .r-zeit{background:transparent;color:var(--grau)}.runde.pause .r-zeit small{color:var(--grau-2)}',
+    '.runde.pause.voll .p-text{grid-column:1/-1;justify-content:center;text-align:center}.runde.pause .r-zeit{background:transparent;color:var(--grau)}.runde.pause .r-zeit small{color:var(--grau-2)}',
     '.p-text{display:flex;align-items:center;padding:12px 16px;border-radius:12px;border:2px dashed #cfd8e3;color:var(--grau);font-weight:700}',
     '.kachel{min-width:0;padding:16px 18px;background:#fff;border-radius:var(--r)}',
     '.k-kopf{display:flex;justify-content:space-between;gap:10px;margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--rand);font-size:.74em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blau)}',
@@ -149,7 +149,7 @@
     '.fehler{color:var(--rot);font-weight:700;font-size:.88em}',
     '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel,.felder .laeuft{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
     '@container (max-width:640px){.gruppen{grid-template-columns:1fr}}',
-    '@container (max-width:540px){.runde.pause .r-zeit:empty{display:none}.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
+    '@container (max-width:540px){.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
   ].join('\n');
 
   var host, wurzel, daten = null, mein = '', pin = '', variante = '', wahlOffen = false;
@@ -220,7 +220,7 @@
       + runden().map(function (r) {
         return rundeHtml(r, r === akt) + (daten.pause && r === daten.pause.nach
           ? (daten.pause.text   // eigener Text (z. B. „Vorrunde beendet“): ohne Uhrzeit
-            ? '<div class="runde pause"><div class="r-zeit"></div><div class="p-text">' + h(daten.pause.text) + '</div></div>'
+            ? '<div class="runde pause voll"><div class="p-text">' + h(daten.pause.text) + '</div></div>'
             : '<div class="runde pause"><div class="r-zeit">' + h(daten.pause.von) + '<small>Uhr</small></div><div class="p-text">Mittagspause bis ' + h(daten.pause.bis) + ' Uhr</div></div>') : '');
       }).join('') + '</div></section>'
       + (pin ? '' : '<div class="fuss"><span></span><button class="knopf klein" data-ein>Ergebnisse eintragen</button></div>')
