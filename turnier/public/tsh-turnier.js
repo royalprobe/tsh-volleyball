@@ -149,7 +149,7 @@
     '.fehler{color:var(--rot);font-weight:700;font-size:.88em}',
     '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel,.felder .laeuft{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
     '@container (max-width:640px){.gruppen{grid-template-columns:1fr}}',
-    '@container (max-width:540px){.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
+    '@container (max-width:540px){.runde.pause .r-zeit:empty{display:none}.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
   ].join('\n');
 
   var host, wurzel, daten = null, mein = '', pin = '', variante = '', wahlOffen = false;
