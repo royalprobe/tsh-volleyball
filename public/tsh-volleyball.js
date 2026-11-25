@@ -207,6 +207,8 @@
     '.person small{display:block;font-size:.72em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--akzent)}',
     '.person b{display:block;font-size:1.05em;color:#0f172a}',
     '.person a{font-size:.84em;color:var(--blau);text-decoration:underline;text-underline-offset:2px;word-break:break-all}',
+    '.zurueck{align-self:center;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;font-size:.85em;font-weight:700;color:var(--grau);text-decoration:none}',
+    '.zurueck:hover{background:var(--hell);color:var(--blau)}.zurueck svg{width:16px;height:16px}',
     '.fuss{margin:-8px 4px 0 0;font-size:.72em;color:var(--grau-2);text-align:right}',
     '.fehler{padding:16px 18px;border-radius:var(--r);background:var(--hell);color:var(--grau)}',
     '@media (prefers-reduced-motion:reduce){.live i{animation:none}.karte,.knopf{transition:none}}',
@@ -255,7 +257,8 @@
       + '</div>' + (team ? detailHtml(teamVon(team), inhalt) : kartenHtml()) + '</section>'
       + '<section class="abschnitt" id="spiele"><div class="a-kopf"><div><div class="t">Ergebnisse &amp; Termine' + (team ? ' · ' + h(teamVon(team).titel) : '') + '</div></div>'
       + (team ? kalenderHtml(teamVon(team)) : '') + '</div>'
-      + spieleHtml() + '</section>' + archivHtml(inhalt) + '</div>';
+      + spieleHtml() + '</section>' + archivHtml(inhalt)
+      + (inhalt.startseite ? '<a class="zurueck" href="' + h(inhalt.startseite) + '">' + PFEIL_ICON + 'Zur Turnerschaft Hohenems</a>' : '') + '</div>';
     p = wurzel.querySelector('.pillen');
     if (p) {
       p.scrollLeft = scroll;
@@ -289,7 +292,6 @@
         + '</div>';
     }
     return '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
-      + (inhalt.startseite ? '<a class="heim" href="' + h(inhalt.startseite) + '">' + PFEIL_ICON + 'Turnerschaft Hohenems</a>' : '')
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<span class="saison">Saison ' + h(daten.saison) + '</span>'
       + '<div class="knoepfe">' + (inhalt.mail ? '<a class="knopf voll" href="mailto:' + h(inhalt.mail) + '">' + MAIL_ICON + 'Schreib uns</a>' : '')
