@@ -76,7 +76,7 @@ function planNeun() {
 const PLAN_10 = [{"runde":1,"spiele":[["B4","B5"],["B1","B2"],["A2","A5"]],"schiri":["A4","A1","B3"]},{"runde":2,"spiele":[["A2","A4"],["A1","A3"],["B3","B5"]],"schiri":["A5","B2","B4"]},{"runde":3,"spiele":[["A4","A5"],["B2","B3"],["B1","B4"]],"schiri":["A2","A3","B5"]},{"runde":4,"spiele":[["A1","A2"],["A3","A5"],["B1","B5"]],"schiri":["A4","B4","B2"]},{"runde":5,"spiele":[["A1","A4"],["B3","B4"],["B2","B5"]],"schiri":["B1","A3","A5"]},{"runde":6,"spiele":[["B1","B3"],["A3","A4"],["B2","B4"]],"schiri":["A2","A1","B5"]},{"runde":7,"spiele":[["A2","A3"],["A1","A5"]],"schiri":["B1","B3"]}];
 // Variante "10v" (zum Ansehen, 25.11.): Gruppensieger direkt ins Halbfinale. 4. gegen 5. der anderen Gruppe:
 // Verlierer spielen um Platz 9, Sieger gegen die Verlierer des Viertelfinales (2. gegen 3.) um Platz 5–8.
-// Viertelfinal-Sieger ins Halbfinale. Der Gruppenfünfte kann also höchstens 5. werden, der Gruppendritte noch 1.
+// Viertelfinal-Sieger ins Halbfinale; die Spiele um Platz 5–8 kommen vor dem Halbfinale (Simons Wunsch). Der Gruppenfünfte kann also höchstens 5. werden, der Gruppendritte noch 1.
 // Raster 25 min, Spiele auf 2 Gewinnsätze belegen ihr Feld 50 min (über die nächste Zeile hinweg).
 // Zeiten und Schiedsgericht per Suche über alle Spielausgänge gefunden: mit diesem Ablauf geht es nicht kürzer als bis 15:10.
 function planZehnVariante() {
@@ -87,17 +87,17 @@ function planZehnVariante() {
   for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, r.spiele.length === 2 ? FELD_ZU_ZWEIT[f] : f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
   neu(8, 1, 'kreuz', '4. gegen 5.', { g: 'A', p: 4 }, { g: 'B', p: 5 }, { g: 'B', p: 2 });          // S21 12:15
   neu(8, 3, 'kreuz', '4. gegen 5.', { g: 'B', p: 4 }, { g: 'A', p: 5 }, { g: 'A', p: 2 });          // S22
-  neu(9, 1, 'kreuz', 'Viertelfinale', { g: 'B', p: 2 }, { g: 'A', p: 3 }, { g: 'A', p: 1 });        // S23 12:40
-  neu(9, 2, 'platz', 'Spiel um Platz 9', { v: 'S21' }, { v: 'S22' }, { s: 'S21' }, 2);             // S24 12:40–13:30
-  neu(9, 3, 'kreuz', 'Viertelfinale', { g: 'A', p: 2 }, { g: 'B', p: 3 }, { g: 'B', p: 1 });        // S25
-  neu(10, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { s: 'S23' }, { v: 'S23' });                  // S26 13:05
-  neu(10, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { s: 'S25' }, { v: 'S25' });                  // S27
-  neu(11, 1, 'platz', 'Spiel um Platz 3', { v: 'S26' }, { v: 'S27' }, { s: 'S26' }, 2);             // S28 13:30–14:20
-  neu(11, 2, 'kreuz', 'um Platz 5–8', { s: 'S21' }, { v: 'S23' }, { v: 'S24' });         // S29 13:30
-  neu(11, 3, 'kreuz', 'um Platz 5–8', { s: 'S22' }, { v: 'S25' }, { s: 'S24' });         // S30
-  neu(12, 2, 'platz', 'Spiel um Platz 7', { v: 'S29' }, { v: 'S30' }, { v: 'S24' }, 2);             // S31 13:55–14:45
-  neu(12, 3, 'platz', 'Spiel um Platz 5', { s: 'S29' }, { s: 'S30' }, { s: 'S24' }, 2);             // S32
-  neu(13, 1, 'platz', 'Finale', { s: 'S26' }, { s: 'S27' }, { v: 'S28' }, 2);                       // S33 14:20–15:10
+  neu(9, 1, 'kreuz', 'Viertelfinale', { g: 'B', p: 2 }, { g: 'A', p: 3 }, { s: 'S21' });            // S23 12:40
+  neu(9, 2, 'platz', 'Spiel um Platz 9', { v: 'S21' }, { v: 'S22' }, { g: 'A', p: 1 }, 2);         // S24 12:40–13:30
+  neu(9, 3, 'kreuz', 'Viertelfinale', { g: 'A', p: 2 }, { g: 'B', p: 3 }, { s: 'S22' });            // S25
+  neu(10, 1, 'kreuz', 'um Platz 5–8', { s: 'S21' }, { v: 'S23' }, { s: 'S23' });                    // S26 13:05
+  neu(10, 3, 'kreuz', 'um Platz 5–8', { s: 'S22' }, { v: 'S25' }, { s: 'S25' });                    // S27
+  neu(11, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { s: 'S23' }, { s: 'S26' });                  // S28 13:30
+  neu(11, 2, 'platz', 'Spiel um Platz 7', { v: 'S26' }, { v: 'S27' }, { v: 'S24' }, 2);             // S29 13:30–14:20
+  neu(11, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { s: 'S25' }, { s: 'S27' });                  // S30
+  neu(12, 3, 'platz', 'Spiel um Platz 5', { s: 'S26' }, { s: 'S27' }, { s: 'S24' }, 2);             // S31 13:55–14:45
+  neu(13, 1, 'platz', 'Finale', { s: 'S28' }, { s: 'S30' }, { s: 'S29' }, 2);                       // S32 14:20–15:10
+  neu(13, 2, 'platz', 'Spiel um Platz 3', { v: 'S28' }, { v: 'S30' }, { v: 'S29' }, 2);             // S33
   return spiele;
 }
 
@@ -175,7 +175,7 @@ function planRechnen() {
 /** Rangfolge der Plätze aus den Platzierungsspielen: Spiel-ID -> [Platz Sieger, Platz Verlierer] */
 const PLAETZE = { '12': { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] }, '9': { S37: [1, 2] },
   '10': { S29: [1, 2], S28: [3, 4], S27: [5, 6], S26: [7, 8], S25: [9, 10] },
-  '10v': { S33: [1, 2], S28: [3, 4], S32: [5, 6], S31: [7, 8], S24: [9, 10] } };
+  '10v': { S32: [1, 2], S33: [3, 4], S31: [5, 6], S29: [7, 8], S24: [9, 10] } };
 // Formate im 25-min-Raster: Spiele auf 2 Gewinnsätze laufen über mehrere Zeilen, die Zeile selbst bleibt 25 min
 const RASTER = { '10v': true };
 
