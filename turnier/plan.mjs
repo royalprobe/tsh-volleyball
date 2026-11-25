@@ -81,11 +81,12 @@ function planZehn() {
   const FELD_ZU_ZWEIT = [1, 3];
   for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, r.spiele.length === 2 ? FELD_ZU_ZWEIT[f] : f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
   // Nach der Vorrunde 20 min Pause für die Auswertung (turnier.json „pause“), dann Überkreuz 3./4. und Halbfinale auf Feld 1+3.
-  // Halbfinalisten haben bis zum Halbfinale frei, Überkreuz-Teams danach; es pfeifen beide Male die Gruppenfünften.
+  // Halbfinalisten haben bis zum Halbfinale frei, Überkreuz-Teams danach. Schiri: Überkreuz die Gruppenfünften,
+  // Halbfinale die Überkreuz-Sieger (bleiben auf ihrem Feld, Simons Wunsch 25.11.).
   neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 5 });   // S21
   neu(8, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 });   // S22
-  neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 5 });             // S23
-  neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 5 });             // S24
+  neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S21' });                // S23
+  neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { s: 'S22' });                // S24
   // Platzierung auf 2 Gewinnsätze: um Platz 9, 7, 5, dann um Platz 3 und Finale
   neu(10, 1, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S23' }, 2);       // S25
   neu(10, 2, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);               // S26
