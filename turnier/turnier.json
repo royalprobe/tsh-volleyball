@@ -6,10 +6,6 @@
   "beginn": "09:00",
   "zeitraum": "9–15 Uhr",
   "minuten": 25,
-  "takte": {
-    "10": 50,
-    "11": 50
-  },
   "pause": {
     "nach": 7,
     "minuten": 20,

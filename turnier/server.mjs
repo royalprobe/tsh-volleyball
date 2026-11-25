@@ -20,7 +20,7 @@ const PORT = Number(process.env.PORT || 8098);
 const grund = JSON.parse(await readFile(path.join(ORDNER, 'turnier.json'), 'utf8'));
 let daten = { teams: {}, ergebnisse: {}, version: 0 };
 try { daten = { ...daten, ...JSON.parse(await readFile(DATEI, 'utf8')) }; } catch { /* noch nichts gespeichert */ }
-format(grund.format || '12');   // "12" oder "9" Teams (plan.mjs)
+format(process.env.FORMAT || grund.format || '12');   // FORMAT=10v zum lokalen Ansehen einer Variante   // "12" oder "9" Teams (plan.mjs)
 const SPIEL_IDS = new Set(spielplan().map((s) => s.id));
 const TEAM_IDS = new Set(spielplan().flatMap((s) => [s.heim.t, s.gast.t]).filter(Boolean));
 

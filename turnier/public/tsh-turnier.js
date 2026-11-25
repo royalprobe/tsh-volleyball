@@ -69,7 +69,10 @@
     '.s-team{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:600;line-height:1.25}',
     '.s-team span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
     '.s-team b{font-size:1.1em;font-variant-numeric:tabular-nums}',
-    '.s-team.sieger{color:var(--blau);font-weight:800}.s-team.verlierer{color:var(--grau)}',
+    '.s-team.sieger,.s-team.verlierer{margin:0 -6px;padding:2px 6px;border-radius:7px;align-items:center}',
+    '.s-team.sieger{color:var(--blau);font-weight:800;background:#e3ecfa}',
+    '.s-team.sieger b{background:var(--blau);color:#fff;border-radius:6px;padding:1px 8px;min-width:1.9em;text-align:center}',
+    '.s-team.verlierer{color:#8a94a6;font-weight:500}.s-team.verlierer b{padding:1px 8px;min-width:1.9em;text-align:center;font-weight:600}',
     '.s-team .offen{color:var(--grau-2);font-weight:500;font-style:italic;padding-right:.25em}',
     '.s-schiri{margin-top:2px;font-size:.72em;color:var(--grau)}',
     // Tabellen
