@@ -45,7 +45,25 @@
     '.abschnitt{display:flex;flex-direction:column;gap:14px;padding:26px 28px 28px;border-radius:calc(var(--r) + 6px);background:var(--flaeche);scroll-margin-top:90px}',
     '.a-kopf{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}',
     '.a-kopf .t{font-size:1.75em;font-weight:800;line-height:1.1;color:var(--blau)}',
-    'select{font:inherit;font-weight:600;padding:7px 34px 7px 14px;border-radius:999px;border:1px solid #d6dee8;background:#fff url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'8\'%3E%3Cpath d=\'M1 1l5 5 5-5\' fill=\'none\' stroke=\'%23002266\' stroke-width=\'2\'/%3E%3C/svg%3E") no-repeat right 13px center;appearance:none;color:var(--blau);cursor:pointer}',
+    // Mein Team: eigene Auswahlliste statt <select>
+    '.wahl{position:relative}',
+    '.wahl-knopf{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;border-radius:999px;border:1px solid var(--rand);background:#fff;color:var(--blau);font-weight:700;font-size:.92em;box-shadow:0 1px 2px rgba(0,34,102,.06)}',
+    '.wahl-knopf:hover{border-color:#b9c7da}.wahl-knopf svg{width:16px;height:16px;flex:none}',
+    '.wahl-knopf.gewaehlt{background:var(--blau);border-color:var(--blau);color:#fff}',
+    '.wahl-knopf .pfeil{width:14px;height:14px;opacity:.7;transition:transform .15s}.wahl.offen .pfeil{transform:rotate(180deg)}',
+    '.wahl-liste{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:20;width:250px;max-height:min(430px,70vh);overflow:auto;padding:6px;border-radius:14px;background:#fff;border:1px solid var(--rand);box-shadow:0 14px 36px rgba(0,34,102,.2)}',
+    '.wahl.offen .wahl-liste{display:block}',
+    '.wahl-gruppe{padding:10px 10px 4px;font-size:.68em;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--grau-2)}',
+    '.wahl-liste button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:9px 10px;border-radius:9px;font-size:.92em;font-weight:600;color:#1e293b;text-align:left}',
+    '.wahl-liste button:hover{background:var(--hell)}',
+    '.wahl-liste button.an{background:#e3ecfa;color:var(--blau);font-weight:800}.wahl-liste button.an::after{content:"\\2713";font-weight:800}',
+    '.wahl-liste .alle{color:var(--grau)}',
+    // Varianten-Umschalter im Kopf
+    '.seg{align-self:flex-start;display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}',
+    '.seg button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:7px 16px;border-radius:12px;color:rgba(255,255,255,.82);font-weight:800;font-size:.88em;line-height:1.2}',
+    '.seg button small{font-weight:600;font-size:.8em;opacity:.75}',
+    '.seg button:hover{background:rgba(255,255,255,.08);color:#fff}',
+    '.seg button.an{background:#fff;color:var(--blau);box-shadow:0 2px 8px rgba(0,0,0,.18)}.seg button.an small{opacity:.7}',
     // Spielplan
     '.runden{display:flex;flex-direction:column;gap:10px}',
     '.runde{display:grid;grid-template-columns:5.2em 1fr;gap:10px;align-items:stretch}',
@@ -131,10 +149,11 @@
     '.fehler{color:var(--rot);font-weight:700;font-size:.88em}',
     '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel,.felder .laeuft{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
     '@container (max-width:640px){.gruppen{grid-template-columns:1fr}}',
-    '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
+    '@container (max-width:540px){.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
   ].join('\n');
 
-  var host, wurzel, daten = null, mein = '', pin = '';
+  var host, wurzel, daten = null, mein = '', pin = '', variante = '', wahlOffen = false;
+  try { variante = new URLSearchParams(location.search).get('variante') || localStorage.getItem('tsh-turnier-variante') || ''; } catch (e) {}
   try { pin = sessionStorage.getItem(SPEICHER) || localStorage.getItem(SPEICHER) || ''; } catch (e) {}
   try { mein = localStorage.getItem('tsh-turnier-team') || ''; } catch (e) {}
 
@@ -165,16 +184,30 @@
     var d = new Date(daten.datum + 'T12:00:00');
     var datum = TAGE[d.getDay()] + ', ' + d.getDate() + '. ' + MONATE[d.getMonth()] + ' ' + d.getFullYear();
     var rundeSp = daten.spiele.filter(function (s) { return s.runde === akt; });
-    var teamWahl = '<select data-mein aria-label="Mein Team hervorheben"><option value="">' + (mein ? 'Alle Teams' : 'Mein Team …') + '</option>'
-      + Object.keys(daten.teams).sort(function (a, b) { return name(a).localeCompare(name(b), 'de'); }).map(function (id) {
-        return '<option value="' + h(id) + '"' + (id === mein ? ' selected' : '') + '>' + h(name(id)) + '</option>'; }).join('') + '</select>';
+    var ids = Object.keys(daten.teams), gruppen = Object.keys(daten.tabellen).sort();
+    var eintrag = function (id) { return '<button type="button" role="option" data-team="' + h(id) + '"' + (id === mein ? ' class="an" aria-selected="true"' : '') + '>' + h(name(id)) + '</button>'; };
+    var sortiert = function (l) { return l.sort(function (a, b) { return name(a).localeCompare(name(b), 'de'); }); };
+    var teamWahl = '<div class="wahl' + (wahlOffen ? ' offen' : '') + '"><button type="button" class="wahl-knopf' + (mein ? ' gewaehlt' : '') + '" data-wahl aria-haspopup="listbox" aria-expanded="' + wahlOffen + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+      + h(mein ? name(mein) : 'Mein Team')
+      + '<svg class="pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
+      + '<div class="wahl-liste" role="listbox" aria-label="Mein Team hervorheben"><button type="button" role="option" class="alle' + (mein ? '' : ' an') + '" data-team="">Alle Teams</button>'
+      + (gruppen.length > 1
+        ? gruppen.map(function (g) { return '<div class="wahl-gruppe">Gruppe ' + h(g) + '</div>' + sortiert(ids.filter(function (id) { return id.charAt(0) === g; })).map(eintrag).join(''); }).join('')
+        : sortiert(ids).map(eintrag).join(''))
+      + '</div></div>';
+    var vari = daten.varianten || [];
+    var umschalter = vari.length > 1 ? '<div class="seg" role="tablist" aria-label="Turnierablauf">' + vari.map(function (v) {
+      var an = v.format === daten.variante;
+      return '<button type="button" role="tab" aria-selected="' + an + '" data-variante="' + h(v.format) + '"' + (an ? ' class="an"' : '') + '>' + h(v.name || v.format) + (v.ende ? '<small>bis ' + h(v.ende) + ' Uhr</small>' : '') + '</button>';
+    }).join('') + '</div>' : '';
     var html = '<div class="w">'
       + '<header class="hero"><span class="zeichen" aria-hidden="true"></span><div class="h-links">'
       + (daten.zurueck ? '<a class="heim" href="' + h(daten.zurueck.link) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' + h(daten.zurueck.text) + '</a>' : '')
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<div class="h-titel">' + h(daten.name) + '</div>'
-      + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn + '–' + daten.ende + ' Uhr') + '</span>'
-      + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">' + Object.keys(daten.teams).length + ' Teams · 3 Felder</span></div></div>'
+      + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(vari.length > 1 || !daten.zeitraum ? daten.beginn.replace(/^0/, '') + '–' + daten.ende + ' Uhr' : daten.zeitraum) + '</span>'
+      + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">' + Object.keys(daten.teams).length + ' Teams · 3 Felder</span></div>' + umschalter + '</div>'
       + '</header>'
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
@@ -245,7 +278,9 @@
   if (!geraet) { geraet = Math.random().toString(36).slice(2, 8); try { localStorage.setItem('tsh-turnier-geraet', geraet); } catch (e) {} }
   function kopf(p) { return { 'Content-Type': 'application/json', 'X-PIN': p, 'X-Name': encodeURIComponent(wer), 'X-Geraet': geraet }; }
   function senden(pfad, body) {
-    return fetch(BASIS + 'api/' + pfad, { method: 'POST', headers: kopf(pin), body: JSON.stringify(body || {}) })
+    body = body || {};
+    if (daten && daten.variante) body.format = daten.variante;   // Ergebnisse gehören zur angezeigten Variante
+    return fetch(BASIS + 'api/' + pfad, { method: 'POST', headers: kopf(pin), body: JSON.stringify(body) })
       .then(function (a) { return a.json().then(function (j) { if (!a.ok) throw new Error(j.fehler || 'Fehler'); return j; }); });
   }
   function pinFragen() {
@@ -326,7 +361,7 @@
   // ------------------------------------------------------------------ Laden und live bleiben
   var version = -1;
   function laden() {
-    return fetch(BASIS + 'api/stand', { cache: 'no-store' }).then(function (a) { return a.json(); }).then(function (j) { daten = j; version = j.version; jimdoKopf(j); zeichnen(); })
+    return fetch(BASIS + 'api/stand' + (variante ? '?format=' + encodeURIComponent(variante) : ''), { cache: 'no-store' }).then(function (a) { return a.json(); }).then(function (j) { daten = j; version = j.version; jimdoKopf(j); zeichnen(); })
       .catch(function () { if (!daten) wurzel.querySelector('.inhalt').innerHTML = '<p>Der Spielplan konnte gerade nicht geladen werden. Bitte gleich nochmal versuchen.</p>'; });
   }
   function live() {
@@ -353,6 +388,16 @@
     wurzel = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
     wurzel.innerHTML = '<style>' + CSS + '\n.logo{--logo:url("' + BASIS + 'logo.png")}.zeichen{--zeichen:url("' + BASIS + 'ball-zeichen.png")}</style><div class="inhalt"><p>Spielplan wird geladen …</p></div>';
     wurzel.addEventListener('click', function (e) {
+      var w = e.target.closest('[data-wahl],[data-team],[data-variante]');
+      if (w && w.hasAttribute('data-wahl')) { wahlOffen = !wahlOffen; zeichnen(); return; }
+      if (w && w.hasAttribute('data-team')) { mein = w.getAttribute('data-team'); wahlOffen = false; try { localStorage.setItem('tsh-turnier-team', mein); } catch (x) {} zeichnen(); return; }
+      if (wahlOffen) { wahlOffen = false; zeichnen(); }
+      if (w && w.hasAttribute('data-variante')) {
+        variante = w.getAttribute('data-variante');
+        try { localStorage.setItem('tsh-turnier-variante', variante); } catch (x) {}
+        laden();
+        return;
+      }
       var z = e.target.closest('[data-spiel],[data-ein],[data-aus],[data-teams],[data-protokoll]');
       if (!z) return;
       if (z.hasAttribute('data-spiel')) ergebnisEintragen(z.getAttribute('data-spiel'));
@@ -361,9 +406,9 @@
       else if (z.hasAttribute('data-teams')) teamsAendern();
       else if (z.hasAttribute('data-protokoll')) protokollZeigen();
     });
-    wurzel.addEventListener('change', function (e) {
-      if (e.target.hasAttribute('data-mein')) { mein = e.target.value; try { localStorage.setItem('tsh-turnier-team', mein); } catch (x) {} zeichnen(); }
-    });
+    // Liste schließen bei Klick außerhalb oder Escape
+    document.addEventListener('click', function (e) { if (wahlOffen && e.composedPath && e.composedPath().indexOf(host) < 0) { wahlOffen = false; zeichnen(); } });
+    document.addEventListener('keydown', function (e) { if (wahlOffen && e.key === 'Escape') { wahlOffen = false; zeichnen(); } });
     laden().then(live);
     setInterval(function () { if (daten && daten.datum === heute()) zeichnen(); }, 60000);   // laufende Runde wandert mit der Uhr
   }

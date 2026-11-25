@@ -1,6 +1,18 @@
 {
   "name": "U14-Turnier",
   "format": "10",
+  "varianten": [
+    {
+      "format": "10",
+      "name": "Standardvariante"
+    },
+    {
+      "format": "10v",
+      "name": "Verlängerte Variante",
+      "pause": 10,
+      "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 10 Minuten Pause. Die Gruppensieger stehen direkt im Halbfinale. 2. gegen 3. der anderen Gruppe spielen im Viertelfinale um den Einzug ins Halbfinale. 4. gegen 5. der anderen Gruppe: Die Sieger spielen gegen die Viertelfinal-Verlierer um Platz 5–8, die Verlierer um Platz 9. Platzierungsspiele und Finale auf 2 Gewinnsätze. Bei nur zwei Spielen bleibt Feld 2 frei."
+    }
+  ],
   "datum": "2026-11-28",
   "ort": "",
   "beginn": "09:00",

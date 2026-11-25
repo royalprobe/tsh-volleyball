@@ -46,12 +46,12 @@ function schiriWahl(kandidaten) {
 
 /** Format wählen ("12" oder "9"); ohne Wert: das aktuelle */
 let FORMAT = '12';
-export function format(f) { if (f && String(f) !== FORMAT) { FORMAT = String(f); plan = null; } return FORMAT; }
+export function format(f) { if (f) FORMAT = String(f); return FORMAT; }
 
 /** Alle Spiele mit Runde, Feld, Phase, Teilnehmern und Schiedsgericht (einmal gerechnet, danach aus dem Speicher) */
-let plan = null;
+const plaene = {};   // je Format einmal gerechnet
 export function spielplan() {
-  if (!plan) plan = FORMAT === '10v' ? planZehnVariante() : FORMAT === '10' ? planZehn() : FORMAT === '9' ? planNeun() : planRechnen();
+  const plan = plaene[FORMAT] ||= FORMAT === '10v' ? planZehnVariante() : FORMAT === '10' ? planZehn() : FORMAT === '9' ? planNeun() : planRechnen();
   return plan.map((sp) => ({ ...sp }));
 }
 

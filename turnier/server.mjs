@@ -20,9 +20,23 @@ const PORT = Number(process.env.PORT || 8098);
 const grund = JSON.parse(await readFile(path.join(ORDNER, 'turnier.json'), 'utf8'));
 let daten = { teams: {}, ergebnisse: {}, version: 0 };
 try { daten = { ...daten, ...JSON.parse(await readFile(DATEI, 'utf8')) }; } catch { /* noch nichts gespeichert */ }
-format(process.env.FORMAT || grund.format || '12');   // FORMAT=10v zum lokalen Ansehen einer Variante   // "12" oder "9" Teams (plan.mjs)
-const SPIEL_IDS = new Set(spielplan().map((s) => s.id));
-const TEAM_IDS = new Set(spielplan().flatMap((s) => [s.heim.t, s.gast.t]).filter(Boolean));
+// Varianten (turnier.json „varianten“): mehrere Formate gleichzeitig, im Widget per Umschalter wählbar.
+// Gruppenspiele teilen sich die Ergebnisse, KO-Spiele werden je Variante gespeichert („10v:S21“).
+const STANDARD = process.env.FORMAT || grund.format || '12';   // FORMAT=10v zum lokalen Ansehen einer Variante
+const VARIANTEN = (grund.varianten || [{ format: STANDARD, name: '' }]).map((v) => ({ format: String(v.format), name: v.name || '', pause: v.pause, erklaerung: v.erklaerung }));
+if (!VARIANTEN.some((v) => v.format === STANDARD)) VARIANTEN.unshift({ format: STANDARD, name: '' });
+const FORMATE = new Set(VARIANTEN.map((v) => v.format));
+const wahl = (f) => FORMATE.has(String(f)) ? String(f) : STANDARD;
+const plan = (f) => { format(f); return spielplan(); };
+const SPIEL_IDS = Object.fromEntries([...FORMATE].map((f) => [f, new Set(plan(f).map((s) => s.id))]));
+const TEAM_IDS = new Set([...FORMATE].flatMap((f) => plan(f).flatMap((s) => [s.heim.t, s.gast.t])).filter(Boolean));
+const schluessel = (f, id) => plan(f).find((s) => s.id === id).phase === 'gruppe' || FORMATE.size === 1 ? id : `${f}:${id}`;
+/** Ergebnisse einer Variante: Gruppenspiele gemeinsam, KO-Spiele je Variante (alte Einträge ohne Präfix zählen für den Standard) */
+const ergebnisseVon = (f) => {
+  const e = {};
+  for (const s of plan(f)) { const k = schluessel(f, s.id), w = daten.ergebnisse[k] ?? (f === STANDARD ? daten.ergebnisse[s.id] : undefined); if (w) e[s.id] = w; }
+  return e;
+};
 
 async function speichern() {
   await mkdir(DATA_DIR, { recursive: true });
@@ -35,8 +49,19 @@ async function protokoll(req, eintrag) {
   await mkdir(DATA_DIR, { recursive: true });
   await appendFile(PROTOKOLL, JSON.stringify({ zeit: new Date().toISOString(), wer, geraet, ...eintrag }) + '\n');
 }
-const spielText = (id) => { const sp = aktuell().spiele.find((s) => s.id === id); return sp ? { nr: sp.nr, titel: sp.titel, heim: sp.heim ? aktuell().teams[sp.heim] : sp.heimText, gast: sp.gast ? aktuell().teams[sp.gast] : sp.gastText } : { nr: id }; };
-const aktuell = () => ({ ...stand({ ...grund, teams: { ...grund.teams, ...daten.teams } }, daten.ergebnisse), version: daten.version });
+const spielText = (f, id) => { const a = aktuell(f), sp = a.spiele.find((s) => s.id === id); return sp ? { variante: FORMATE.size > 1 ? f : undefined, nr: sp.nr, titel: sp.titel, heim: sp.heim ? a.teams[sp.heim] : sp.heimText, gast: sp.gast ? a.teams[sp.gast] : sp.gastText } : { nr: id }; };
+const aktuell = (f = STANDARD) => {
+  f = wahl(f);
+  const v = VARIANTEN.find((x) => x.format === f);
+  const pause = grund.pause && v.pause !== undefined ? { ...grund.pause, minuten: v.pause } : grund.pause;
+  const ergebnisse = ergebnisseVon(f);
+  format(f);
+  return { ...stand({ ...grund, pause, erklaerung: v.erklaerung || grund.erklaerung, teams: { ...grund.teams, ...daten.teams } }, ergebnisse), version: daten.version,
+    variante: f, varianten: VARIANTEN.length > 1 ? VARIANTEN.map((x) => ({ format: x.format, name: x.name, ende: ENDE[x.format] })) : [] };
+};
+
+const ENDE = {};   // Ende je Variante (hängt nicht von Ergebnissen ab)
+for (const v of VARIANTEN) ENDE[v.format] = aktuell(v.format).ende;
 
 // ---- Live: Server-Sent Events
 const zuhoerer = new Set();
@@ -70,7 +95,7 @@ createServer(async (req, res) => {
       res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type, X-PIN, X-Name, X-Geraet', 'Access-Control-Max-Age': '86400' });
       return res.end();
     }
-    if (req.method === 'GET' && url.pathname === '/api/stand') return json(res, 200, aktuell());
+    if (req.method === 'GET' && url.pathname === '/api/stand') return json(res, 200, aktuell(url.searchParams.get('format')));
     if (req.method === 'GET' && url.pathname === '/api/live') {
       res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store', Connection: 'keep-alive', 'Access-Control-Allow-Origin': '*' });
       res.write(`data: ${JSON.stringify({ version: daten.version })}\n\n`);
@@ -95,19 +120,22 @@ createServer(async (req, res) => {
         try { zeilen = (await readFile(PROTOKOLL, 'utf8')).split('\n').filter(Boolean).map((z) => JSON.parse(z)); } catch { /* noch leer */ }
         return json(res, 200, { eintraege: zeilen.reverse() });
       }
+      const f = wahl(b.format);
       if (url.pathname === '/api/ergebnis') {
-        if (!SPIEL_IDS.has(b.spiel)) return json(res, 400, { fehler: 'Unbekanntes Spiel.' });
-        const vorher = daten.ergebnisse[b.spiel] || null;
+        if (!SPIEL_IDS[f].has(b.spiel)) return json(res, 400, { fehler: 'Unbekanntes Spiel.' });
+        const k = schluessel(f, b.spiel);
+        const vorher = ergebnisseVon(f)[b.spiel] || null;
         let nachher = null;
         if (b.ergebnis !== null) {
-          const gs = spielplan().find((x) => x.id === b.spiel).gewinnsaetze || 1;
+          const gs = plan(f).find((x) => x.id === b.spiel).gewinnsaetze || 1;
           nachher = !Array.isArray(b.ergebnis) ? null : gs === 1 ? b.ergebnis.map(Number) : b.ergebnis.map((x) => Array.isArray(x) ? x.map(Number) : x);
-          const f = pruefen(nachher, gs);
-          if (f) return json(res, 400, { fehler: f });
+          const fehler = pruefen(nachher, gs);
+          if (fehler) return json(res, 400, { fehler });
         }
-        if (JSON.stringify(vorher) === JSON.stringify(nachher)) return json(res, 200, aktuell());   // nichts geändert
-        await protokoll(req, { art: 'ergebnis', spiel: spielText(b.spiel), vorher, nachher });
-        if (nachher) daten.ergebnisse[b.spiel] = nachher; else delete daten.ergebnisse[b.spiel];
+        if (JSON.stringify(vorher) === JSON.stringify(nachher)) return json(res, 200, aktuell(f));   // nichts geändert
+        await protokoll(req, { art: 'ergebnis', spiel: spielText(f, b.spiel), vorher, nachher });
+        if (k !== b.spiel && f === STANDARD) delete daten.ergebnisse[b.spiel];   // alter Eintrag ohne Präfix
+        if (nachher) daten.ergebnisse[k] = nachher; else delete daten.ergebnisse[k];
       } else if (url.pathname === '/api/teams') {
         const aenderungen = [];
         for (const [id, name] of Object.entries(b.teams || {})) {
@@ -117,13 +145,13 @@ createServer(async (req, res) => {
           aenderungen.push({ team: id, vorher: alt || null, nachher: n || null });
           if (n) daten.teams[id] = n; else delete daten.teams[id];
         }
-        if (!aenderungen.length) return json(res, 200, aktuell());
+        if (!aenderungen.length) return json(res, 200, aktuell(f));
         await protokoll(req, { art: 'teams', aenderungen });
       } else return json(res, 404, { fehler: 'Unbekannt.' });
       daten.version++;
       await speichern();
       senden();
-      return json(res, 200, aktuell());
+      return json(res, 200, aktuell(f));
     }
     if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/ball-zeichen.png', '/'].includes(url.pathname)) {
       const datei = url.pathname === '/' ? 'vorschau.html' : url.pathname.slice(1);
