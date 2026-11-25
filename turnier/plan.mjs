@@ -74,27 +74,30 @@ function planNeun() {
 // Dornbirn Jungs in Runde 1, jedes Team pfeift 2-mal, Teams desselben Vereins in A und B spielen nur 1-mal gleichzeitig).
 // Teams A1…A5 = Gruppe A, B1…B5 = Gruppe B.
 const PLAN_10 = [{"runde":1,"spiele":[["B4","B5"],["B1","B2"],["A2","A5"]],"schiri":["A4","A1","B3"]},{"runde":2,"spiele":[["A2","A4"],["A1","A3"],["B3","B5"]],"schiri":["A5","B2","B4"]},{"runde":3,"spiele":[["A4","A5"],["B2","B3"],["B1","B4"]],"schiri":["A2","A3","B5"]},{"runde":4,"spiele":[["A1","A2"],["A3","A5"],["B1","B5"]],"schiri":["A4","B4","B2"]},{"runde":5,"spiele":[["A1","A4"],["B3","B4"],["B2","B5"]],"schiri":["B1","A3","A5"]},{"runde":6,"spiele":[["B1","B3"],["A3","A4"],["B2","B4"]],"schiri":["A2","A1","B5"]},{"runde":7,"spiele":[["A2","A3"],["A1","A5"]],"schiri":["B1","B3"]}];
-// Variante "10v" (zum Ansehen, 25.11.): Gruppensieger direkt ins Halbfinale. Zuerst 4. gegen 5. der anderen Gruppe,
-// dann Viertelfinale 2. gegen 3. der anderen Gruppe um den Einzug ins Halbfinale; danach um Platz 9, 7, 5 und
-// Platz 3/Finale auf 2 Gewinnsätze. Schiri bleibt am Feld: jeweils das Team, das dort zuletzt gewonnen/verloren hat.
+// Variante "10v" (zum Ansehen, 25.11.): Gruppensieger direkt ins Halbfinale. 4. gegen 5. der anderen Gruppe:
+// Verlierer spielen um Platz 9, Sieger gegen die Verlierer des Viertelfinales (2. gegen 3.) um Platz 5–8.
+// Viertelfinal-Sieger ins Halbfinale. Der Gruppenfünfte kann also höchstens 5. werden, der Gruppendritte noch 1.
+// Raster 25 min, Spiele auf 2 Gewinnsätze belegen ihr Feld 50 min (über die nächste Zeile hinweg).
+// Zeiten und Schiedsgericht per Suche über alle Spielausgänge gefunden: mit diesem Ablauf geht es nicht kürzer als bis 15:10.
 function planZehnVariante() {
   const spiele = [];
   let nr = 0;
   const neu = (runde, feld, phase, titel, heim, gast, schiri, gewinnsaetze = 1) => spiele.push({ id: `S${++nr}`, nr, runde, feld, phase, titel, heim, gast, schiri, gewinnsaetze });
   const FELD_ZU_ZWEIT = [1, 3];
   for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, r.spiele.length === 2 ? FELD_ZU_ZWEIT[f] : f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
-  neu(8, 1, 'kreuz', 'Überkreuz Platz 7–10', { g: 'A', p: 4 }, { g: 'B', p: 5 }, { g: 'A', p: 1 });   // S21
-  neu(8, 3, 'kreuz', 'Überkreuz Platz 7–10', { g: 'B', p: 4 }, { g: 'A', p: 5 }, { g: 'B', p: 1 });   // S22
-  neu(9, 1, 'kreuz', 'Viertelfinale', { g: 'B', p: 2 }, { g: 'A', p: 3 }, { s: 'S21' });              // S23
-  neu(9, 3, 'kreuz', 'Viertelfinale', { g: 'A', p: 2 }, { g: 'B', p: 3 }, { s: 'S22' });              // S24
-  neu(10, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { s: 'S23' }, { v: 'S23' });                    // S25
-  neu(10, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { s: 'S24' }, { v: 'S24' });                    // S26
-  neu(11, 1, 'platz', 'Spiel um Platz 9', { v: 'S21' }, { v: 'S22' }, { v: 'S25' }, 2);               // S27
-  neu(11, 2, 'platz', 'Spiel um Platz 7', { s: 'S21' }, { s: 'S22' }, { v: 'S26' }, 2);               // S28
-  neu(11, 3, 'platz', 'Spiel um Platz 5', { v: 'S23' }, { v: 'S24' }, { s: 'S26' }, 2);               // S29
-  neu(12, 3, 'platz', 'Spiel um Platz 3', { v: 'S25' }, { v: 'S26' }, { s: 'S28' }, 2);               // S30
-  neu(12, 1, 'platz', 'Finale', { s: 'S25' }, { s: 'S26' }, { s: 'S29' }, 2);                         // S31
-  spiele.push(spiele.splice(spiele.findIndex((sp) => sp.id === 'S30'), 1)[0]);   // Anzeige: Finale zuerst
+  neu(8, 1, 'kreuz', '4. gegen 5.', { g: 'A', p: 4 }, { g: 'B', p: 5 }, { g: 'B', p: 2 });          // S21 12:15
+  neu(8, 3, 'kreuz', '4. gegen 5.', { g: 'B', p: 4 }, { g: 'A', p: 5 }, { g: 'A', p: 2 });          // S22
+  neu(9, 1, 'kreuz', 'Viertelfinale', { g: 'B', p: 2 }, { g: 'A', p: 3 }, { g: 'A', p: 1 });        // S23 12:40
+  neu(9, 2, 'platz', 'Spiel um Platz 9', { v: 'S21' }, { v: 'S22' }, { s: 'S21' }, 2);             // S24 12:40–13:30
+  neu(9, 3, 'kreuz', 'Viertelfinale', { g: 'A', p: 2 }, { g: 'B', p: 3 }, { g: 'B', p: 1 });        // S25
+  neu(10, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { s: 'S23' }, { v: 'S23' });                  // S26 13:05
+  neu(10, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { s: 'S25' }, { v: 'S25' });                  // S27
+  neu(11, 1, 'platz', 'Spiel um Platz 3', { v: 'S26' }, { v: 'S27' }, { s: 'S26' }, 2);             // S28 13:30–14:20
+  neu(11, 2, 'kreuz', 'um Platz 5–8', { s: 'S21' }, { v: 'S23' }, { v: 'S24' });         // S29 13:30
+  neu(11, 3, 'kreuz', 'um Platz 5–8', { s: 'S22' }, { v: 'S25' }, { s: 'S24' });         // S30
+  neu(12, 2, 'platz', 'Spiel um Platz 7', { v: 'S29' }, { v: 'S30' }, { v: 'S24' }, 2);             // S31 13:55–14:45
+  neu(12, 3, 'platz', 'Spiel um Platz 5', { s: 'S29' }, { s: 'S30' }, { s: 'S24' }, 2);             // S32
+  neu(13, 1, 'platz', 'Finale', { s: 'S26' }, { s: 'S27' }, { v: 'S28' }, 2);                       // S33 14:20–15:10
   return spiele;
 }
 
@@ -172,7 +175,9 @@ function planRechnen() {
 /** Rangfolge der Plätze aus den Platzierungsspielen: Spiel-ID -> [Platz Sieger, Platz Verlierer] */
 const PLAETZE = { '12': { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] }, '9': { S37: [1, 2] },
   '10': { S29: [1, 2], S28: [3, 4], S27: [5, 6], S26: [7, 8], S25: [9, 10] },
-  '10v': { S31: [1, 2], S30: [3, 4], S29: [5, 6], S28: [7, 8], S27: [9, 10] } };
+  '10v': { S33: [1, 2], S28: [3, 4], S32: [5, 6], S31: [7, 8], S24: [9, 10] } };
+// Formate im 25-min-Raster: Spiele auf 2 Gewinnsätze laufen über mehrere Zeilen, die Zeile selbst bleibt 25 min
+const RASTER = { '10v': true };
 
 const satzOk = (e) => Array.isArray(e) && e.length === 2 && Number.isInteger(e[0]) && Number.isInteger(e[1]) && e[0] !== e[1];
 /** fertiges Ergebnis? 1 Satz: [Heim, Gast]; 2 Gewinnsätze: [[Heim, Gast], …] bis ein Team 2 Sätze hat */
@@ -251,13 +256,13 @@ export function stand(turnier, ergebnisse) {
   const pause = turnier.pause && turnier.pause.nach ? turnier.pause : null;   // { nach: Runde, minuten }
   const uhr = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
   // Runden mit Spielen auf 2 Gewinnsätze dauern doppelt so lang (turnier.json „takte“ kann einzelne Runden überschreiben)
-  const dauer = (runde) => (turnier.takte && turnier.takte[runde]) || (spiele.some((sp) => sp.runde === runde && (sp.gewinnsaetze || 1) > 1) ? 2 * takt : takt);
+  const dauer = (runde) => (turnier.takte && turnier.takte[runde]) || (!RASTER[FORMAT] && spiele.some((sp) => sp.runde === runde && (sp.gewinnsaetze || 1) > 1) ? 2 * takt : takt);
+  const spielEnde = (sp) => minute(sp.runde) + (RASTER[FORMAT] ? takt * (sp.gewinnsaetze || 1) : dauer(sp.runde));
   const minute = (runde) => { let m = hh * 60 + mm + (pause && runde > pause.nach ? pause.minuten : 0); for (let r = 1; r < runde; r++) m += dauer(r); return m; };
   const zeit = (runde) => uhr(minute(runde));
-  const letzte = Math.max(...spiele.map((sp) => sp.runde));
   const raus = spiele.map((sp) => {
     const heim = aufloesen(sp.heim), gast = aufloesen(sp.gast), schiri = aufloesen(sp.schiri);
-    return { id: sp.id, nr: sp.nr, runde: sp.runde, feld: sp.feld, zeit: zeit(sp.runde), phase: sp.phase, titel: sp.titel,
+    return { id: sp.id, nr: sp.nr, runde: sp.runde, feld: sp.feld, zeit: zeit(sp.runde), bis: uhr(spielEnde(sp)), phase: sp.phase, titel: sp.titel,
       heim, gast, schiri, heimText: heim ? null : text(sp.heim), gastText: gast ? null : text(sp.gast), schiriText: schiri ? null : text(sp.schiri),
       gewinnsaetze: sp.gewinnsaetze || 1,
       ergebnis: fertig(ergebnisse[sp.id], sp.gewinnsaetze || 1) ? stand2(ergebnisse[sp.id], sp.gewinnsaetze || 1) : null,
@@ -274,7 +279,7 @@ export function stand(turnier, ergebnisse) {
   // 9 Teams: ab Platz 3 zählt die Tabelle (sobald alle Gruppenspiele gespielt sind)
   if (FORMAT === '9' && tab.A.komplett) tab.A.zeilen.slice(2).forEach((z) => endstand.push({ platz: z.platz, team: z.id }));
   endstand.sort((a, b) => a.platz - b.platz);
-  return { format: FORMAT, name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: uhr(minute(letzte) + dauer(letzte)),
+  return { format: FORMAT, name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: uhr(Math.max(...spiele.map(spielEnde))),
     pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + dauer(pause.nach)), bis: uhr(minute(pause.nach) + dauer(pause.nach) + pause.minuten), text: pause.text || 'Mittagspause' } : null,
     erklaerung: turnier.erklaerung || null, zeitraum: turnier.zeitraum || null, zurueck: turnier.zurueck || null, jimdoKopfAusblenden: !!turnier.jimdoKopfAusblenden, minuten: takt,
     modus: turnier.modus, teams: Object.fromEntries(Object.values(tab).flatMap((t) => t.zeilen).map((z) => z.id).sort((a, b) => a.localeCompare(b, 'de', { numeric: true })).map((id) => [id, teams[id] || `Team ${id}`])),

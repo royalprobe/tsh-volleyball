@@ -52,7 +52,7 @@
     '.r-zeit{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;background:#fff;color:var(--blau);font-weight:800;line-height:1.15}',
     '.r-zeit small{font-size:.7em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--grau-2)}',
     '.runde.aktiv .r-zeit{background:var(--blau);color:#fff}.runde.aktiv .r-zeit small{color:rgba(255,255,255,.7)}',
-    '.felder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.felder .f1{grid-column:1}.felder .f2{grid-column:2}.felder .f3{grid-column:3}',
+    '.felder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:row dense;gap:10px}.felder .f1{grid-column:1}.felder .f2{grid-column:2}.felder .f3{grid-column:3}',
     '.spiel{position:relative;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:#fff;text-align:left;border:2px solid transparent;min-width:0}',
     '.spiel.kann{cursor:pointer}.spiel.kann:hover{border-color:var(--akzent)}',
     // „Mein Team“: eigene Spiele blau gefüllt, Schiri-Einsätze nur blau umrandet, alles andere tritt zurück
@@ -107,6 +107,7 @@
     'input.pin{letter-spacing:.5em;font-size:1.6em;padding:12px;text-indent:.5em}',
     '.hinweis{font-size:.78em;color:var(--grau-2)}',
     '.fehler:empty{display:none}',
+    '.laeuft{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;border:2px dashed #cfd8e6;border-radius:12px;color:var(--grau);font-size:.8em;font-weight:600}',
     '.s-saetze{font-size:.74em;color:var(--grau);font-variant-numeric:tabular-nums}',
     '.saetze{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px 10px;align-items:center;font-size:.9em}',
     '.saetze b{font-size:.85em;text-align:center;color:var(--blau);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
@@ -128,7 +129,7 @@
     '.teams-form input{font-size:.95em;text-align:left;padding:7px 10px}',
     '.zeile{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}',
     '.fehler{color:var(--rot);font-weight:700;font-size:.88em}',
-    '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
+    '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel,.felder .laeuft{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
     '@container (max-width:640px){.gruppen{grid-template-columns:1fr}}',
     '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
   ].join('\n');
@@ -208,6 +209,8 @@
           + (s.saetze ? '<div class="s-saetze">' + s.saetze.map(function (x) { return x[0] + ':' + x[1]; }).join(' · ') + '</div>' : '')
           + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + '</div>'
           + '</' + (pin ? 'button' : 'div') + '>';
+      }).join('') + daten.spiele.filter(function (x) { return x.feld && x.runde < r && x.bis && x.bis > sp[0].zeit; }).map(function (x) {
+        return '<div class="laeuft f' + x.feld + '">Feld ' + x.feld + ' · Spiel ' + x.nr + ' läuft bis ' + h(x.bis) + ' Uhr</div>';
       }).join('') + '</div></div>';
   }
 
