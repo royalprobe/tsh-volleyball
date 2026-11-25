@@ -242,8 +242,6 @@
           + (s.saetze ? '<div class="s-saetze">' + s.saetze.map(function (x) { return x[0] + ':' + x[1]; }).join(' · ') + '</div>' : '')
           + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + '</div>'
           + '</' + (pin ? 'button' : 'div') + '>';
-      }).join('') + daten.spiele.filter(function (x) { return x.feld && x.runde < r && x.bis && x.bis > sp[0].zeit; }).map(function (x) {
-        return '<div class="laeuft f' + x.feld + '">Feld ' + x.feld + ' · Spiel ' + x.nr + ' läuft bis ' + h(x.bis) + ' Uhr</div>';
       }).join('') + '</div></div>';
   }
 

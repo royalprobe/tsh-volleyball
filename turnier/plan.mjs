@@ -92,12 +92,14 @@ function planZehnVariante() {
   neu(9, 3, 'kreuz', 'Viertelfinale', { g: 'A', p: 2 }, { g: 'B', p: 3 }, { s: 'S22' });            // S25
   neu(10, 1, 'kreuz', 'um Platz 5–8', { s: 'S21' }, { v: 'S23' }, { s: 'S23' });                    // S26 13:05
   neu(10, 3, 'kreuz', 'um Platz 5–8', { s: 'S22' }, { v: 'S25' }, { s: 'S25' });                    // S27
-  neu(11, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { s: 'S23' }, { s: 'S26' });                  // S28 13:30
-  neu(11, 2, 'platz', 'Spiel um Platz 7', { v: 'S26' }, { v: 'S27' }, { v: 'S24' }, 2);             // S29 13:30–14:20
+  // Platz 7 auf Feld 1, die Halbfinale auf Feld 2+3; danach Platz 3 und 5 parallel, zum Schluss das Finale allein auf Feld 1.
+  // Für das Spiel um Platz 3 ist kein Team frei (Simon: „Schiedsrichter offen“, macht die Turnierleitung).
+  neu(11, 2, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { s: 'S23' }, { s: 'S26' });                  // S28 13:20
+  neu(11, 1, 'platz', 'Spiel um Platz 7', { v: 'S26' }, { v: 'S27' }, { v: 'S24' }, 2);             // S29 13:20–14:10
   neu(11, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { s: 'S25' }, { s: 'S27' });                  // S30
-  neu(12, 3, 'platz', 'Spiel um Platz 5', { s: 'S26' }, { s: 'S27' }, { s: 'S24' }, 2);             // S31 13:55–14:45
-  neu(13, 1, 'platz', 'Finale', { s: 'S28' }, { s: 'S30' }, { s: 'S29' }, 2);                       // S32 14:20–15:10
-  neu(13, 2, 'platz', 'Spiel um Platz 3', { v: 'S28' }, { v: 'S30' }, { v: 'S29' }, 2);             // S33
+  neu(12, 2, 'platz', 'Spiel um Platz 3', { v: 'S28' }, { v: 'S30' }, null, 2);                     // S31 13:45–14:35
+  neu(12, 3, 'platz', 'Spiel um Platz 5', { s: 'S26' }, { s: 'S27' }, { s: 'S24' }, 2);             // S32
+  neu(13, 1, 'platz', 'Finale', { s: 'S28' }, { s: 'S30' }, { s: 'S29' }, 2);                       // S33 14:10–15:00
   return spiele;
 }
 
@@ -175,7 +177,7 @@ function planRechnen() {
 /** Rangfolge der Plätze aus den Platzierungsspielen: Spiel-ID -> [Platz Sieger, Platz Verlierer] */
 const PLAETZE = { '12': { S42: [1, 2], S41: [3, 4], S40: [5, 6], S39: [7, 8], S38: [9, 10], S37: [11, 12] }, '9': { S37: [1, 2] },
   '10': { S29: [1, 2], S28: [3, 4], S27: [5, 6], S26: [7, 8], S25: [9, 10] },
-  '10v': { S32: [1, 2], S33: [3, 4], S31: [5, 6], S29: [7, 8], S24: [9, 10] } };
+  '10v': { S33: [1, 2], S31: [3, 4], S32: [5, 6], S29: [7, 8], S24: [9, 10] } };
 // Formate im 25-min-Raster: Spiele auf 2 Gewinnsätze laufen über mehrere Zeilen, die Zeile selbst bleibt 25 min
 const RASTER = { '10v': true };
 
@@ -263,7 +265,7 @@ export function stand(turnier, ergebnisse) {
   const raus = spiele.map((sp) => {
     const heim = aufloesen(sp.heim), gast = aufloesen(sp.gast), schiri = aufloesen(sp.schiri);
     return { id: sp.id, nr: sp.nr, runde: sp.runde, feld: sp.feld, zeit: zeit(sp.runde), bis: uhr(spielEnde(sp)), phase: sp.phase, titel: sp.titel,
-      heim, gast, schiri, heimText: heim ? null : text(sp.heim), gastText: gast ? null : text(sp.gast), schiriText: schiri ? null : text(sp.schiri),
+      heim, gast, schiri, heimText: heim ? null : text(sp.heim), gastText: gast ? null : text(sp.gast), schiriText: schiri ? null : sp.schiri ? text(sp.schiri) : 'offen',
       gewinnsaetze: sp.gewinnsaetze || 1,
       ergebnis: fertig(ergebnisse[sp.id], sp.gewinnsaetze || 1) ? stand2(ergebnisse[sp.id], sp.gewinnsaetze || 1) : null,
       saetze: (sp.gewinnsaetze || 1) > 1 && fertig(ergebnisse[sp.id], sp.gewinnsaetze) ? ergebnisse[sp.id] : null };
