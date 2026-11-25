@@ -1,5 +1,5 @@
 // Sucht die Gruppenphase für 10 Teams in zwei 5er-Gruppen (je jeder gegen jeden = 20 Spiele):
-// Runde 1–4 auf 3 Feldern, Runde 5–8 („Mittagszeit“) nur auf Feld 1 und 2. Ausgabe: JSON für plan.mjs (PLAN_10).
+// Runde 1–6 auf 3 Feldern, Runde 7 nur auf Feld 1 und 2 (danach Überkreuz, Mittagspause, Halbfinale). Ausgabe: JSON für plan.mjs (PLAN_10).
 // Aufruf: node turnier/werkzeuge/plan10-erzeugen.mjs
 //
 // Teams: A1 Dornbirn 1, A2 Hohenems 1, A3 Montafon 1, A4 Egg, A5 Wolfurt | B1 Dornbirn 2, B2 Dornbirn Jungs, B3 Hohenems 2,
@@ -12,8 +12,11 @@ let seed = 28112026;
 const zufall = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
 const mischen = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(zufall() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 const TEAMS = ['A1', 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'B4', 'B5'];
-const FELDER = [3, 3, 3, 3, 2, 2, 2, 2];   // Spiele je Runde
-const MITTAG = [4, 5, 6, 7];                // Runden 5–8 (Index)
+const FELDER = [3, 3, 3, 3, 3, 3, 2];   // Spiele je Runde: Gruppenphase 9:00–11:55, die letzte Runde nur auf Feld 1+2
+const MITTAG = [];                       // Mittag liegt seit 25.11. nach der Gruppenphase (Überkreuz, Pause, Halbfinale)
+// Teams desselben Vereins in Gruppe A und B sollen möglichst nicht gleichzeitig spielen (mindestens 1 Runde ist unvermeidbar:
+// je 4 Spiele in 7 Runden)
+const VEREIN = [['A1', 'B1'], ['A1', 'B2'], ['A2', 'B3'], ['A3', 'B4']];
 const paare = [];
 for (const g of ['A', 'B']) for (let a = 1; a <= 5; a++) for (let b = a + 1; b <= 5; b++) paare.push([`${g}${a}`, `${g}${b}`]);
 const FEST = ['B1', 'B2'];
@@ -45,10 +48,10 @@ function strafeSpiele(runden) {
   for (const t of TEAMS) {
     let folge = 0;
     for (let r = 0; r < runden.length; r++) { if (spielt(runden, r, t)) { if (++folge >= 3) s += 10; } else folge = 0; }
-    // Mittagspause muss möglich sein: zwei Runden in Folge (5–8) ohne Spiel
-    let pause = false;
-    for (let i = 0; i < MITTAG.length - 1; i++) if (!spielt(runden, MITTAG[i], t) && !spielt(runden, MITTAG[i + 1], t)) pause = true;
-    if (!pause) s += 50;
+  }
+  for (const [x, y] of VEREIN) {
+    const gleichzeitig = runden.filter((_, r) => spielt(runden, r, x) && spielt(runden, r, y)).length;
+    s += Math.max(0, gleichzeitig - 1) * 8;
   }
   return s;
 }
@@ -78,12 +81,8 @@ function schiris(runden) {
       naechste = plan[r];
     }
     if (!ok || Object.values(zahl).some((n) => n !== 2)) continue;
-    // Mittagspause: zwei Runden in Folge (5–8) ohne Spiel, mindestens eine davon auch ohne Pfeifen
-    const ganz = (t, r) => !spielt(runden, r, t) && !plan[r].schiri.includes(t);
-    const block = (t, r1, r2) => !spielt(runden, r1, t) && !spielt(runden, r2, t) && (ganz(t, r1) || ganz(t, r2));
-    if (!TEAMS.every((t) => MITTAG.slice(0, -1).some((r, i) => block(t, r, MITTAG[i + 1])))) continue;
-    const voll = TEAMS.filter((t) => MITTAG.slice(0, -1).some((r, i) => ganz(t, r) && ganz(t, MITTAG[i + 1]))).length;
-    const wert = voll * 3 + treffer;
+    const voll = 0;
+    const wert = treffer;
     if (!beste || wert > beste.wert) beste = { plan, treffer, voll, wert };
   }
   return beste;
@@ -119,7 +118,8 @@ for (let lauf = 0; lauf < 400; lauf++) {
   if (!bester || wert < bester.wert) bester = { wert, strafe: st, treffer: sch.treffer, voll: sch.voll, plan: sch.plan };
 }
 if (!bester) { console.error('kein Plan gefunden'); process.exit(1); }
-console.error(`Strafe ${bester.strafe}, Schiri spielt danach am selben Feld: ${bester.treffer}, Teams mit 2 ganz freien Mittagsrunden: ${bester.voll}`);
+console.error(`Strafe ${bester.strafe}, Schiri spielt danach am selben Feld: ${bester.treffer}`);
+for (const [x, y] of VEREIN) console.error(`${x}+${y} gleichzeitig: ${bester.plan.filter((r) => r.spiele.some((p) => p.includes(x)) && r.spiele.some((p) => p.includes(y))).length}`);
 const raus = bester.plan.map((x, r) => ({ runde: r + 1, spiele: x.spiele, schiri: x.schiri }));
 for (const t of TEAMS) console.error(`${t}: ` + raus.map((x) => x.spiele.some((p) => p.includes(t)) ? 'S' : x.schiri.includes(t) ? 'p' : '·').join(''));
 console.log(JSON.stringify(raus));

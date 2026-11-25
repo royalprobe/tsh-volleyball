@@ -2,7 +2,7 @@
 //  "12": 12 Teams in zwei 6er-Gruppen (jeder gegen jeden), danach Überkreuz-Spiele (1./2., 3./4., 5./6. der Gruppen)
 //        und alle Platzierungsspiele – 42 Spiele, 14 Runden, 3 Felder. (Stand 22.11.2026, auch als Git-Tag u14-12-teams)
 //  "9":  9 Teams jeder gegen jeden (36 Spiele, 12 Runden, Mittagspause nach Runde 6), danach Finale 1. gegen 2. (Tag u14-9-teams)
-//  "10": 10 Teams in zwei 5er-Gruppen (Runde 1–4 auf 3 Feldern, Runde 5–8 nur Feld 1+2 = abwechselnd Mittagspause),
+//  "10": 10 Teams in zwei 5er-Gruppen (bis 11:55), Mittagszeit nur auf Feld 1+2 (Überkreuz, Pause, Halbfinale),
 //        Überkreuz 3./4. und Halbfinale 1./2., danach um Platz 9, 7, 5, 3 und Finale – die Platzierungsspiele auf 2 Gewinnsätze.
 // Ein Spiel = 1 Satz auf 25. Schiedsgericht: möglichst ein Team, das danach auf demselben Feld spielt.
 //
@@ -69,25 +69,27 @@ function planNeun() {
   spiele.push({ id: `S${nr}`, nr, runde: PLAN_9.length + 1, feld: null, phase: 'platz', titel: 'Finale', heim: { g: 'A', p: 1 }, gast: { g: 'A', p: 2 }, schiri: { g: 'A', p: 3 } });
   return spiele;
 }
-// 10 Teams: Gruppenphase von werkzeuge/plan10-erzeugen.mjs (Dornbirn 2 – Dornbirn Jungs in Runde 1, jedes Team pfeift 2-mal,
-// in Runde 5–8 hat jedes Team 2 Runden ohne Spiel, davon mindestens eine ganz frei). Teams A1…A5 = Gruppe A, B1…B5 = Gruppe B.
-const PLAN_10 = [{"runde":1,"spiele":[["A1","A5"],["B1","B2"],["B3","B4"]],"schiri":["A3","A2","B5"]},{"runde":2,"spiele":[["A1","A3"],["A2","A5"],["B1","B5"]],"schiri":["B3","A4","B4"]},{"runde":3,"spiele":[["B2","B3"],["A2","A4"],["B4","B5"]],"schiri":["A1","A5","B1"]},{"runde":4,"spiele":[["A1","A4"],["A3","A5"],["B1","B3"]],"schiri":["B4","A2","B2"]},{"runde":5,"spiele":[["B2","B4"],["A2","A3"]],"schiri":["B1","A1"]},{"runde":6,"spiele":[["B1","B4"],["A1","A2"]],"schiri":["B5","A4"]},{"runde":7,"spiele":[["B3","B5"],["A4","A5"]],"schiri":["B2","A3"]},{"runde":8,"spiele":[["B2","B5"],["A3","A4"]],"schiri":["A5","B3"]}];
+// 10 Teams: Gruppenphase von werkzeuge/plan10-erzeugen.mjs (Runde 1–6 auf 3 Feldern, Runde 7 auf Feld 1+2; Dornbirn 2 –
+// Dornbirn Jungs in Runde 1, jedes Team pfeift 2-mal, Teams desselben Vereins in A und B spielen nur 1-mal gleichzeitig).
+// Teams A1…A5 = Gruppe A, B1…B5 = Gruppe B.
+const PLAN_10 = [{"runde":1,"spiele":[["B4","B5"],["B1","B2"],["A2","A5"]],"schiri":["A4","A1","B3"]},{"runde":2,"spiele":[["A2","A4"],["A1","A3"],["B3","B5"]],"schiri":["A5","B2","B4"]},{"runde":3,"spiele":[["A4","A5"],["B2","B3"],["B1","B4"]],"schiri":["A2","A3","B5"]},{"runde":4,"spiele":[["A1","A2"],["A3","A5"],["B1","B5"]],"schiri":["A4","B4","B2"]},{"runde":5,"spiele":[["A1","A4"],["B3","B4"],["B2","B5"]],"schiri":["B1","A3","A5"]},{"runde":6,"spiele":[["B1","B3"],["A3","A4"],["B2","B4"]],"schiri":["A2","A1","B5"]},{"runde":7,"spiele":[["A2","A3"],["A1","A5"]],"schiri":["B1","B3"]}];
 function planZehn() {
   const spiele = [];
   let nr = 0;
   const neu = (runde, feld, phase, titel, heim, gast, schiri, gewinnsaetze = 1) => spiele.push({ id: `S${++nr}`, nr, runde, feld, phase, titel, heim, gast, schiri, gewinnsaetze });
   for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
-  // Überkreuz (1 Satz): zuerst 3. gegen 4., dann die Halbfinale; Schiri spielt danach auf demselben Feld
-  neu(9, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 1 });   // S21
-  neu(9, 2, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 1 });   // S22
-  neu(10, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 5 });            // S23
-  neu(10, 2, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { v: 'S21' });                // S24
+  // Mittagszeit nur auf Feld 1+2: 11:55 Überkreuz 3./4., 12:20 Pause (turnier.json „pause“), 12:45 Halbfinale.
+  // So haben Überkreuz-Teams 12:20–13:10 und Halbfinalisten 11:55–12:45 frei; es pfeifen beide Male die Gruppenfünften.
+  neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 5 });   // S21
+  neu(8, 2, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 });   // S22
+  neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 5 });             // S23
+  neu(9, 2, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 5 });             // S24
   // Platzierung auf 2 Gewinnsätze: um Platz 9, 7, 5, dann um Platz 3 und Finale
-  neu(11, 1, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S23' }, 2);       // S25
-  neu(11, 2, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);               // S26
-  neu(11, 3, 'platz', 'Spiel um Platz 5', { s: 'S21' }, { s: 'S22' }, { s: 'S24' }, 2);               // S27
-  neu(12, null, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S24' }, { s: 'S26' }, 2);            // S28
-  neu(12, null, 'platz', 'Finale', { s: 'S23' }, { s: 'S24' }, { s: 'S27' }, 2);                      // S29
+  neu(10, 1, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S23' }, 2);       // S25
+  neu(10, 2, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);               // S26
+  neu(10, 3, 'platz', 'Spiel um Platz 5', { s: 'S21' }, { s: 'S22' }, { s: 'S24' }, 2);               // S27
+  neu(11, null, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S24' }, { s: 'S26' }, 2);            // S28
+  neu(11, null, 'platz', 'Finale', { s: 'S23' }, { s: 'S24' }, { s: 'S27' }, 2);                      // S29
   // Anzeige um 14:00: Finale zuerst
   spiele.push(spiele.splice(spiele.findIndex((sp) => sp.id === 'S28'), 1)[0]);
   return spiele;

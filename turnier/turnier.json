@@ -7,10 +7,14 @@
   "zeitraum": "9–15 Uhr",
   "minuten": 25,
   "takte": {
-    "11": 50,
-    "12": 50
+    "10": 50,
+    "11": 50
   },
-  "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze. 10:40–12:20 wird nur auf Feld 1 und 2 gespielt, damit die Teams abwechselnd Mittagspause machen können.",
+  "pause": {
+    "nach": 8,
+    "minuten": 25
+  },
+  "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze. Zu Mittag (11:55–13:10) wird nur auf Feld 1 und 2 gespielt, damit die Teams abwechselnd Mittagspause machen können.",
   "modus": "Gruppen 1 Satz auf 25, Platzierung 2 Gewinnsätze",
   "zurueck": {
     "text": "TS Hohenems Volleyball",
