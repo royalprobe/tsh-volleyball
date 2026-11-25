@@ -10,7 +10,7 @@
       "format": "10v",
       "name": "Verlängerte Variante",
       "pause": 10,
-      "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 10 Minuten Pause. Die Gruppensieger stehen direkt im Halbfinale. 2. gegen 3. der anderen Gruppe spielen im Viertelfinale um den Einzug ins Halbfinale. 4. gegen 5. der anderen Gruppe: Die Sieger spielen gegen die Viertelfinal-Verlierer um Platz 5–8, die Verlierer um Platz 9. Platzierungsspiele und Finale auf 2 Gewinnsätze. Bei nur zwei Spielen bleibt Feld 2 frei."
+      "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 10 Minuten Pause. Die Gruppensieger stehen direkt im Halbfinale. 2. gegen 3. der anderen Gruppe spielen im Viertelfinale um den Einzug ins Halbfinale. 4. gegen 5. der anderen Gruppe: Die Sieger spielen gegen die Viertelfinal-Verlierer um Platz 5–8, die Verlierer um Platz 9. Platzierungsspiele und Finale auf 2 Gewinnsätze."
     }
   ],
   "datum": "2026-11-28",
@@ -23,7 +23,7 @@
     "minuten": 20,
     "text": "Pause – Auswertung der Vorrunde"
   },
-  "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 20 Minuten Pause für die Auswertung. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze. Bei nur zwei Spielen wird auf Feld 1 und 3 gespielt, Feld 2 bleibt frei.",
+  "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 20 Minuten Pause für die Auswertung. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze.",
   "modus": "Gruppen 1 Satz auf 25, Platzierung 2 Gewinnsätze",
   "zurueck": {
     "text": "TS Hohenems Volleyball",
