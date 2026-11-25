@@ -117,9 +117,9 @@ function planZehn() {
   neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { s: 'S21' }, 2);                // S23
   neu(9, 2, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S21' }, 2);          // S24
   neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { s: 'S22' }, 2);                // S25
-  neu(10, 1, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);                 // S26
+  neu(10, 1, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { s: 'S23' }, 2);                 // S26
   neu(10, 2, 'platz', 'Spiel um Platz 5', { s: 'S21' }, { s: 'S22' }, { s: 'S24' }, 2);                 // S27
-  neu(10, 3, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S25' }, { s: 'S23' }, 2);                 // S28
+  neu(10, 3, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S25' }, { v: 'S24' }, 2);                 // S28
   neu(11, 1, 'platz', 'Finale', { s: 'S23' }, { s: 'S25' }, { s: 'S27' }, 2);                           // S29
   return spiele;
 }
