@@ -104,6 +104,11 @@
     'input.pin{letter-spacing:.5em;font-size:1.6em;padding:12px;text-indent:.5em}',
     '.hinweis{font-size:.78em;color:var(--grau-2)}',
     '.fehler:empty{display:none}',
+    '.s-saetze{font-size:.74em;color:var(--grau);font-variant-numeric:tabular-nums}',
+    '.saetze{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px 10px;align-items:center;font-size:.9em}',
+    '.saetze b{font-size:.85em;text-align:center;color:var(--blau);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.saetze span{font-weight:700;white-space:nowrap}.saetze small{font-weight:400;color:var(--grau-2)}',
+    '.box .saetze input{font-size:1em;padding:8px}',
     '.box input.name{font-size:1em;text-align:left;font-weight:600}',
     '.dialog.breit .box{width:min(100%,640px)}',
     '.protokoll{list-style:none;margin:0;padding:0;max-height:60vh;overflow:auto;display:flex;flex-direction:column}',
@@ -197,6 +202,7 @@
         return '<' + (pin ? 'button' : 'div') + ' class="spiel schatten' + (pin ? ' kann' : '') + art + '"' + (pin ? ' data-spiel="' + s.id + '"' : '') + '>'
           + '<div class="s-kopf"><span>' + (s.feld ? 'Feld ' + s.feld + ' · ' : '') + 'Spiel ' + s.nr + '</span><span class="ph">' + h(s.phase === 'gruppe' ? '' : s.titel) + '</span></div>'
           + team(s.heim, s.heimText, 0) + team(s.gast, s.gastText, 1)
+          + (s.saetze ? '<div class="s-saetze">' + s.saetze.map(function (x) { return x[0] + ':' + x[1]; }).join(' · ') + '</div>' : '')
           + '<div class="s-schiri">Schiedsgericht: ' + h(s.schiri ? name(s.schiri) : s.schiriText) + '</div>'
           + '</' + (pin ? 'button' : 'div') + '>';
       }).join('') + '</div></div>';
@@ -257,13 +263,18 @@
       dialog('<form><div class="t">Spiel ' + s.nr + '</div><small>Die Teams stehen noch nicht fest (' + h(s.heimText || name(s.heim)) + ' – ' + h(s.gastText || name(s.gast)) + ').</small><div class="zeile"><button class="knopf voll">OK</button></div></form>', function (d, zu) { zu(); });
       return;
     }
-    var e = s.ergebnis || ['', ''];
-    dialog('<form><div class="kopf"><div class="t">Spiel ' + s.nr + (s.feld ? ' · Feld ' + s.feld : '') + '</div><small>' + h(s.zeit) + ' Uhr · ' + h(s.titel) + ' · 1 Satz auf 25</small></div>'
-      + '<div class="eingabe"><span>' + h(name(s.heim)) + '</span><input type="number" inputmode="numeric" min="0" max="60" value="' + e[0] + '" aria-label="Punkte ' + h(name(s.heim)) + '">'
-      + '<span>' + h(name(s.gast)) + '</span><input type="number" inputmode="numeric" min="0" max="60" value="' + e[1] + '" aria-label="Punkte ' + h(name(s.gast)) + '"></div><div class="fehler"></div>'
+    var gs = s.gewinnsaetze || 1, e = s.ergebnis || ['', ''], saetze = s.saetze || [];
+    var zahl = function (v, label) { return '<input type="number" inputmode="numeric" min="0" max="60" value="' + (v === undefined ? '' : v) + '" aria-label="' + h(label) + '">'; };
+    var felder = gs === 1
+      ? '<div class="eingabe"><span>' + h(name(s.heim)) + '</span>' + zahl(e[0], 'Punkte ' + name(s.heim)) + '<span>' + h(name(s.gast)) + '</span>' + zahl(e[1], 'Punkte ' + name(s.gast)) + '</div>'
+      : '<div class="saetze"><span></span><b>' + h(name(s.heim)) + '</b><b>' + h(name(s.gast)) + '</b>'
+        + [0, 1, 2].map(function (i) { var x = saetze[i] || []; return '<span>' + (i + 1) + '. Satz' + (i === 2 ? ' <small>(falls nötig)</small>' : '') + '</span>' + zahl(x[0], (i + 1) + '. Satz ' + name(s.heim)) + zahl(x[1], (i + 1) + '. Satz ' + name(s.gast)); }).join('') + '</div>';
+    dialog('<form><div class="kopf"><div class="t">Spiel ' + s.nr + (s.feld ? ' · Feld ' + s.feld : '') + '</div><small>' + h(s.zeit) + ' Uhr · ' + h(s.titel) + ' · ' + (gs === 1 ? '1 Satz auf 25' : '2 Gewinnsätze') + '</small></div>'
+      + felder + '<div class="fehler"></div>'
       + '<div class="zeile">' + (s.ergebnis ? '<button type="button" class="knopf" data-loeschen>Löschen</button>' : '') + '<button type="button" class="knopf" data-zu>Abbrechen</button><button class="knopf voll">Speichern</button></div></form>', function (d, zu) {
-      var f = d.querySelectorAll('input');
-      senden('ergebnis', { spiel: id, ergebnis: [parseInt(f[0].value, 10), parseInt(f[1].value, 10)] })
+      var f = [].map.call(d.querySelectorAll('input'), function (i) { return i.value.trim() === '' ? null : parseInt(i.value, 10); });
+      var wert = gs === 1 ? [f[0], f[1]] : [[f[0], f[1]], [f[2], f[3]], [f[4], f[5]]].filter(function (x) { return x[0] !== null || x[1] !== null; });
+      senden('ergebnis', { spiel: id, ergebnis: wert })
         .then(function (j) { daten = j; zu(); zeichnen(); })
         .catch(function (x) { d.querySelector('.fehler').textContent = x.message; if (/PIN/.test(x.message)) abmelden(); });
     });
@@ -287,7 +298,7 @@
     senden('protokoll').then(function (j) {
       var heuteText = new Date().toDateString();
       var zeit = function (iso) { var d = new Date(iso); return (d.toDateString() === heuteText ? '' : d.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' }) + ' ') + d.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); };
-      var erg = function (e) { return e ? e[0] + ':' + e[1] : '–'; };
+      var erg = function (e) { return !e ? '–' : Array.isArray(e[0]) ? e.map(function (x) { return x[0] + ':' + x[1]; }).join(', ') : e[0] + ':' + e[1]; };
       var text = function (e) {
         if (e.art === 'anmeldung') return e.ok ? 'angemeldet' : '<b class="rot">falsche PIN</b>';
         if (e.art === 'ergebnis') return 'Spiel ' + h(e.spiel.nr) + ' (' + h(e.spiel.heim) + ' – ' + h(e.spiel.gast) + '): '

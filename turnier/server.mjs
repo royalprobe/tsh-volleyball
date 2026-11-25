@@ -100,8 +100,9 @@ createServer(async (req, res) => {
         const vorher = daten.ergebnisse[b.spiel] || null;
         let nachher = null;
         if (b.ergebnis !== null) {
-          nachher = Array.isArray(b.ergebnis) ? b.ergebnis.map(Number) : null;
-          const f = pruefen(nachher);
+          const gs = spielplan().find((x) => x.id === b.spiel).gewinnsaetze || 1;
+          nachher = !Array.isArray(b.ergebnis) ? null : gs === 1 ? b.ergebnis.map(Number) : b.ergebnis.map((x) => Array.isArray(x) ? x.map(Number) : x);
+          const f = pruefen(nachher, gs);
           if (f) return json(res, 400, { fehler: f });
         }
         if (JSON.stringify(vorher) === JSON.stringify(nachher)) return json(res, 200, aktuell());   // nichts geändert
