@@ -77,19 +77,21 @@ function planZehn() {
   const spiele = [];
   let nr = 0;
   const neu = (runde, feld, phase, titel, heim, gast, schiri, gewinnsaetze = 1) => spiele.push({ id: `S${++nr}`, nr, runde, feld, phase, titel, heim, gast, schiri, gewinnsaetze });
-  for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
-  // Mittagszeit nur auf Feld 1+2: 11:55 Überkreuz 3./4., 12:20 Pause (turnier.json „pause“), 12:45 Halbfinale.
-  // So haben Überkreuz-Teams 12:20–13:10 und Halbfinalisten 11:55–12:45 frei; es pfeifen beide Male die Gruppenfünften.
+  // Runden mit nur zwei Spielen laufen auf Feld 1 und 3, Feld 2 bleibt frei (Simons Wunsch 25.11.)
+  const FELD_ZU_ZWEIT = [1, 3];
+  for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, r.spiele.length === 2 ? FELD_ZU_ZWEIT[f] : f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
+  // Nach der Vorrunde 20 min Pause für die Auswertung (turnier.json „pause“), dann Überkreuz 3./4. und Halbfinale auf Feld 1+3.
+  // Halbfinalisten haben bis zum Halbfinale frei, Überkreuz-Teams danach; es pfeifen beide Male die Gruppenfünften.
   neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 5 });   // S21
-  neu(8, 2, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 });   // S22
+  neu(8, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 });   // S22
   neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { g: 'A', p: 5 });             // S23
-  neu(9, 2, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 5 });             // S24
+  neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { g: 'B', p: 5 });             // S24
   // Platzierung auf 2 Gewinnsätze: um Platz 9, 7, 5, dann um Platz 3 und Finale
   neu(10, 1, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { v: 'S23' }, 2);       // S25
   neu(10, 2, 'platz', 'Spiel um Platz 7', { v: 'S21' }, { v: 'S22' }, { v: 'S24' }, 2);               // S26
   neu(10, 3, 'platz', 'Spiel um Platz 5', { s: 'S21' }, { s: 'S22' }, { s: 'S24' }, 2);               // S27
-  neu(11, null, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S24' }, { s: 'S26' }, 2);            // S28
-  neu(11, null, 'platz', 'Finale', { s: 'S23' }, { s: 'S24' }, { s: 'S27' }, 2);                      // S29
+  neu(11, 3, 'platz', 'Spiel um Platz 3', { v: 'S23' }, { v: 'S24' }, { s: 'S26' }, 2);               // S28
+  neu(11, 1, 'platz', 'Finale', { s: 'S23' }, { s: 'S24' }, { s: 'S27' }, 2);                         // S29
   // Anzeige um 14:00: Finale zuerst
   spiele.push(spiele.splice(spiele.findIndex((sp) => sp.id === 'S28'), 1)[0]);
   return spiele;
@@ -245,7 +247,7 @@ export function stand(turnier, ergebnisse) {
   if (FORMAT === '9' && tab.A.komplett) tab.A.zeilen.slice(2).forEach((z) => endstand.push({ platz: z.platz, team: z.id }));
   endstand.sort((a, b) => a.platz - b.platz);
   return { format: FORMAT, name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: uhr(minute(letzte) + dauer(letzte)),
-    pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + takt), bis: uhr(minute(pause.nach) + takt + pause.minuten) } : null,
+    pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + dauer(pause.nach)), bis: uhr(minute(pause.nach) + dauer(pause.nach) + pause.minuten), text: pause.text || 'Mittagspause' } : null,
     erklaerung: turnier.erklaerung || null, zeitraum: turnier.zeitraum || null, zurueck: turnier.zurueck || null, jimdoKopfAusblenden: !!turnier.jimdoKopfAusblenden, minuten: takt,
     modus: turnier.modus, teams: Object.fromEntries(Object.values(tab).flatMap((t) => t.zeilen).map((z) => z.id).sort((a, b) => a.localeCompare(b, 'de', { numeric: true })).map((id) => [id, teams[id] || `Team ${id}`])),
     spiele: raus, tabellen: tab, endstand };
