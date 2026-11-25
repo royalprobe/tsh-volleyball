@@ -212,7 +212,7 @@
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppen' : 'Tabelle') + '</div></div>'
-      + '<div class="gruppen' + (Object.keys(daten.tabellen).length > 1 ? '' : ' eine') + '">' + Object.keys(daten.tabellen).map(tabelleHtml).join('') + '</div>'
+      + '<div class="gruppen' + (Object.keys(daten.tabellen).length > 1 ? '' : ' eine') + '">' + Object.keys(daten.tabellen).sort().map(tabelleHtml).join('') + '</div>'
       + '<p style="margin:0;font-size:.78em;color:var(--grau)">' + h(daten.erklaerung || 'Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Danach Überkreuz: 5. gegen 6., 3. gegen 4., 1. gegen 2. der anderen Gruppe.') + '</p></section>'
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">Spielplan</div>' + teamWahl + '</div>'
       + (mein ? '<div class="legende"><span><i style="background:#dbe7f8;border:2px solid #002266"></i>' + h(name(mein)) + ' spielt</span><span><i style="background:#fff;border:2px solid #002266"></i>' + h(name(mein)) + ' pfeift</span></div>' : '')
