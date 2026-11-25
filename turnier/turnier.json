@@ -15,7 +15,7 @@
   "datum": "2026-11-28",
   "ort": "",
   "beginn": "09:00",
-  "zeitraum": "9–15 Uhr",
+  "zeitraum": "9:00–15:00 Uhr",
   "minuten": 25,
   "pause": {
     "nach": 7,
@@ -23,7 +23,7 @@
     "text": "Vorrunde beendet"
   },
   "erklaerung": "Zwei 5er-Gruppen, jeder gegen jeden. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz. Nach der Vorrunde 20 Minuten Pause für die Auswertung. Danach Überkreuz: 3. gegen 4. und 1. gegen 2. (Halbfinale) der anderen Gruppe, dann Spiele um Platz 9, 7, 5, 3 und das Finale auf 2 Gewinnsätze.",
-  "modus": "Gruppen 1 Satz auf 25, Platzierung 2 Gewinnsätze",
+  "modus": "1 Satz auf 25 – Platzierungsspiele 2 Gewinnsätze",
   "zurueck": {
     "text": "TS Hohenems Volleyball",
     "link": "https://www.ts-hohenems.at/sparten/volleyball/"

@@ -206,8 +206,8 @@
       + (daten.zurueck ? '<a class="heim" href="' + h(daten.zurueck.link) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' + h(daten.zurueck.text) + '</a>' : '')
       + '<span class="logo" role="img" aria-label="Turnerschaft Hohenems Volleyball"></span>'
       + '<div class="h-titel">' + h(daten.name) + '</div>'
-      + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(vari.length > 1 || !daten.zeitraum ? daten.beginn.replace(/^0/, '') + '–' + daten.ende + ' Uhr' : daten.zeitraum) + '</span>'
-      + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span><span class="chip">' + Object.keys(daten.teams).length + ' Teams · 3 Felder</span></div>' + umschalter + '</div>'
+      + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn.replace(/^0/, '') + '–' + daten.ende + ' Uhr') + '</span>'
+      + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span></div>' + umschalter + '</div>'
       + '</header>'
       + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
