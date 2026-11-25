@@ -52,7 +52,7 @@
     '.r-zeit{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;background:#fff;color:var(--blau);font-weight:800;line-height:1.15}',
     '.r-zeit small{font-size:.7em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--grau-2)}',
     '.runde.aktiv .r-zeit{background:var(--blau);color:#fff}.runde.aktiv .r-zeit small{color:rgba(255,255,255,.7)}',
-    '.felder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}',
+    '.felder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.felder .f1{grid-column:1}.felder .f2{grid-column:2}.felder .f3{grid-column:3}',
     '.spiel{position:relative;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:#fff;text-align:left;border:2px solid transparent;min-width:0}',
     '.spiel.kann{cursor:pointer}.spiel.kann:hover{border-color:var(--akzent)}',
     // „Mein Team“: eigene Spiele blau gefüllt, Schiri-Einsätze nur blau umrandet, alles andere tritt zurück
@@ -125,7 +125,7 @@
     '.teams-form input{font-size:.95em;text-align:left;padding:7px 10px}',
     '.zeile{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}',
     '.fehler{color:var(--rot);font-weight:700;font-size:.88em}',
-    '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
+    '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
     '@container (max-width:640px){.gruppen{grid-template-columns:1fr}}',
     '@container (max-width:540px){.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
   ].join('\n');
@@ -199,7 +199,7 @@
           var cls = s.ergebnis ? ((s.ergebnis[i] > s.ergebnis[1 - i]) ? ' sieger' : ' verlierer') : '';
           return '<div class="s-team' + cls + '"><span' + (id ? (id === mein ? ' class="ich"' : '') : ' class="offen"') + '>' + h(id ? name(id) : text) + '</span>' + (s.ergebnis ? '<b>' + s.ergebnis[i] + '</b>' : '') + '</div>';
         };
-        return '<' + (pin ? 'button' : 'div') + ' class="spiel schatten' + (pin ? ' kann' : '') + art + '"' + (pin ? ' data-spiel="' + s.id + '"' : '') + '>'
+        return '<' + (pin ? 'button' : 'div') + ' class="spiel schatten' + (s.feld ? ' f' + s.feld : '') + (pin ? ' kann' : '') + art + '"' + (pin ? ' data-spiel="' + s.id + '"' : '') + '>'
           + '<div class="s-kopf"><span>' + (s.feld ? 'Feld ' + s.feld + ' · ' : '') + 'Spiel ' + s.nr + '</span><span class="ph">' + h(s.phase === 'gruppe' ? '' : s.titel) + '</span></div>'
           + team(s.heim, s.heimText, 0) + team(s.gast, s.gastText, 1)
           + (s.saetze ? '<div class="s-saetze">' + s.saetze.map(function (x) { return x[0] + ':' + x[1]; }).join(' · ') + '</div>' : '')
