@@ -254,7 +254,7 @@ export function stand(turnier, ergebnisse) {
   const pause = turnier.pause && turnier.pause.nach ? turnier.pause : null;   // { nach: Runde, minuten }
   const uhr = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
   // Runden mit Spielen auf 2 Gewinnsätze dauern doppelt so lang (turnier.json „takte“ kann einzelne Runden überschreiben)
-  const dauer = (runde) => (turnier.takte && turnier.takte[runde]) || (!RASTER[FORMAT] && spiele.some((sp) => sp.runde === runde && (sp.gewinnsaetze || 1) > 1) ? 2 * takt : takt);
+  const dauer = (runde) => (turnier.takte && turnier.takte[runde]) || (!RASTER[FORMAT] && spiele.some((sp) => sp.runde === runde && (sp.gewinnsaetze || 1) > 1) ? (turnier.koMinuten || 2 * takt) : takt);   // koMinuten: Länge eines Spiels auf 2 Gewinnsätze
   const spielEnde = (sp) => minute(sp.runde) + (RASTER[FORMAT] ? takt * (sp.gewinnsaetze || 1) : dauer(sp.runde));
   const minute = (runde) => { let m = hh * 60 + mm + (pause && runde > pause.nach ? pause.minuten : 0); for (let r = 1; r < runde; r++) m += dauer(r); return m; };
   const zeit = (runde) => uhr(minute(runde));
