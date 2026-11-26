@@ -115,8 +115,13 @@
     '.knopf{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;font-weight:700;font-size:.9em;border:1px solid #d6dee8;background:#fff;color:var(--blau)}',
     '.knopf.voll{background:var(--blau);border-color:var(--blau);color:#fff}',
     '.knopf.klein{padding:5px 12px;font-size:.8em}',
-    '.leiste .druck{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto}.leiste .druck>span{display:inline-flex;align-items:center;gap:6px}.leiste .druck svg{width:16px;height:16px}',
-    '.leiste{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border-radius:var(--r);background:#e7f6ec;color:var(--gruen);font-weight:700;font-size:.88em}',
+    '.leiste{display:flex;flex-direction:column;gap:12px;padding:14px 18px;border-radius:var(--r);background:#e7f6ec;color:var(--gruen);font-size:.88em}',
+    '.l-kopf{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}.l-kopf [data-aus]{margin-left:auto}',
+    '.l-status{display:inline-flex;align-items:center;gap:8px;font-weight:800}.l-status i{width:9px;height:9px;border-radius:50%;background:var(--gruen);box-shadow:0 0 0 3px rgba(22,128,60,.18)}',
+    '.l-hinweis{font-weight:600;color:#2f6b45}',
+    '.l-gruppen{display:flex;flex-wrap:wrap;gap:10px 28px;padding-top:12px;border-top:1px solid rgba(22,128,60,.18)}',
+    '.l-gruppe{display:flex;flex-wrap:wrap;align-items:center;gap:6px}',
+    '.l-gruppe>span{display:inline-flex;align-items:center;gap:6px;margin-right:4px;font-size:.82em;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#2f6b45}.l-gruppe svg{width:15px;height:15px}',
     '.dialog{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:16px;background:rgba(0,19,61,.55)}',
     '.box{width:min(100%,400px);padding:26px 24px 22px;border-radius:calc(var(--r) + 6px);background:#fff;box-shadow:0 24px 60px rgba(0,19,61,.35)}',
     '.box form{display:flex;flex-direction:column;gap:16px}',
@@ -150,7 +155,7 @@
     '.fehler{color:var(--rot);font-weight:700;font-size:.88em}',
     '@container (max-width:860px){.hero{grid-template-columns:1fr;padding:26px 22px}.felder{grid-template-columns:1fr}.felder .spiel,.felder .laeuft{grid-column:auto}.runde{grid-template-columns:4.4em 1fr}.end{grid-template-columns:1fr 1fr}}',
     '@container (max-width:640px){.gruppen{grid-template-columns:1fr}}',
-    '@container (max-width:540px){.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
+    '@container (max-width:540px){.l-hinweis{order:3;flex-basis:100%}.l-gruppe>span{flex-basis:100%;margin-bottom:2px}.wahl-liste{left:0;right:auto}.seg{display:grid;grid-template-columns:1fr 1fr;align-self:stretch}.seg button{padding:7px 10px}.w{font-size:14px;gap:16px}.abschnitt{padding:20px 14px}.h-titel{font-size:1.8em}.zeichen{width:220px;right:-60px}.end{grid-template-columns:1fr}.runde{grid-template-columns:1fr}.r-zeit{flex-direction:row;gap:8px;justify-content:flex-start;padding:6px 12px;background:transparent}.runde.aktiv .r-zeit{background:var(--blau)}}'
   ].join('\n');
 
   var host, wurzel, daten = null, mein = '', pin = '', variante = '', wahlOffen = false;
@@ -210,8 +215,9 @@
       + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn.replace(/^0/, '') + '–' + daten.ende + ' Uhr') + '</span>'
       + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span></div>' + umschalter + '</div>'
       + '</header>'
-      + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button>'
-        + '<span class="druck"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>Drucken / PDF:</span><button class="knopf klein" data-druck="vorrunde">Vorrunde</button><button class="knopf klein" data-druck="tabellen">Tabellen</button><button class="knopf klein" data-druck="playoff">Playoff</button></span></div>' : '')
+      + (pin ? '<div class="leiste"><div class="l-kopf"><span class="l-status"><i></i>Eintragen ist an</span><span class="l-hinweis">Spiel antippen, um das Ergebnis einzutragen.</span><button class="knopf klein" data-aus>Beenden</button></div>'
+        + '<div class="l-gruppen"><div class="l-gruppe"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Verwalten</span><button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button></div>'
+        + '<div class="l-gruppe"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>Drucken / PDF</span><button class="knopf klein" data-druck="vorrunde">Vorrunde</button><button class="knopf klein" data-druck="tabellen">Tabellen</button><button class="knopf klein" data-druck="playoff">Playoff</button></div></div></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppen' : 'Tabelle') + '</div></div>'
       + '<div class="gruppen' + (Object.keys(daten.tabellen).length > 1 ? '' : ' eine') + '">' + Object.keys(daten.tabellen).sort().map(tabelleHtml).join('') + '</div>'
