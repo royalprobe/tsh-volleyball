@@ -86,7 +86,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
     const zeilen = zeiten(ko).map((z) => {
       const sp = ko.filter((s) => s.zeit === z);
       return sp.map((s, i) => `<tr class="${i === 0 ? 'neu' : 'spiel'}">${i === 0 ? `<td class="zeit" rowspan="${sp.length * 2}">${uhr(z)}</td>` : ''}
-        <td class="c" rowspan="2">${s.feld || ''}</td><td class="c" rowspan="2">${s.nr}</td><td class="titel" rowspan="2">${h(s.titel)}</td>
+        <td class="c" rowspan="2">${s.feld || ''}</td><td class="c" rowspan="2">${s.nr}</td><td class="titel" rowspan="2">${h(s.titel).replace(/Platz (\d)/g, 'Platz&nbsp;$1')}</td>
         <td class="team">${teil(s.heim, s.heimText)}</td>${saetze(s, 0)}<td class="klein team" rowspan="2">${schiri(s)}</td></tr>
         <tr class="gast"><td class="team">${teil(s.gast, s.gastText)}</td>${saetze(s, 1)}</tr>`).join('');
     }).join('');
