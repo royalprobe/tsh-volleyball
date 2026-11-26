@@ -58,12 +58,11 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         const pa = e ? (s.heim === a ? e[0] : e[1]) : null, pb = e ? (s.heim === a ? e[1] : e[0]) : null;
         return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel"><span class="z${e && pa > pb ? ' fett' : ''}">${pa ?? ''}</span>:<span class="z${e && pb > pa ? ' fett' : ''}">${pb ?? ''}</span></span></td>`;
       };
-      return `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2><table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:12mm"><col style="width:16mm"><col style="width:11mm"><col style="width:11mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Bälle</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
+      return `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2><table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:14mm"><col style="width:16mm"><col style="width:14mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
       ${ids.map((a, i) => {
         const z = zeile(a), gespielt = z && z.sp > 0;
         return `<tr><th class="tm"><span class="nr">${i + 1}</span>${h(name(a))}</th>${ids.map((b) => a === b ? '<td class="leer"></td>' : feld(a, b)).join('')}
-        <td class="wert">${gespielt ? z.s : ''}</td><td class="wert baelle">${gespielt ? z.bp + ':' + z.bm : ':'}</td>
-        <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
+        <td class="wert">${gespielt ? z.s : ''}</td>        <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
       }).join('')}</tbody></table>`;
     };
     return `<section>${kopf('Gruppentabellen')}${gruppen.map(kreuz).join('')}</section>`;
