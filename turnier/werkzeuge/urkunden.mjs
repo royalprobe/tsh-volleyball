@@ -3,7 +3,7 @@
 //   node werkzeuge/urkunden.mjs            → Teams von der Turnierseite
 //   node werkzeuge/urkunden.mjs <API-URL>  → anderer Server
 // Bild unten (Spielerinnen + Netz) aus Simons Vorlage (urkunde/vorlage.jpg, Swoosh rechts unten weggerechnet → urkunde/unten.png),
-// Swooshes als Vektor, Logo und Flammenball aus turnier/public.
+// Swooshes als Vektor, Steinbock im Kreis aus turnier/public/ts-zeichen.png.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'file:///C:/Users/Simon/VScode/beachliga/node_modules/playwright/index.mjs';
@@ -14,7 +14,7 @@ const RESERVE = 2;
 const d = await (await fetch(new URL('api/stand', BASIS))).json();
 const teams = Object.keys(d.teams).sort().map((id) => d.teams[id]);
 const bild = async (datei) => 'data:image/png;base64,' + (await readFile(datei)).toString('base64');
-const logo = await bild(path.join(HIER, 'urkunde', 'logo-volleyball.png')), ball = await bild(path.join(HIER, 'urkunde', 'flammenball.png')), unten = await bild(path.join(HIER, 'urkunde', 'unten.png'));
+const logo = await bild(path.join(HIER, 'urkunde', 'logo-volleyball.png')), steinbock = await bild(path.join(HIER, 'urkunde', 'steinbock.png')), unten = await bild(path.join(HIER, 'urkunde', 'unten.png'));
 const h = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const NAVY = '#0a2c78', GOLD = '#f5c000';
@@ -38,7 +38,7 @@ const seite = (team) => `<section class="seite">
     <div class="beim">BEIM</div>
     <div class="turnier"><div class="t1">HOHENEMSER</div><div class="t2">U14-VOLLEYBALLTURNIER</div></div>
     <div class="datum">Samstag, 28. November 2026 · Sportmittelschule Hohenems</div>
-    <div class="trenner"><i></i><img class="flamme" src="${ball}" alt=""><i></i></div>
+    <div class="trenner"><i></i><img class="steinbock" src="${steinbock}" alt=""><i></i></div>
     <div class="text">In Anerkennung eurer sportlichen Leistung,<br>eures Teamgeists und eures Engagements.</div>
     <div class="team"><small>TEAM</small><div class="name">${h(team || '')}</div></div>
     <div class="gratuliert"><i></i><span>Wir gratulieren herzlich!</span><i></i></div>
@@ -67,13 +67,13 @@ body{margin:0;font-family:Montserrat,Arial,sans-serif;color:${NAVY}}
 .fuer{top:61mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
 .platz{top:69mm;display:flex;justify-content:center;align-items:center;gap:6mm}
 .feld{width:36mm;height:25mm;border:.7mm solid ${NAVY};border-radius:4mm;background:#f3f6fc}
-.feld{position:relative}.punkt{position:absolute;right:6mm;bottom:4.5mm;font-size:36pt;font-weight:900;line-height:.6}.pl{font-size:36pt;font-weight:900;letter-spacing:.03em;line-height:1;margin-right:6mm}
+.feld{position:relative}.punkt{position:absolute;right:4mm;bottom:4.5mm;font-size:36pt;font-weight:900;line-height:.6}.pl{font-size:36pt;font-weight:900;letter-spacing:.03em;line-height:1;margin-right:6mm}
 .beim{top:97.5mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
 .turnier{top:104.5mm;font-weight:900;line-height:1.02}.t1{font-size:42pt;letter-spacing:.04em}.t2{font-size:35pt}
 .datum{top:134mm;font-size:11pt;font-weight:600;color:#3a5590}
 .trenner{top:138.5mm;display:flex;align-items:center;justify-content:center;gap:5mm}
 .trenner i{display:block;width:62mm;height:1.1mm;border-radius:1mm;background:${GOLD}}
-.flamme{width:22mm;height:auto}
+.steinbock{width:23mm;height:auto}
 .text{top:162.5mm;font-size:12.5pt;font-weight:500;line-height:1.45;color:#1d3a80}
 .team{top:177mm;left:18mm;right:18mm;height:23mm;border:.8mm solid ${NAVY};border-radius:5mm;background:#fff;display:flex;flex-direction:column;justify-content:center}
 .team small{position:absolute;top:2.2mm;left:0;right:0;font-size:8.5pt;font-weight:700;letter-spacing:.3em;color:#5a6f9e}
