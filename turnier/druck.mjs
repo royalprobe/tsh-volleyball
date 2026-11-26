@@ -116,8 +116,8 @@ thead th{background:#ddd;font-size:8.5pt;text-transform:uppercase;letter-spacing
 .c{text-align:center}.zeit{font-weight:800;text-align:center;width:13mm}
 tr.neu td{border-top:2px solid #000}
 .sieger{font-weight:800}
-.box{display:inline-flex;align-items:center;justify-content:center;width:8.5mm;height:6.5mm;border:1px solid #555;border-radius:2px;vertical-align:middle;margin:0 3px;background:#fff;font-size:10pt;font-variant-numeric:tabular-nums}
-.box.fett{font-weight:800;border:2px solid #000}
+.box{display:inline-flex;align-items:center;justify-content:center;width:8.5mm;height:6.5mm;vertical-align:middle;margin:0 3px;font-size:11pt;font-variant-numeric:tabular-nums}
+.box.fett{font-weight:800}
 .plan td{height:8.4mm}.vr td{height:12mm}.vr td.erg .box{height:7.5mm;width:9.5mm}
 .ko td{height:9.5mm}.ko{table-layout:fixed}.ko tr.gast td{border-top:1px dashed #888}.ko tr.spiel td{border-top:1.5px solid #000}
 .ko td.b{text-align:center;padding:2px}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
