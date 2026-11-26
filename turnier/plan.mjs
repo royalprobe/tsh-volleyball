@@ -112,8 +112,8 @@ function planZehn() {
   for (const r of PLAN_10) r.spiele.forEach(([a, b], f) => neu(r.runde, r.spiele.length === 2 ? FELD_ZU_ZWEIT[f] : f + 1, 'gruppe', `Gruppe ${a[0]}`, { t: a }, { t: b }, { t: r.schiri[f] }));
   // Seit 26.11. (Simons Wunsch): ab der KO-Phase alles auf 2 Gewinnsätze (Runden à 50 min). Überkreuz 3./4.; dann Halbfinale
   // auf Feld 1+3 und daneben Platz 9 auf Feld 2; dann Platz 7, 5, 3 gleichzeitig; zum Schluss das Finale allein.
-  neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'A', p: 5 }, 2);   // S21
-  neu(8, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'B', p: 5 }, 2);   // S22
+  neu(8, 1, 'kreuz', 'Überkreuz Platz 5–8', { g: 'A', p: 3 }, { g: 'B', p: 4 }, { g: 'B', p: 2 }, 2);   // S21
+  neu(8, 3, 'kreuz', 'Überkreuz Platz 5–8', { g: 'B', p: 3 }, { g: 'A', p: 4 }, { g: 'A', p: 2 }, 2);   // S22
   neu(9, 1, 'kreuz', 'Halbfinale', { g: 'A', p: 1 }, { g: 'B', p: 2 }, { v: 'S21' }, 2);                // S23
   neu(9, 2, 'platz', 'Spiel um Platz 9', { g: 'A', p: 5 }, { g: 'B', p: 5 }, { s: 'S21' }, 2);          // S24
   neu(9, 3, 'kreuz', 'Halbfinale', { g: 'B', p: 1 }, { g: 'A', p: 2 }, { s: 'S22' }, 2);                // S25
