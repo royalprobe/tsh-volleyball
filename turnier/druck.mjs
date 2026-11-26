@@ -66,8 +66,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
       }).join('')}</tbody></table>`;
     };
-    return `<section>${kopf('Gruppentabellen')}${gruppen.map(kreuz).join('')}
-    <p class="hinweis">Je Zeile die eigenen Punkte links, die des Gegners rechts. Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz.</p></section>`;
+    return `<section>${kopf('Gruppentabellen')}${gruppen.map(kreuz).join('')}</section>`;
   };
 
   // ---- Playoff: je Spiel zwei Zeilen (Heim oben, Gast unten), pro Satz ein Kästchen je Team, dazu gewonnene Sätze
