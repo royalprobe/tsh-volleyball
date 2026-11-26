@@ -58,7 +58,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         const pa = e ? (s.heim === a ? e[0] : e[1]) : null, pb = e ? (s.heim === a ? e[1] : e[0]) : null;
         return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel"><span class="z${e && pa > pb ? ' fett' : ''}">${pa ?? ''}</span>:<span class="z${e && pb > pa ? ' fett' : ''}">${pb ?? ''}</span></span></td>`;
       };
-      return `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2><table class="kreuz"><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Bälle</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
+      return `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2><table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:12mm"><col style="width:16mm"><col style="width:11mm"><col style="width:11mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Bälle</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
       ${ids.map((a, i) => {
         const z = zeile(a), gespielt = z && z.sp > 0;
         return `<tr><th class="tm"><span class="nr">${i + 1}</span>${h(name(a))}</th>${ids.map((b) => a === b ? '<td class="leer"></td>' : feld(a, b)).join('')}
@@ -126,8 +126,8 @@ tr.neu td{border-top:2px solid #000}
 .klein{font-size:8.5pt}.titel{font-size:8.5pt;font-weight:700;width:24mm}
 .team{line-height:1.15}.platzhalter{display:block;font-size:7.5pt;color:#444;font-style:italic}.linie{display:block;border-bottom:1px solid #777;height:5mm}
 .hinweis{font-size:8.5pt;color:#333;margin:6px 0 0}
-.kreuz th.tm{text-align:left;width:52mm;white-space:nowrap;background:#fff;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
-.kreuz th.sp{text-align:center;width:20mm}.kreuz td{height:15mm;text-align:center}
+.kreuz{table-layout:fixed}.kreuz th.tm{text-align:left;white-space:nowrap;overflow:hidden;background:#fff;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
+.kreuz th.sp{text-align:center}.kreuz thead th{padding:4px 2px;text-align:center}.kreuz td{height:15mm;text-align:center}
 .kreuz td.leer{background:#ccc}
 .kreuz td.feld{position:relative;padding-top:10px}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
 .doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:8mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
