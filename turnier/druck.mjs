@@ -128,7 +128,7 @@ tr.neu td{border-top:2px solid #000}
 .hinweis{font-size:8.5pt;color:#333;margin:6px 0 0}
 .kreuz th.tm{text-align:left;width:52mm;white-space:nowrap;background:#fff;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
 .kreuz th.sp{text-align:center;width:20mm}.kreuz td{height:15mm;text-align:center}
-.kreuz td.leer{background:repeating-linear-gradient(45deg,#c8c8c8 0 1px,#fff 1px 8px)}
+.kreuz td.leer{background:#ccc}
 .kreuz td.feld{position:relative;padding-top:10px}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
 .doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:8mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
 .wert{font-weight:700;font-variant-numeric:tabular-nums}.baelle{white-space:nowrap}.platz{font-size:12pt;font-weight:800}
