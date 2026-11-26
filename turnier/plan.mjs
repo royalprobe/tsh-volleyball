@@ -194,7 +194,8 @@ const stand2 = (e, gs = 1) => gs === 1 ? e : e.reduce((n, [x, y]) => (x > y ? n[
  * Direkter Vergleich auch bei 3 oder mehr Teams mit gleich vielen Siegen: Es zählen nur die Spiele dieser Teams
  * untereinander (Siege in dieser „Mini-Tabelle“). Trennt das nur einen Teil, wird für die übrigen gleichauf liegenden
  * Teams wieder ihr direkter Vergleich genommen; bleibt es gleich (z. B. A schlägt B, B schlägt C, C schlägt A),
- * entscheidet die Ballpunkt-Differenz aus den Spielen dieser Teams untereinander, danach die aus allen Gruppenspielen.
+ * entscheidet die Ballpunkt-Differenz aus den Spielen dieser Teams untereinander; sind danach noch Teams gleich, wieder
+ * deren direkter Vergleich, zuletzt die Ballpunkt-Differenz (dann mehr Bälle) aus allen Gruppenspielen.
  */
 export function tabelle(g, spiele, ergebnisse, teams) {
   const z = {};
@@ -221,7 +222,10 @@ export function tabelle(g, spiele, ergebnisse, teams) {
     const stufen = [...new Set(mini.values())].sort((a, b) => b - a);
     if (stufen.length === 1) {   // Kreis: Ballpunkt-Differenz aus den Spielen untereinander, dann aus allen Spielen
       const diff = (t) => gruppe.reduce((n, o) => n + (o === t ? 0 : (baelle[`${t.id}>${o.id}`] || 0) - (baelle[`${o.id}>${t.id}`] || 0)), 0);
-      return [...gruppe].sort((x, y) => diff(y) - diff(x) || balle(x, y));
+      // Teams, die danach noch gleich sind: wieder ihr direkter Vergleich (wenn weniger Teams), zuletzt alle Spiele
+      const werte = [...new Set(gruppe.map(diff))].sort((a, b) => b - a);
+      if (werte.length === 1) return [...gruppe].sort(balle);
+      return werte.flatMap((d) => reihen(gruppe.filter((t) => diff(t) === d)));
     }
     return stufen.flatMap((w) => reihen(gruppe.filter((t) => mini.get(t.id) === w)));
   };
