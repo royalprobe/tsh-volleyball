@@ -72,8 +72,8 @@ function planNeun() {
 }
 // 10 Teams: Gruppenphase von werkzeuge/plan10-erzeugen.mjs (Runde 1–6 auf 3 Feldern, Runde 7 auf Feld 1+2; Dornbirn 2 –
 // Dornbirn Jungs in Runde 1, jedes Team pfeift 2-mal, Teams desselben Vereins in A und B spielen nur 1-mal gleichzeitig).
-// Teams A1…A5 = Gruppe A, B1…B5 = Gruppe B.
-const PLAN_10 = [{"runde":1,"spiele":[["B4","B5"],["B1","B2"],["A2","A5"]],"schiri":["A4","A1","B3"]},{"runde":2,"spiele":[["A2","A4"],["A1","A3"],["B3","B5"]],"schiri":["A5","B2","B4"]},{"runde":3,"spiele":[["A4","A5"],["B2","B3"],["B1","B4"]],"schiri":["A2","A3","B5"]},{"runde":4,"spiele":[["A1","A2"],["A3","A5"],["B1","B5"]],"schiri":["A4","B4","B2"]},{"runde":5,"spiele":[["A1","A4"],["B3","B4"],["B2","B5"]],"schiri":["B1","A3","A5"]},{"runde":6,"spiele":[["B1","B3"],["A3","A4"],["B2","B4"]],"schiri":["A2","A1","B5"]},{"runde":7,"spiele":[["A2","A3"],["A1","A5"]],"schiri":["B1","B3"]}];
+// Teams A1…A5 = Gruppe A, B1…B5 = Gruppe B. (26.11.: Gruppen A/B getauscht, damit Gruppe A um 9:00 auf Feld 1 beginnt.)
+const PLAN_10 = [{"runde":1,"spiele":[["A4","A5"],["A1","A2"],["B2","B5"]],"schiri":["B4","B1","A3"]},{"runde":2,"spiele":[["B2","B4"],["B1","B3"],["A3","A5"]],"schiri":["B5","A2","A4"]},{"runde":3,"spiele":[["B4","B5"],["A2","A3"],["A1","A4"]],"schiri":["B2","B3","A5"]},{"runde":4,"spiele":[["B1","B2"],["B3","B5"],["A1","A5"]],"schiri":["B4","A4","A2"]},{"runde":5,"spiele":[["B1","B4"],["A3","A4"],["A2","A5"]],"schiri":["A1","B3","B5"]},{"runde":6,"spiele":[["A1","A3"],["B3","B4"],["A2","A4"]],"schiri":["B2","B1","A5"]},{"runde":7,"spiele":[["B2","B3"],["B1","B5"]],"schiri":["A1","A3"]}];
 // Variante "10v" (zum Ansehen, 25.11.): Gruppensieger direkt ins Halbfinale. 4. gegen 5. der anderen Gruppe:
 // Verlierer spielen um Platz 9, Sieger gegen die Verlierer des Viertelfinales (2. gegen 3.) um Platz 5–8.
 // Viertelfinal-Sieger ins Halbfinale; die Spiele um Platz 5–8 kommen vor dem Halbfinale (Simons Wunsch). Der Gruppenfünfte kann also höchstens 5. werden, der Gruppendritte noch 1.
