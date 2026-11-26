@@ -37,10 +37,8 @@ const vorZeilen = zeiten(vor).map((z) => {
     <td>${h(name(s.heim))}</td><td>${h(name(s.gast))}</td><td class="erg"><span class="box"></span>:<span class="box"></span></td><td class="klein">${schiri(s)}</td></tr>`).join('');
 }).join('');
 const seite1 = `<section>${kopf('Vorrunde – Spielplan', '1 Satz auf 25')}
-<table class="plan"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th><th>Gr.</th><th>Heim</th><th>Gast</th><th>Ergebnis</th><th>Schiedsgericht</th></tr></thead>
+<table class="plan vr"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th><th>Gr.</th><th>Heim</th><th>Gast</th><th>Ergebnis</th><th>Schiedsgericht</th></tr></thead>
 <tbody>${vorZeilen}</tbody></table>
-<p class="hinweis">Nach der Vorrunde (${uhr(d.pause.von)}–${uhr(d.pause.bis)} Uhr): Pause und Auswertung der Gruppentabellen.</p>
-<div class="teams">${gruppen.map((g) => `<div><b>Gruppe ${g}</b>${d.tabellen[g].zeilen.map((z) => z.id).sort().map((id) => `<span>${h(name(id))}</span>`).join('')}</div>`).join('')}</div>
 </section>`;
 
 // ---- Seite 2: Gruppentabellen als Kreuztabellen
@@ -83,7 +81,7 @@ const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;font-size:10.5pt;color:#000}
 section{page-break-after:always}section:last-child{page-break-after:auto}
 header{display:flex;align-items:center;gap:14px;padding-bottom:8px;margin-bottom:10px;border-bottom:2px solid #000}
-.logo{flex:none;width:150px;height:27px;background:#000;-webkit-mask:url(${logo}) left center/contain no-repeat;mask:url(${logo}) left center/contain no-repeat}
+.logo{flex:none;width:150px;height:36px;background:#000;-webkit-mask:url(${logo}) left center/contain no-repeat;mask:url(${logo}) left center/contain no-repeat}
 header .t{font-size:17pt;font-weight:800;line-height:1.1}header .u{font-size:9.5pt;color:#333}
 h2{font-size:13pt;margin:14px 0 6px}
 table{width:100%;border-collapse:collapse}
@@ -91,7 +89,7 @@ th,td{border:1px solid #000;padding:4px 6px;vertical-align:middle}
 thead th{background:#ddd;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em;text-align:left}
 .c{text-align:center}.zeit{font-weight:800;text-align:center;width:13mm}
 tr.neu td{border-top:2px solid #000}
-.plan td{height:8.4mm}.ko td{height:9.5mm}.ko{table-layout:fixed}.ko tr.gast td{border-top:1px dashed #888}.ko tr.spiel td{border-top:1.5px solid #000}.ko td.b{text-align:center;padding:2px}.ko td.s{background:#eee}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
+.plan td{height:8.4mm}.vr td{height:12.4mm}.vr td.erg .box{height:7.5mm;width:9.5mm}.ko td{height:9.5mm}.ko{table-layout:fixed}.ko tr.gast td{border-top:1px dashed #888}.ko tr.spiel td{border-top:1.5px solid #000}.ko td.b{text-align:center;padding:2px}.ko td.s{background:#eee}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
 .erg{white-space:nowrap;text-align:center;width:24mm}.ko .box{width:8mm;height:6.5mm;margin:0}.ko td.team{font-size:9.5pt}
 .box{display:inline-block;width:8.5mm;height:6.5mm;border:1px solid #555;border-radius:2px;vertical-align:middle;margin:0 3px;background:#fff}
 .klein{font-size:8.5pt}.titel{font-size:8.5pt;font-weight:700;width:24mm}
