@@ -105,7 +105,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
 @page{size:A4;margin:12mm 12mm 12mm}
 *{box-sizing:border-box}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;font-size:10.5pt;color:#000;background:#fff}
-section{page-break-after:always}section:last-child{page-break-after:auto}
+section+section{break-before:page;page-break-before:always}
 header{display:flex;align-items:center;gap:14px;padding-bottom:8px;margin-bottom:10px;border-bottom:2px solid #000}
 .logo{flex:none;width:150px;height:36px;background:#000;-webkit-mask:url(${logo}) left center/contain no-repeat;mask:url(${logo}) left center/contain no-repeat}
 header .t{font-size:17pt;font-weight:800;line-height:1.1}header .u{font-size:9.5pt;color:#333}
@@ -118,7 +118,7 @@ tr.neu td{border-top:2px solid #000}
 .sieger{font-weight:800}
 .box{display:inline-flex;align-items:center;justify-content:center;width:8.5mm;height:6.5mm;border:1px solid #555;border-radius:2px;vertical-align:middle;margin:0 3px;background:#fff;font-size:10pt;font-variant-numeric:tabular-nums}
 .box.fett{font-weight:800;border:2px solid #000}
-.plan td{height:8.4mm}.vr td{height:12.4mm}.vr td.erg .box{height:7.5mm;width:9.5mm}
+.plan td{height:8.4mm}.vr td{height:12mm}.vr td.erg .box{height:7.5mm;width:9.5mm}
 .ko td{height:9.5mm}.ko{table-layout:fixed}.ko tr.gast td{border-top:1px dashed #888}.ko tr.spiel td{border-top:1.5px solid #000}
 .ko td.b{text-align:center;padding:2px}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
 .erg{white-space:nowrap;text-align:center;width:24mm}.ko .box{width:8mm;height:6.5mm;margin:0}.ko td.team{font-size:9.5pt}
