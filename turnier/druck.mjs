@@ -123,7 +123,7 @@ tr.neu td{border-top:2px solid #000}
 .ko td.b{text-align:center;padding:2px}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
 .erg{white-space:nowrap;text-align:center;width:24mm}.ko .box{width:8mm;height:6.5mm;margin:0}.ko td.team{font-size:9.5pt}
 .klein{font-size:8.5pt}.titel{font-size:8.5pt;font-weight:700;width:24mm}
-.team{line-height:1.15}.platzhalter{display:block;font-size:7.5pt;color:#444;font-style:italic}.linie{display:block;border-bottom:1px solid #777;height:5mm}
+.team{line-height:1.15}.platzhalter{display:block;font-size:7.5pt;color:#444;font-style:italic}.linie{display:block;height:5mm}
 .hinweis{font-size:8.5pt;color:#333;margin:6px 0 0}
 .kreuz{table-layout:fixed}.kreuz th.tm{text-align:left;white-space:nowrap;overflow:hidden;background:#fff;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
 .kreuz th.sp{text-align:center}.kreuz thead th{padding:4px 2px;text-align:center}.kreuz td{height:15mm;text-align:center}
