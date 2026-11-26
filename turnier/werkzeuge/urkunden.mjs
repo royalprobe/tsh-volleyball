@@ -14,7 +14,7 @@ const RESERVE = 2;
 const d = await (await fetch(new URL('api/stand', BASIS))).json();
 const teams = Object.keys(d.teams).sort().map((id) => d.teams[id]);
 const bild = async (datei) => 'data:image/png;base64,' + (await readFile(datei)).toString('base64');
-const logo = await bild(path.join(PUB, 'logo.png')), ball = await bild(path.join(HIER, 'urkunde', 'flammenball.png')), unten = await bild(path.join(HIER, 'urkunde', 'unten.png'));
+const logo = await bild(path.join(HIER, 'urkunde', 'logo-volleyball.png')), ball = await bild(path.join(HIER, 'urkunde', 'flammenball.png')), unten = await bild(path.join(HIER, 'urkunde', 'unten.png'));
 const h = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const NAVY = '#0a2c78', GOLD = '#f5c000';
@@ -31,10 +31,10 @@ const seite = (team) => `<section class="seite">
     <div class="ecke ol">${ecke(true)}</div>
     <img class="unten" src="${unten}" alt="">
     <div class="ecke ur">${ecke(false)}</div>
-    <span class="logo"></span>
+    <div class="logo"><div class="l1">TURNERSCHAFT HOHENEMS</div><span class="l2"></span></div>
     <div class="urkunde">URKUNDE</div><div class="balken"></div>
     <div class="fuer">FÜR DAS ERREICHEN DES</div>
-    <div class="platz"><span class="feld"></span><span class="pl">PLATZES</span></div>
+    <div class="platz"><span class="feld"></span><span class="pl"><span class="punkt">.</span>PLATZES</span></div>
     <div class="beim">BEIM</div>
     <div class="turnier"><div class="t1">HOHENEMSER</div><div class="t2">U14-VOLLEYBALLTURNIER</div></div>
     <div class="datum">Samstag, 28. November 2026 · Sportmittelschule Hohenems</div>
@@ -59,13 +59,15 @@ body{margin:0;font-family:Montserrat,Arial,sans-serif;color:${NAVY}}
 .innen>*{position:absolute;left:0;right:0}
 .ecke{width:170mm;height:75mm}.ecke.ol{left:0;top:0;transform:scale(.82);transform-origin:0 0}.ecke.ur{left:auto;right:0;top:auto;bottom:0;transform:rotate(180deg)}
 .unten{left:0;right:auto;bottom:0;width:196mm;-webkit-mask:linear-gradient(to bottom,transparent 0,#000 9mm);mask:linear-gradient(to bottom,transparent 0,#000 9mm)}
-.logo{left:auto;right:8mm;top:12mm;width:80mm;height:14.4mm;background:${NAVY};-webkit-mask:url(${logo}) right center/contain no-repeat;mask:url(${logo}) right center/contain no-repeat}
+.logo{left:auto;right:8mm;top:12mm;width:80mm;height:14.4mm}
+.l1{position:absolute;left:0;top:-1.1mm;font-size:15.2pt;font-weight:400;line-height:1;white-space:nowrap;text-align:left}
+.l2{position:absolute;left:0;right:0;bottom:0;height:9.63mm;background:${NAVY};-webkit-mask:url(${logo}) left bottom/100% 100% no-repeat;mask:url(${logo}) left bottom/100% 100% no-repeat}
 .urkunde{top:29mm;font-size:70pt;font-weight:900;letter-spacing:.02em;line-height:1}
 .balken{top:55mm;left:38mm;right:38mm;height:1.6mm;border-radius:1mm;background:linear-gradient(90deg,transparent,${GOLD} 12%,${GOLD} 88%,transparent)}
 .fuer{top:61mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
-.platz{top:69mm;display:flex;justify-content:center;align-items:center;gap:6mm}
+.platz{top:69mm;display:flex;justify-content:center;align-items:center;gap:1mm}
 .feld{width:36mm;height:25mm;border:.7mm solid ${NAVY};border-radius:4mm;background:#f3f6fc}
-.pl{font-size:36pt;font-weight:900;letter-spacing:.03em}
+.punkt{margin-right:5mm}.pl{font-size:36pt;font-weight:900;letter-spacing:.03em;line-height:1;margin-right:6mm}
 .beim{top:97.5mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
 .turnier{top:104.5mm;font-weight:900;line-height:1.02}.t1{font-size:42pt;letter-spacing:.04em}.t2{font-size:35pt}
 .datum{top:134mm;font-size:11pt;font-weight:600;color:#3a5590}
@@ -90,6 +92,15 @@ const b = await chromium.launch();
 const p = await b.newPage();
 await p.goto('file:///' + htmlDatei.replace(/\\/g, '/'), { waitUntil: 'networkidle' });
 await p.evaluate(() => document.fonts.ready);
+// obere Logozeile in Montserrat auf die Breite von „VOLLEYBALL“ bringen (im Logo-PNG ist sie oben angeschnitten)
+await p.evaluate(() => {
+  for (const z of document.querySelectorAll('.l1')) {
+    const ziel = z.parentElement.getBoundingClientRect().width;
+    let ls = 0;
+    for (let i = 0; i < 40; i++) { z.style.letterSpacing = ls + 'px'; const b = z.getBoundingClientRect().width - ls; ls += (ziel - b) / z.textContent.length; }
+    z.style.letterSpacing = ls + 'px';
+  }
+});
 await p.pdf({ path: pdf, preferCSSPageSize: true, printBackground: true });
 await b.close();
 console.log(pdf, teams.length + RESERVE, 'Seiten');
