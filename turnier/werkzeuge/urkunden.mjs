@@ -71,7 +71,7 @@ body{margin:0;font-family:Montserrat,Arial,sans-serif;color:${NAVY}}
 .beim{top:97.5mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
 .turnier{top:104.5mm;font-weight:900;line-height:1.02}.t1{font-size:42pt;letter-spacing:.04em}.t2{font-size:35pt}
 .datum{top:134mm;font-size:11pt;font-weight:600;color:#3a5590}
-.trenner{top:138.5mm;display:flex;align-items:center;justify-content:center;gap:5mm}
+.trenner{top:140.5mm;display:flex;align-items:center;justify-content:center;gap:5mm}
 .trenner i{display:block;width:62mm;height:1.1mm;border-radius:1mm;background:${GOLD}}
 .steinbock{width:18mm;height:auto}
 .text{top:162.5mm;font-size:12.5pt;font-weight:500;line-height:1.45;color:#1d3a80}
