@@ -113,7 +113,7 @@ header .t{font-size:17pt;font-weight:800;line-height:1.1}header .u{font-size:9.5
 h2{font-size:13pt;margin:14px 0 6px}h2 small{font-size:9pt;font-weight:600;color:#444}
 table{width:100%;border-collapse:collapse}
 th,td{border:1px solid #000;padding:4px 6px;vertical-align:middle}
-thead th{background:#ddd;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em;text-align:left}
+thead th{background:#f0f0f0;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em;text-align:left}
 .c{text-align:center}.zeit{font-weight:800;text-align:center;width:13mm}
 tr.neu td{border-top:2px solid #000}
 .sieger{font-weight:800}
@@ -121,15 +121,15 @@ tr.neu td{border-top:2px solid #000}
 .box.fett{font-weight:800;border:2px solid #000}
 .plan td{height:8.4mm}.vr td{height:12.4mm}.vr td.erg .box{height:7.5mm;width:9.5mm}
 .ko td{height:9.5mm}.ko{table-layout:fixed}.ko tr.gast td{border-top:1px dashed #888}.ko tr.spiel td{border-top:1.5px solid #000}
-.ko td.b{text-align:center;padding:2px}.ko td.s{background:#eee}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
+.ko td.b{text-align:center;padding:2px}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
 .erg{white-space:nowrap;text-align:center;width:24mm}.ko .box{width:8mm;height:6.5mm;margin:0}.ko td.team{font-size:9.5pt}
 .klein{font-size:8.5pt}.titel{font-size:8.5pt;font-weight:700;width:24mm}
 .team{line-height:1.15}.platzhalter{display:block;font-size:7.5pt;color:#444;font-style:italic}.linie{display:block;border-bottom:1px solid #777;height:5mm}
 .hinweis{font-size:8.5pt;color:#333;margin:6px 0 0}
-.kreuz th.tm{text-align:left;width:52mm;white-space:nowrap;background:#ddd;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
+.kreuz th.tm{text-align:left;width:52mm;white-space:nowrap;background:#fff;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
 .kreuz th.sp{text-align:center;width:20mm}.kreuz td{height:15mm;text-align:center}
-.kreuz td.leer{background:repeating-linear-gradient(45deg,#bbb 0 2px,#eee 2px 7px)}
-.kreuz td.feld{position:relative;padding-top:10px}.kreuz td.gew{background:#e6e6e6}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
+.kreuz td.leer{background:repeating-linear-gradient(45deg,#c8c8c8 0 1px,#fff 1px 8px)}
+.kreuz td.feld{position:relative;padding-top:10px}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
 .doppel{display:inline-flex;align-items:center;gap:2px}.doppel .box{width:7.5mm;margin:0}
 .wert{font-weight:700;font-variant-numeric:tabular-nums}.baelle{white-space:nowrap}.platz{font-size:12pt;font-weight:800}
 .end{table-layout:fixed}.end td{height:9mm;font-weight:700}.end td.c{width:12mm;font-weight:800}
