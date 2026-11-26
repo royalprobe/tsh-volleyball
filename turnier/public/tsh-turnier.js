@@ -105,6 +105,7 @@
     'td{padding:7px 6px;text-align:right;border-top:1px solid var(--rand)}',
     '.tm{text-align:left;width:100%;font-weight:600}td.pl{color:var(--grau-2)}td.pk{font-weight:800}',
     'tr.mein td{background:var(--hell)}tr.mein .tm{color:var(--blau);font-weight:800}',
+    'tbody tr[data-team],.end li[data-team]{cursor:pointer}tbody tr[data-team]:hover .tm{color:var(--blau);text-decoration:underline;text-underline-offset:3px}.end li.mein{box-shadow:inset 0 0 0 2px var(--blau)}',
     // Endstand
     '.end{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}',
     '.end li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:#fff;font-weight:700}',
@@ -259,13 +260,13 @@
     var t = daten.tabellen[g];
     return '<div class="kachel schatten"><div class="k-kopf">' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppe ' + g : 'Gruppenphase') + '<span>' + (t.komplett ? 'abgeschlossen' : t.zeilen.some(function (z) { return z.sp > 0; }) ? 'läuft' : '') + '</span></div><table><thead><tr><th></th><th class="tm">Team</th><th>Sp</th><th>S</th><th>N</th><th>Bälle</th></tr></thead><tbody>'
       + t.zeilen.map(function (z) {
-        return '<tr' + (z.id === mein ? ' class="mein"' : '') + '><td class="pl">' + z.platz + '</td><td class="tm">' + h(name(z.id)) + '</td><td>' + z.sp + '</td><td class="pk">' + z.s + '</td><td>' + z.n + '</td><td>' + z.bp + ':' + z.bm + '</td></tr>';
+        return '<tr data-team="' + h(z.id) + '" data-umschalten title="Spiele von ' + h(name(z.id)) + ' hervorheben"' + (z.id === mein ? ' class="mein"' : '') + '><td class="pl">' + z.platz + '</td><td class="tm">' + h(name(z.id)) + '</td><td>' + z.sp + '</td><td class="pk">' + z.s + '</td><td>' + z.n + '</td><td>' + z.bp + ':' + z.bm + '</td></tr>';
       }).join('') + '</tbody></table></div>';
   }
 
   function endstandHtml() {
     return '<section class="abschnitt"><div class="a-kopf"><div class="t">Endstand</div></div><ol class="end">'
-      + daten.endstand.map(function (e) { return '<li class="p' + e.platz + '"><b>' + e.platz + '.</b>' + h(name(e.team)) + '</li>'; }).join('') + '</ol></section>';
+      + daten.endstand.map(function (e) { return '<li data-team="' + h(e.team) + '" data-umschalten class="p' + e.platz + (e.team === mein ? ' mein' : '') + '"><b>' + e.platz + '.</b>' + h(name(e.team)) + '</li>'; }).join('') + '</ol></section>';
   }
 
   // ------------------------------------------------------------------ Eintragen (mit PIN)
@@ -398,7 +399,7 @@
     wurzel.addEventListener('click', function (e) {
       var w = e.target.closest('[data-wahl],[data-team],[data-variante]');
       if (w && w.hasAttribute('data-wahl')) { wahlOffen = !wahlOffen; zeichnen(); return; }
-      if (w && w.hasAttribute('data-team')) { mein = w.getAttribute('data-team'); wahlOffen = false; try { localStorage.setItem('tsh-turnier-team', mein); } catch (x) {} zeichnen(); return; }
+      if (w && w.hasAttribute('data-team')) { mein = w.hasAttribute('data-umschalten') && w.getAttribute('data-team') === mein ? '' : w.getAttribute('data-team'); wahlOffen = false; try { localStorage.setItem('tsh-turnier-team', mein); } catch (x) {} zeichnen(); return; }
       if (wahlOffen) { wahlOffen = false; zeichnen(); }
       if (w && w.hasAttribute('data-variante')) {
         variante = w.getAttribute('data-variante');
