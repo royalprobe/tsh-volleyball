@@ -9,6 +9,7 @@ import { readFile, writeFile, mkdir, rename, appendFile } from 'node:fs/promises
 import { timingSafeEqual, createHash } from 'node:crypto';
 import path from 'node:path';
 import { stand, pruefen, spielplan, format } from './plan.mjs';
+import { druckHtml, TEILE } from './druck.mjs';
 
 const ORDNER = import.meta.dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ORDNER, 'daten');
@@ -152,6 +153,12 @@ createServer(async (req, res) => {
       await speichern();
       senden();
       return json(res, 200, aktuell(f));
+    }
+    if (req.method === 'GET' && url.pathname === '/druck') {   // Druckansicht: ?teil=vorrunde|tabellen|playoff|alle&format=…
+      const t = url.searchParams.get('teil');
+      const teile = t in TEILE ? [t] : Object.keys(TEILE);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+      return res.end(druckHtml(aktuell(url.searchParams.get('format')), { teile, logo: 'logo.png', knopf: true }));
     }
     if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/ball-zeichen.png', '/'].includes(url.pathname)) {
       const datei = url.pathname === '/' ? 'vorschau.html' : url.pathname.slice(1);

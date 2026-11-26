@@ -115,6 +115,7 @@
     '.knopf{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;font-weight:700;font-size:.9em;border:1px solid #d6dee8;background:#fff;color:var(--blau)}',
     '.knopf.voll{background:var(--blau);border-color:var(--blau);color:#fff}',
     '.knopf.klein{padding:5px 12px;font-size:.8em}',
+    '.leiste .druck{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto}.leiste .druck>span{display:inline-flex;align-items:center;gap:6px}.leiste .druck svg{width:16px;height:16px}',
     '.leiste{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border-radius:var(--r);background:#e7f6ec;color:var(--gruen);font-weight:700;font-size:.88em}',
     '.dialog{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:16px;background:rgba(0,19,61,.55)}',
     '.box{width:min(100%,400px);padding:26px 24px 22px;border-radius:calc(var(--r) + 6px);background:#fff;box-shadow:0 24px 60px rgba(0,19,61,.35)}',
@@ -209,7 +210,8 @@
       + '<div class="h-info"><span class="chip">' + h(datum) + '</span><span class="chip">' + h(daten.zeitraum || daten.beginn.replace(/^0/, '') + '–' + daten.ende + ' Uhr') + '</span>'
       + (daten.ort ? '<span class="chip">' + h(daten.ort) + '</span>' : '') + '<span class="chip">' + h(daten.modus) + '</span></div>' + umschalter + '</div>'
       + '</header>'
-      + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button></div>' : '')
+      + (pin ? '<div class="leiste">Eintragen ist an – Spiel antippen, um das Ergebnis einzutragen. <button class="knopf klein" data-teams>Teamnamen ändern</button><button class="knopf klein" data-protokoll>Protokoll</button><button class="knopf klein" data-aus>Beenden</button>'
+        + '<span class="druck"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>Drucken / PDF:</span><button class="knopf klein" data-druck="vorrunde">Vorrunde</button><button class="knopf klein" data-druck="tabellen">Tabellen</button><button class="knopf klein" data-druck="playoff">Playoff</button></span></div>' : '')
       + (daten.endstand.length ? endstandHtml() : '')
       + '<section class="abschnitt"><div class="a-kopf"><div class="t">' + (Object.keys(daten.tabellen).length > 1 ? 'Gruppen' : 'Tabelle') + '</div></div>'
       + '<div class="gruppen' + (Object.keys(daten.tabellen).length > 1 ? '' : ' eine') + '">' + Object.keys(daten.tabellen).sort().map(tabelleHtml).join('') + '</div>'
@@ -396,6 +398,11 @@
         variante = w.getAttribute('data-variante');
         try { localStorage.setItem('tsh-turnier-variante', variante); } catch (x) {}
         laden();
+        return;
+      }
+      var dr = e.target.closest('[data-druck]');
+      if (dr) {   // Druckansicht in neuem Fenster, mit den aktuellen Ergebnissen der angezeigten Variante
+        window.open(BASIS + 'druck?teil=' + dr.getAttribute('data-druck') + (daten && daten.variante ? '&format=' + encodeURIComponent(daten.variante) : ''), '_blank');
         return;
       }
       var z = e.target.closest('[data-spiel],[data-ein],[data-aus],[data-teams],[data-protokoll]');
