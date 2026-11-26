@@ -56,7 +56,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
       const feld = (a, b) => {
         const s = spiel(a, b), e = s.ergebnis;
         const pa = e ? (s.heim === a ? e[0] : e[1]) : null, pb = e ? (s.heim === a ? e[1] : e[0]) : null;
-        return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel">${box(pa, e && pa > pb)}:${box(pb)}</span></td>`;
+        return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel"><span class="z${e && pa > pb ? ' fett' : ''}">${pa ?? ''}</span>:<span class="z${e && pb > pa ? ' fett' : ''}">${pb ?? ''}</span></span></td>`;
       };
       return `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2><table class="kreuz"><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Bälle</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
       ${ids.map((a, i) => {
@@ -113,7 +113,7 @@ header .t{font-size:17pt;font-weight:800;line-height:1.1}header .u{font-size:9.5
 h2{font-size:13pt;margin:14px 0 6px}h2 small{font-size:9pt;font-weight:600;color:#444}
 table{width:100%;border-collapse:collapse}
 th,td{border:1px solid #000;padding:4px 6px;vertical-align:middle}
-thead th{background:#f0f0f0;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em;text-align:left}
+thead th{background:#ddd;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em;text-align:left}
 .c{text-align:center}.zeit{font-weight:800;text-align:center;width:13mm}
 tr.neu td{border-top:2px solid #000}
 .sieger{font-weight:800}
@@ -130,7 +130,7 @@ tr.neu td{border-top:2px solid #000}
 .kreuz th.sp{text-align:center;width:20mm}.kreuz td{height:15mm;text-align:center}
 .kreuz td.leer{background:repeating-linear-gradient(45deg,#c8c8c8 0 1px,#fff 1px 8px)}
 .kreuz td.feld{position:relative;padding-top:10px}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
-.doppel{display:inline-flex;align-items:center;gap:2px}.doppel .box{width:7.5mm;margin:0}
+.doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:8mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
 .wert{font-weight:700;font-variant-numeric:tabular-nums}.baelle{white-space:nowrap}.platz{font-size:12pt;font-weight:800}
 .end{table-layout:fixed}.end td{height:9mm;font-weight:700}.end td.c{width:12mm;font-weight:800}
 .leiste{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px;padding:12px 16px;border-radius:10px;background:#eef3f9;font-size:10pt}
