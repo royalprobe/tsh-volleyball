@@ -34,7 +34,7 @@ const seite = (team) => `<section class="seite">
     <div class="logo"><div class="l1">TURNERSCHAFT HOHENEMS</div><span class="l2"></span></div>
     <div class="urkunde">URKUNDE</div><div class="balken"></div>
     <div class="fuer">FÜR DAS ERREICHEN DES</div>
-    <div class="platz"><span class="feld"></span><span class="pl"><span class="punkt">.</span>PLATZES</span></div>
+    <div class="platz"><span class="feld"><span class="punkt">.</span></span><span class="pl">PLATZES</span></div>
     <div class="beim">BEIM</div>
     <div class="turnier"><div class="t1">HOHENEMSER</div><div class="t2">U14-VOLLEYBALLTURNIER</div></div>
     <div class="datum">Samstag, 28. November 2026 · Sportmittelschule Hohenems</div>
@@ -65,9 +65,9 @@ body{margin:0;font-family:Montserrat,Arial,sans-serif;color:${NAVY}}
 .urkunde{top:29mm;font-size:70pt;font-weight:900;letter-spacing:.02em;line-height:1}
 .balken{top:55mm;left:38mm;right:38mm;height:1.6mm;border-radius:1mm;background:linear-gradient(90deg,transparent,${GOLD} 12%,${GOLD} 88%,transparent)}
 .fuer{top:61mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
-.platz{top:69mm;display:flex;justify-content:center;align-items:center;gap:1mm}
+.platz{top:69mm;display:flex;justify-content:center;align-items:center;gap:6mm}
 .feld{width:36mm;height:25mm;border:.7mm solid ${NAVY};border-radius:4mm;background:#f3f6fc}
-.punkt{margin-right:5mm}.pl{font-size:36pt;font-weight:900;letter-spacing:.03em;line-height:1;margin-right:6mm}
+.feld{position:relative}.punkt{position:absolute;right:6mm;bottom:4.5mm;font-size:36pt;font-weight:900;line-height:.6}.pl{font-size:36pt;font-weight:900;letter-spacing:.03em;line-height:1;margin-right:6mm}
 .beim{top:97.5mm;font-size:15pt;font-weight:600;letter-spacing:.16em}
 .turnier{top:104.5mm;font-weight:900;line-height:1.02}.t1{font-size:42pt;letter-spacing:.04em}.t2{font-size:35pt}
 .datum{top:134mm;font-size:11pt;font-weight:600;color:#3a5590}
