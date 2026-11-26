@@ -73,7 +73,7 @@ body{margin:0;font-family:Montserrat,Arial,sans-serif;color:${NAVY}}
 .datum{top:134mm;font-size:11pt;font-weight:600;color:#3a5590}
 .trenner{top:138.5mm;display:flex;align-items:center;justify-content:center;gap:5mm}
 .trenner i{display:block;width:62mm;height:1.1mm;border-radius:1mm;background:${GOLD}}
-.steinbock{width:23mm;height:auto}
+.steinbock{width:18mm;height:auto}
 .text{top:162.5mm;font-size:12.5pt;font-weight:500;line-height:1.45;color:#1d3a80}
 .team{top:177mm;left:18mm;right:18mm;height:23mm;border:.8mm solid ${NAVY};border-radius:5mm;background:#fff;display:flex;flex-direction:column;justify-content:center}
 .team small{position:absolute;top:2.2mm;left:0;right:0;font-size:8.5pt;font-weight:700;letter-spacing:.3em;color:#5a6f9e}
