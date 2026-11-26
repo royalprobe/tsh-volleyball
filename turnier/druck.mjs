@@ -106,6 +106,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
 *{box-sizing:border-box}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;font-size:10.5pt;color:#000;background:#fff}
 section+section{break-before:page;page-break-before:always}
+section{padding:0 2px}   /* Tabellenränder ragen sonst rechts minimal aus dem Druckbereich */
 header{display:flex;align-items:center;gap:14px;padding-bottom:8px;margin-bottom:10px;border-bottom:2px solid #000}
 .logo{flex:none;width:150px;height:36px;background:#000;-webkit-mask:url(${logo}) left center/contain no-repeat;mask:url(${logo}) left center/contain no-repeat}
 header .t{font-size:17pt;font-weight:800;line-height:1.1}header .u{font-size:9.5pt;color:#333}
