@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { chromium } from 'file:///C:/Users/Simon/VScode/beachliga/node_modules/playwright/index.mjs';
 
-const URL_ = process.argv[2] || 'https://tsh-turnier-production.up.railway.app/';
+const URL_ = process.argv[2] || 'https://www.ts-hohenems.at/sparten/volleyball/u14-turnier';
 const HIER = import.meta.dirname, AUS = path.join(HIER, '..', 'druck');
 const svg = execFileSync('C:/Program Files/Python314/python.exe', ['-c',
   'import segno,sys,io;q=segno.make(sys.argv[1],error="m");b=io.BytesIO();q.save(b,kind="svg",border=0,dark="#0a2c78",xmldecl=False,svgns=True,omitsize=True);sys.stdout.write(b.getvalue().decode())', URL_]).toString();
@@ -37,7 +37,7 @@ h1{margin:3mm 0 0;font-size:50pt;font-weight:900;line-height:1.05}
 <div class="qr">${svg}</div>
 <div class="text">Alle Spiele, Ergebnisse und die Tabelle<br>live auf dem Handy</div>
 <div class="klein">QR-Code mit der Handykamera scannen</div>
-<div class="url">${URL_.replace(/^https:\/\//, '').replace(/\/$/, '')}</div>
+<div class="url">${URL_.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '')}</div>
 </section></body></html>`;
 await mkdir(AUS, { recursive: true });
 const htmlDatei = path.join(AUS, 'QR-Spielplan-Tabelle.html'), pdf = path.join(AUS, 'QR-Spielplan-Tabelle.pdf');

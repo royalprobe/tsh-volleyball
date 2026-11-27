@@ -356,7 +356,7 @@
     // Programmpunkt: [Zeit, Text] oder [Zeit, Text, Link] – mit Link wie ein Spiel anklickbar
     var zeilen = (a.programm || []).map(function (z) {
       var innen = '<b>' + h(z[0]) + '</b><span>' + h(z[1]) + '</span>';
-      return { zeit: z[0], html: z[2] ? '<li class="spiel"><a href="' + h(z[2]) + '" target="_blank" rel="noopener">' + innen + '<i class="pfeil" aria-hidden="true">›</i></a></li>' : '<li>' + innen + '</li>' };
+      return { zeit: z[0], html: z[2] ? '<li class="spiel"><a href="' + h(z[2]) + '"' + (/^https:\/\/www\.ts-hohenems\.at\//.test(z[2]) ? '' : ' target="_blank" rel="noopener"') + '>' + innen + '<i class="pfeil" aria-hidden="true">›</i></a></li>' : '<li>' + innen + '</li>' };
     });
     if (a.spieleAm) daten.spiele.filter(function (s) { return s.datum === a.spieleAm && eigen(s.heim); }).forEach(function (s) {
       var stand = s.ergebnis ? '<em>' + h(s.ergebnis) + '</em>' : laeuft(s) ? '<span class="live"><i></i>LIVE</span>' : '';
