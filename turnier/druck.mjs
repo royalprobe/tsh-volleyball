@@ -22,6 +22,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
   const kopf = (titel, zusatz) => `<header><span class="logo"></span><div><div class="t">${h(titel)}</div>
     <div class="u">${h(d.name)} weiblich · ${h(datum)}${zusatz ? ' · ' + h(zusatz) : ''}</div></div></header>`;
   const gruppen = Object.keys(d.tabellen).sort();
+  if (gruppen.length === 1) teile = teile.filter((t) => t !== 'playoff');   // eine Gruppe: Finale steht im Spielplan
   const vor = d.spiele.filter((s) => s.phase === 'gruppe');
   const ko = d.spiele.filter((s) => s.phase !== 'gruppe').sort((a, b) => a.zeit.localeCompare(b.zeit) || (a.feld || 9) - (b.feld || 9));
   const zeiten = (liste) => [...new Set(liste.map((s) => s.zeit))];
@@ -32,15 +33,16 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
 
   // ---- Vorrunde
   seiten.vorrunde = () => {
-    const zeilen = zeiten(vor).map((z) => {
-      const sp = vor.filter((s) => s.zeit === z);
+    const liste = mehr ? vor : [...vor, ...ko];
+    const zeilen = zeiten(liste).map((z) => {
+      const sp = liste.filter((s) => s.zeit === z);
       const pause = d.pause && !d.pause.text && sp[0].runde === d.pause.nach
         ? `<tr class="neu pause"><td class="zeit">${uhr(d.pause.von)}</td><td colspan="${mehr ? 7 : 6}">Mittagspause bis ${h(d.pause.bis)} Uhr</td></tr>` : '';
       return sp.map((s, i) => {
         const e = s.ergebnis;
         return `<tr class="${i === 0 ? 'neu' : ''}">${i === 0 ? `<td class="zeit" rowspan="${sp.length}">${uhr(z)}</td>` : ''}
-        <td class="c">${s.feld}</td><td class="c">${s.nr}</td>${mehr ? `<td class="c">${h(s.titel.replace('Gruppe ', ''))}</td>` : ''}
-        <td${e && e[0] > e[1] ? ' class="sieger"' : ''}>${h(name(s.heim))}</td><td${e && e[1] > e[0] ? ' class="sieger"' : ''}>${h(name(s.gast))}</td>
+        <td class="c">${s.feld}</td><td class="c">${s.nr}${s.phase !== 'gruppe' ? `<small class="rd">${h(s.titel)}</small>` : ''}</td>${mehr ? `<td class="c">${h(s.titel.replace('Gruppe ', ''))}</td>` : ''}
+        <td${e && e[0] > e[1] ? ' class="sieger"' : ''}>${s.heim ? h(name(s.heim)) : teil(null, s.heimText)}</td><td${e && e[1] > e[0] ? ' class="sieger"' : ''}>${s.gast ? h(name(s.gast)) : teil(null, s.gastText)}</td>
         <td class="erg">${box(e && e[0], e && e[0] > e[1])}:${box(e && e[1], e && e[1] > e[0])}</td><td class="klein">${schiri(s)}</td></tr>`;
       }).join('') + pause;
     }).join('');
@@ -61,11 +63,11 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         const pa = e ? (s.heim === a ? e[0] : e[1]) : null, pb = e ? (s.heim === a ? e[1] : e[0]) : null;
         return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel"><span class="z${e && pa > pb ? ' fett' : ''}">${pa ?? ''}</span>:<span class="z${e && pb > pa ? ' fett' : ''}">${pb ?? ''}</span></span></td>`;
       };
-      return `${mehr ? `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2>` : t.komplett ? '<h2><small>abgeschlossen</small></h2>' : ''}<table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:14mm"><col style="width:16mm"><col style="width:14mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
+      return `${mehr ? `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2>` : t.komplett ? '<h2><small>abgeschlossen</small></h2>' : ''}<table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:14mm"><col style="width:16mm"><col style="width:14mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th class="aus">Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
       ${ids.map((a, i) => {
         const z = zeile(a), gespielt = z && z.sp > 0;
         return `<tr><th class="tm"><span class="nr">${i + 1}</span>${h(name(a))}</th>${ids.map((b) => a === b ? '<td class="leer"></td>' : feld(a, b)).join('')}
-        <td class="wert">${gespielt ? z.s : ''}</td>        <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
+        <td class="wert aus">${gespielt ? z.s : ''}</td>        <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
       }).join('')}</tbody></table>`;
     };
     return `<section>${kopf(mehr ? 'Gruppentabellen' : 'Tabelle')}${gruppen.map(kreuz).join('')}</section>`;
@@ -132,8 +134,9 @@ tr.neu td{border-top:2px solid #000}
 .kreuz{table-layout:fixed}.kreuz th.tm{text-align:left;white-space:nowrap;overflow:hidden;background:#fff;font-size:9.5pt}.kreuz .nr{display:inline-block;width:5mm;font-weight:800}
 .kreuz th.sp{text-align:center}.kreuz thead th{padding:4px 2px;text-align:center}.kreuz td{height:15mm;text-align:center}
 .kreuz td.leer{background:#ccc}
-.kreuz td.feld{position:relative;padding-top:10px}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
-.doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:8mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
+.kreuz td.feld{position:relative;padding:10px 0 2px}.kreuz thead th{border-bottom:2.5px solid #000}.kreuz th.tm{border-right:2.5px solid #000}.kreuz .aus{border-left:2.5px solid #000}
+.vr .rd{display:block;font-size:7pt;font-weight:700;text-transform:uppercase}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
+.doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:6.5mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
 .wert{font-weight:700;font-variant-numeric:tabular-nums}.baelle{white-space:nowrap}.platz{font-size:12pt;font-weight:800}
 .end{table-layout:fixed}.end td{height:9mm;font-weight:700}.end td.c{width:12mm;font-weight:800}
 .leiste{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px;padding:12px 16px;border-radius:10px;background:#eef3f9;font-size:10pt}

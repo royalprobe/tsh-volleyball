@@ -1,7 +1,7 @@
 // Spielplan und Wertung des U14-Turniers. Zwei Formate (turnier.json → "format"):
 //  "12": 12 Teams in zwei 6er-Gruppen (jeder gegen jeden), danach Überkreuz-Spiele (1./2., 3./4., 5./6. der Gruppen)
 //        und alle Platzierungsspiele – 42 Spiele, 14 Runden, 3 Felder. (Stand 22.11.2026, auch als Git-Tag u14-12-teams)
-//  "9":  9 Teams jeder gegen jeden (36 Spiele, 12 Runden, Mittagspause nach Runde 6), danach Finale 1. gegen 2. (Tag u14-9-teams)
+//  "9":  9 Teams jeder gegen jeden (36 Spiele, 13 Runden, Runde 7–9 nur Feld 1+3), danach Finale der zwei besten Mädchenteams
 //  "10": 10 Teams in zwei 5er-Gruppen (bis 11:55), Mittagszeit nur auf Feld 1+2 (Überkreuz, Pause, Halbfinale),
 //        Überkreuz 3./4. und Halbfinale 1./2., danach um Platz 9, 7, 5, 3 und Finale – die Platzierungsspiele auf 2 Gewinnsätze.
 //  "10v": wie "10", aber Gruppensieger direkt im Halbfinale, davor 4./5. und Viertelfinale 2./3. (Variante zum Ansehen).
@@ -57,17 +57,23 @@ export function spielplan() {
 
 // 9 Teams: Runden, Felder und Schiedsgericht von werkzeuge/plan9-erzeugen.mjs gesucht (jedes Team 4 Spiele vor und 4 nach
 // der Pause, höchstens einmal 3 Spiele in Folge, die 3 freien Teams pfeifen – meist dort, wo sie danach spielen).
-// Je Runde: spiele = [[Heim, Gast] auf Feld 1, 2, 3], schiri = [Team auf Feld 1, 2, 3]; Zahlen = Team A1 … A9.
-// Vereinsduelle zuerst: Runde 1 Dornbirn 1–2, Hohenems 1–2, Montafon 1–2; Runde 2 und 3 Dornbirn 1 bzw. 2 gegen Jungs.
-const PLAN_9 = [{"runde":1,"spiele":[[1,2],[4,5],[6,7]],"schiri":[3,8,9]},{"runde":2,"spiele":[[1,3],[4,8],[5,9]],"schiri":[2,7,6]},{"runde":3,"spiele":[[2,3],[7,9],[6,8]],"schiri":[1,5,4]},{"runde":4,"spiele":[[1,7],[5,8],[4,6]],"schiri":[2,9,3]},{"runde":5,"spiele":[[2,9],[1,4],[3,5]],"schiri":[6,7,8]},{"runde":6,"spiele":[[3,6],[2,7],[8,9]],"schiri":[5,4,1]},{"runde":7,"spiele":[[5,7],[3,4],[1,8]],"schiri":[2,6,9]},{"runde":8,"spiele":[[7,8],[2,6],[3,9]],"schiri":[1,5,4]},{"runde":9,"spiele":[[1,6],[2,5],[4,9]],"schiri":[7,3,8]},{"runde":10,"spiele":[[4,7],[1,5],[3,8]],"schiri":[2,6,9]},{"runde":11,"spiele":[[2,8],[6,9],[3,7]],"schiri":[1,5,4]},{"runde":12,"spiele":[[1,9],[5,6],[2,4]],"schiri":[3,7,8]}];
+// Je Runde: spiele = [[Heim, Gast] auf Feld 1, 2, 3 bzw. bei 2 Spielen Feld 1 und 3], schiri = Team je Feld; Zahlen = Team A1 … A9.
+// Seit 27.11.: 13 Runden ohne Mittagspause. Runde 7–9 (11:30–12:45) nur Feld 1+3, Feld 2 bleibt frei; in diesen drei Runden
+// hat jedes Team genau einmal ganz frei (weder Spiel noch Schiri). Keiner spielt 3-mal hintereinander, jeder pfeift 4-mal.
+// Vereinsduelle früh: Runde 1 Dornbirn 1–2 und Montafon 1–2, Runde 2 Dornbirn 1 – Jungs, Runde 4 Dornbirn 2 – Jungs.
+// Erzeugt mit werkzeuge/plan9-erzeugen.mjs (ohne feste Duelle) + werkzeuge/plan9-vereine.mjs (Teams passend umnummeriert).
+// Finale: die zwei besten Mädchenteams (VC Dornbirn Jungs = A3 zählt dafür nicht), Schiri das drittbeste Mädchenteam.
+const PLAN_9 = [{"runde":1,"spiele":[[3,5],[6,7],[1,2]],"schiri":[8,9,4]},{"runde":2,"spiele":[[8,9],[1,3],[4,6]],"schiri":[2,5,7]},{"runde":3,"spiele":[[4,8],[2,5],[7,9]],"schiri":[6,3,1]},{"runde":4,"spiele":[[5,6],[3,2],[1,7]],"schiri":[8,4,9]},{"runde":5,"spiele":[[3,8],[1,4],[6,9]],"schiri":[7,2,5]},{"runde":6,"spiele":[[8,7],[4,2],[5,9]],"schiri":[3,1,6]},{"runde":7,"spiele":[[3,7],[1,6]],"schiri":[4,2]},{"runde":8,"spiele":[[5,8],[1,9]],"schiri":[3,6]},{"runde":9,"spiele":[[4,5],[2,9]],"schiri":[7,8]},{"runde":10,"spiele":[[3,6],[4,7],[2,8]],"schiri":[9,5,1]},{"runde":11,"spiele":[[3,9],[5,7],[1,8]],"schiri":[2,4,6]},{"runde":12,"spiele":[[2,6],[4,9],[1,5]],"schiri":[7,3,8]},{"runde":13,"spiele":[[2,7],[4,3],[6,8]],"schiri":[1,5,9]}];
+const OHNE_9 = ['A3'];
 function planNeun() {
   const spiele = [];
   let nr = 0;
   for (const r of PLAN_9) {
-    r.spiele.forEach(([a, b], f) => { nr++; spiele.push({ id: `S${nr}`, nr, runde: r.runde, feld: f + 1, phase: 'gruppe', titel: 'Gruppe A', heim: { t: `A${a}` }, gast: { t: `A${b}` }, schiri: { t: `A${r.schiri[f]}` } }); });
+    r.spiele.forEach(([a, b], f) => { nr++; spiele.push({ id: `S${nr}`, nr, runde: r.runde, feld: r.spiele.length === 2 ? [1, 3][f] : f + 1, phase: 'gruppe', titel: 'Gruppe A', heim: { t: `A${a}` }, gast: { t: `A${b}` }, schiri: { t: `A${r.schiri[f]}` } }); });
   }
   nr++;
-  spiele.push({ id: `S${nr}`, nr, runde: PLAN_9.length + 1, feld: 1, phase: 'platz', titel: 'Finale', heim: { g: 'A', p: 1 }, gast: { g: 'A', p: 2 }, schiri: { g: 'A', p: 3 } });
+  const m = (p) => ({ g: 'A', p, ohne: OHNE_9 });
+  spiele.push({ id: `S${nr}`, nr, runde: PLAN_9.length + 1, feld: 1, phase: 'platz', titel: 'Finale', heim: m(1), gast: m(2), schiri: m(3) });
   return spiele;
 }
 // 10 Teams: Gruppenphase von werkzeuge/plan10-erzeugen.mjs (Runde 1–6 auf 3 Feldern, Runde 7 auf Feld 1+2; Dornbirn 2 –
@@ -244,7 +250,7 @@ export function stand(turnier, ergebnisse) {
   const aufloesen = (x) => {
     if (!x) return null;
     if (x.t) return x.t;
-    if (x.g) return tab[x.g].komplett ? tab[x.g].zeilen[x.p - 1].id : null;
+    if (x.g) { if (!tab[x.g].komplett) return null; const z = tab[x.g].zeilen.filter((y) => !(x.ohne || []).includes(y.id))[x.p - 1]; return z ? z.id : null; }
     const id = x.s || x.v, sp = spiele.find((s) => s.id === id), e = ergebnisse[id];
     if (!sp || !fertig(e, sp.gewinnsaetze || 1)) return null;
     const h = aufloesen(sp.heim), a = aufloesen(sp.gast);
@@ -252,7 +258,7 @@ export function stand(turnier, ergebnisse) {
     const st = stand2(e, sp.gewinnsaetze || 1);
     return (st[0] > st[1]) === !!x.s ? h : a;
   };
-  const text = (x) => x.t ? null : x.g ? (gruppen.length > 1 ? `${x.p}. Gruppe ${x.g}` : `${x.p}. der Tabelle`) : `${x.s ? 'Sieger' : 'Verlierer'} Spiel ${x.s ? x.s.slice(1) : x.v.slice(1)}`;
+  const text = (x) => x.t ? null : x.g && x.ohne ? `${x.p}. Mädchenteam der Tabelle` : x.g ? (gruppen.length > 1 ? `${x.p}. Gruppe ${x.g}` : `${x.p}. der Tabelle`) : `${x.s ? 'Sieger' : 'Verlierer'} Spiel ${x.s ? x.s.slice(1) : x.v.slice(1)}`;
   const [hh, mm] = String(turnier.beginn || '09:00').split(':').map(Number);
   const takt = turnier.minuten || 25;
   const pause = turnier.pause && turnier.pause.nach ? turnier.pause : null;   // { nach: Runde, minuten }
@@ -279,7 +285,8 @@ export function stand(turnier, ergebnisse) {
     endstand.push({ platz: p1, team: s }, { platz: p2, team: v });
   }
   // 9 Teams: ab Platz 3 zählt die Tabelle (sobald alle Gruppenspiele gespielt sind)
-  if (FORMAT === '9' && tab.A.komplett) tab.A.zeilen.slice(2).forEach((z) => endstand.push({ platz: z.platz, team: z.id }));
+  // (Finalisten = die zwei besten Mädchenteams, alle anderen der Reihe nach ab Platz 3, auch Dornbirn Jungs)
+  if (FORMAT === '9' && tab.A.komplett) { const fin = [aufloesen({ g: 'A', p: 1, ohne: OHNE_9 }), aufloesen({ g: 'A', p: 2, ohne: OHNE_9 })]; tab.A.zeilen.filter((z) => !fin.includes(z.id)).forEach((z, i) => endstand.push({ platz: 3 + i, team: z.id })); }
   endstand.sort((a, b) => a.platz - b.platz);
   return { format: FORMAT, name: turnier.name, datum: turnier.datum, ort: turnier.ort, beginn: zeit(1), ende: uhr(Math.max(...spiele.map(spielEnde))),
     pause: pause ? { nach: pause.nach, von: uhr(minute(pause.nach) + dauer(pause.nach)), bis: uhr(minute(pause.nach) + dauer(pause.nach) + pause.minuten), text: pause.text || null } : null,
