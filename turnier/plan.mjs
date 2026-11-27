@@ -258,7 +258,7 @@ export function stand(turnier, ergebnisse) {
     const st = stand2(e, sp.gewinnsaetze || 1);
     return (st[0] > st[1]) === !!x.s ? h : a;
   };
-  const text = (x) => x.t ? null : x.g ? (gruppen.length > 1 ? `${x.p}. Gruppe ${x.g}` : `${x.p}. der Tabelle`) : `${x.s ? 'Sieger' : 'Verlierer'} Spiel ${x.s ? x.s.slice(1) : x.v.slice(1)}`;
+  const text = (x) => x.t ? null : x.g && x.ohne ? `${['Bestes', 'Zweitbestes', 'Drittbestes'][x.p - 1]} Mädchenteam` : x.g ? (gruppen.length > 1 ? `${x.p}. Gruppe ${x.g}` : `${x.p}. der Tabelle`) : `${x.s ? 'Sieger' : 'Verlierer'} Spiel ${x.s ? x.s.slice(1) : x.v.slice(1)}`;
   const [hh, mm] = String(turnier.beginn || '09:00').split(':').map(Number);
   const takt = turnier.minuten || 25;
   const pause = turnier.pause && turnier.pause.nach ? turnier.pause : null;   // { nach: Runde, minuten }
