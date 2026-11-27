@@ -42,12 +42,13 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         const e = s.ergebnis;
         return `<tr class="${i === 0 ? 'neu' : ''}">${i === 0 ? `<td class="zeit" rowspan="${sp.length}">${uhr(z)}</td>` : ''}
         <td class="c">${s.feld}</td><td class="c">${s.nr}${s.phase !== 'gruppe' ? `<small class="rd">${h(s.titel)}</small>` : ''}</td>${mehr ? `<td class="c">${h(s.titel.replace('Gruppe ', ''))}</td>` : ''}
-        <td${e && e[0] > e[1] ? ' class="sieger"' : ''}>${s.heim ? h(name(s.heim)) : teil(null, s.heimText)}</td><td${e && e[1] > e[0] ? ' class="sieger"' : ''}>${s.gast ? h(name(s.gast)) : teil(null, s.gastText)}</td>
-        <td class="erg">${box(e && e[0], e && e[0] > e[1])}:${box(e && e[1], e && e[1] > e[0])}</td><td class="klein">${schiri(s)}</td></tr>`;
+        <td class="t1${e && e[0] > e[1] ? ' sieger' : ''}">${s.heim ? h(name(s.heim)) : teil(null, s.heimText)}</td>
+        <td class="erg">${box(e && e[0], e && e[0] > e[1])}:${box(e && e[1], e && e[1] > e[0])}</td>
+        <td class="t2${e && e[1] > e[0] ? ' sieger' : ''}">${s.gast ? h(name(s.gast)) : teil(null, s.gastText)}</td><td class="klein sr">${schiri(s)}</td></tr>`;
       }).join('') + '</tbody>' + (pause ? '<tbody>' + pause + '</tbody>' : '');
     }).join('');
     return `<section>${kopf(mehr ? 'Vorrunde – Spielplan' : 'Spielplan', '1 Satz auf 25')}
-    <table class="plan vr"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th>${mehr ? '<th>Gr.</th>' : ''}<th>Heim</th><th>Gast</th><th>Ergebnis</th><th>Schiedsgericht</th></tr></thead>
+    <table class="plan vr"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th>${mehr ? '<th>Gr.</th>' : ''}<th class="t1">Team 1</th><th class="erg">Ergebnis</th><th>Team 2</th><th class="sr">Schiedsgericht</th></tr></thead>
     ${zeilen}</table></section>`;
   };
 
@@ -135,6 +136,7 @@ tr.neu td{border-top:2px solid #000}
 .kreuz th.sp{text-align:center}.kreuz thead th{padding:4px 2px;text-align:center}.kreuz td{height:15mm;text-align:center}
 .kreuz td.leer{background:#ccc}
 .kreuz td.feld{position:relative;padding:10px 0 2px}.kreuz thead th{border-bottom:2.5px solid #000}.kreuz th.tm{border-right:2.5px solid #000}.kreuz .aus{border-left:2.5px solid #000}
+.vr .t1{text-align:right}.vr th.erg{text-align:center}.vr .sr{border-left:3px solid #000}.vr td.sr{padding-left:8px}
 .vr .rd{display:block;font-size:7pt;font-weight:700;text-transform:uppercase}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
 .doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:6.5mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
 .wert{font-weight:700;font-variant-numeric:tabular-nums}.baelle{white-space:nowrap}.platz{font-size:12pt;font-weight:800}
