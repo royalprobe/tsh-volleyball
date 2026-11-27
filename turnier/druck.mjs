@@ -5,7 +5,7 @@
 const h = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const TAGE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 const MONATE = ['Jänner', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-export const TEILE = { vorrunde: 'Vorrunde', tabellen: 'Gruppentabellen', playoff: 'Playoff', feld1: 'Feld 1', feld2: 'Feld 2', feld3: 'Feld 3' };
+export const TEILE = { vorrunde: 'Vorrunde', tabellen: 'Gruppentabellen', playoff: 'Playoff', feld1: 'Feld 1', feld2: 'Feld 2', feld3: 'Feld 3', endstand: 'Endstand' };
 
 /**
  * @param d       Stand wie /api/stand
@@ -107,6 +107,12 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
     </section>`;
   };
 
+  // ---- Endstand: ein Team steht erst drin, wenn sein Platz feststeht (Platzierungsspiel bzw. Tabelle fertig)
+  seiten.endstand = () => {
+    const n = Object.keys(d.teams).length;
+    const zeilen = Array.from({ length: n }, (_, i) => { const e = d.endstand.find((x) => x.platz === i + 1); return `<tr><td class="p">${i + 1}.</td><td class="n">${e ? h(name(e.team)) : ''}</td></tr>`; }).join('');
+    return `<section>${kopf('Endstand')}<table class="endstand"><tbody>${zeilen}</tbody></table></section>`;
+  };
   seiten.feld1 = () => seiten.vorrunde(1); seiten.feld2 = () => seiten.vorrunde(2); seiten.feld3 = () => seiten.vorrunde(3);
 
   const titel = teile.length === 1 ? `${d.name} – ${TEILE[teile[0]]}` : `${d.name} – Druck`;
@@ -140,6 +146,7 @@ tr.neu td{border-top:2px solid #000}
 .kreuz th.sp{text-align:center}.kreuz thead th{padding:4px 2px;text-align:center}.kreuz td{height:15mm;text-align:center}
 .kreuz td.leer{background:#ccc}
 .kreuz td.feld{position:relative;padding:10px 0 2px}.kreuz thead th{border-bottom:2.5px solid #000}.kreuz th.tm{border-right:2.5px solid #000}.kreuz .aus{border-left:2.5px solid #000}
+.endstand{margin-top:8mm}.endstand td{height:17mm;font-size:16pt}.endstand td.p{width:22mm;text-align:center;font-size:20pt;font-weight:800}.endstand td.n{padding-left:6mm;font-weight:700}
 .vr tr.fremd td{color:#8a8a8a}.vr tr.fremd td.erg{background:#e4e4e4}.vr tr.fremd td.zeit{color:#000}.vr tr.fremd .sieger{font-weight:400}
 .vr .t1{text-align:right}.vr th.erg{text-align:center}.vr .sr{border-left:3px solid #000}.vr td.sr{padding-left:8px}
 .vr .rd{display:block;font-size:7pt;font-weight:700;text-transform:uppercase}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
