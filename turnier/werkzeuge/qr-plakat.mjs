@@ -1,7 +1,7 @@
-// A4-Aushang mit großem QR-Code zur Turnierseite → turnier/druck/QR-Spielplan-Tabelle.pdf
+// A4-Aushang mit großem QR-Code zur Turnierseite → turnier/druck/QR-Spielplan-Tabelle.pdf (+ Kopie public/qr-aushang.pdf)
 //   node werkzeuge/qr-plakat.mjs [URL]
 // QR-Code per Python-Paket segno (als SVG), PDF per Playwright (aus beachliga/node_modules wie bei den Urkunden).
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { chromium } from 'file:///C:/Users/Simon/VScode/beachliga/node_modules/playwright/index.mjs';
@@ -53,4 +53,5 @@ await p.evaluate(() => {   // obere Logozeile auf die Breite von „VOLLEYBALL�
 });
 await p.pdf({ path: pdf, preferCSSPageSize: true, printBackground: true });
 await b.close();
+await copyFile(pdf, path.join(HIER, '..', 'public', 'qr-aushang.pdf'));   // Download-Knopf auf der Turnierseite (nach Deploy)
 console.log(pdf);

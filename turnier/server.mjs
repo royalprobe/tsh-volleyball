@@ -160,10 +160,10 @@ createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
       return res.end(druckHtml(aktuell(url.searchParams.get('format')), { teile, logo: 'logo.png', knopf: true }));
     }
-    if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/ball-zeichen.png', '/'].includes(url.pathname)) {
+    if (req.method === 'GET' && ['/tsh-turnier.js', '/logo.png', '/ts-zeichen.png', '/ball-zeichen.png', '/qr-aushang.pdf', '/'].includes(url.pathname)) {
       const datei = url.pathname === '/' ? 'vorschau.html' : url.pathname.slice(1);
-      const typ = { js: 'text/javascript; charset=utf-8', png: 'image/png', html: 'text/html; charset=utf-8' }[datei.split('.').pop()];
-      res.writeHead(200, { 'Content-Type': typ, 'Cache-Control': datei.endsWith('.js') ? 'no-cache' : 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' });
+      const typ = { js: 'text/javascript; charset=utf-8', png: 'image/png', html: 'text/html; charset=utf-8', pdf: 'application/pdf' }[datei.split('.').pop()];
+      res.writeHead(200, { 'Content-Type': typ, ...(typ === 'application/pdf' ? { 'Content-Disposition': 'attachment; filename="QR-Spielplan-Tabelle.pdf"' } : {}), 'Cache-Control': datei.endsWith('.js') ? 'no-cache' : 'public, max-age=3600', 'Access-Control-Allow-Origin': '*' });
       return res.end(await readFile(path.join(ORDNER, 'public', datei)));
     }
     json(res, 404, { fehler: 'Nicht gefunden.' });
