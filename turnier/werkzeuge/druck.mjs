@@ -1,4 +1,4 @@
-// Druckvorlage fürs U14-Turnier als PDF (Vorrunde, Gruppentabellen, Playoff). Holt den aktuellen Stand von der Turnierseite,
+// Druckvorlage fürs U14-Turnier als PDF (Spielplan, Tabellen, Playoff, Spielpläne je Feld). Holt den aktuellen Stand von der Turnierseite,
 // eingetragene Ergebnisse sind ausgefüllt (Layout in ../druck.mjs, dasselbe wie der Druck-Knopf auf der Seite).
 //   node werkzeuge/druck.mjs            → turnier/druck/U14-Turnier-Druck.pdf
 //   node werkzeuge/druck.mjs <API-URL>  → anderer Server (z. B. http://localhost:8098/)

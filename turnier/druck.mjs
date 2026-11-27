@@ -5,7 +5,7 @@
 const h = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const TAGE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 const MONATE = ['Jänner', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-export const TEILE = { vorrunde: 'Vorrunde', tabellen: 'Gruppentabellen', playoff: 'Playoff' };
+export const TEILE = { vorrunde: 'Vorrunde', tabellen: 'Gruppentabellen', playoff: 'Playoff', feld1: 'Feld 1', feld2: 'Feld 2', feld3: 'Feld 3' };
 
 /**
  * @param d       Stand wie /api/stand
@@ -32,7 +32,8 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
   const mehr = gruppen.length > 1;
 
   // ---- Vorrunde
-  seiten.vorrunde = () => {
+  // feld: Spielplan für ein Feld – alle Spiele stehen drauf, ausgefüllt werden nur die dieses Feldes
+  seiten.vorrunde = (feld) => {
     const liste = mehr ? vor : [...vor, ...ko];
     const zeilen = zeiten(liste).map((z) => {
       const sp = liste.filter((s) => s.zeit === z);
@@ -40,14 +41,15 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         ? `<tr class="neu pause"><td class="zeit">${uhr(d.pause.von)}</td><td colspan="${mehr ? 7 : 6}">Mittagspause bis ${h(d.pause.bis)} Uhr</td></tr>` : '';
       return '<tbody>' + sp.map((s, i) => {
         const e = s.ergebnis;
-        return `<tr class="${i === 0 ? 'neu' : ''}">${i === 0 ? `<td class="zeit" rowspan="${sp.length}">${uhr(z)}</td>` : ''}
+        const fremd = feld && s.feld !== feld;
+        return `<tr class="${i === 0 ? 'neu' : ''}${fremd ? ' fremd' : ''}">${i === 0 ? `<td class="zeit" rowspan="${sp.length}">${uhr(z)}</td>` : ''}
         <td class="c">${s.feld}</td><td class="c">${s.nr}${s.phase !== 'gruppe' ? `<small class="rd">${h(s.titel)}</small>` : ''}</td>${mehr ? `<td class="c">${h(s.titel.replace('Gruppe ', ''))}</td>` : ''}
         <td class="t1${e && e[0] > e[1] ? ' sieger' : ''}">${s.heim ? h(name(s.heim)) : teil(null, s.heimText)}</td>
-        <td class="erg">${box(e && e[0], e && e[0] > e[1])}:${box(e && e[1], e && e[1] > e[0])}</td>
+        <td class="erg">${fremd ? '' : `${box(e && e[0], e && e[0] > e[1])}:${box(e && e[1], e && e[1] > e[0])}`}</td>
         <td class="t2${e && e[1] > e[0] ? ' sieger' : ''}">${s.gast ? h(name(s.gast)) : teil(null, s.gastText)}</td><td class="klein sr">${schiri(s)}</td></tr>`;
       }).join('') + '</tbody>' + (pause ? '<tbody>' + pause + '</tbody>' : '');
     }).join('');
-    return `<section>${kopf(mehr ? 'Vorrunde – Spielplan' : 'Spielplan', '1 Satz auf 25')}
+    return `<section>${kopf((mehr ? 'Vorrunde – Spielplan' : 'Spielplan') + (feld ? ` – Feld ${feld}` : ''), feld ? `nur die Spiele auf Feld ${feld} eintragen` : '1 Satz auf 25')}
     <table class="plan vr"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th>${mehr ? '<th>Gr.</th>' : ''}<th class="t1">Team 1</th><th class="erg">Ergebnis</th><th>Team 2</th><th class="sr">Schiedsgericht</th></tr></thead>
     ${zeilen}</table></section>`;
   };
@@ -105,6 +107,8 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
     </section>`;
   };
 
+  seiten.feld1 = () => seiten.vorrunde(1); seiten.feld2 = () => seiten.vorrunde(2); seiten.feld3 = () => seiten.vorrunde(3);
+
   const titel = teile.length === 1 ? `${d.name} – ${TEILE[teile[0]]}` : `${d.name} – Druck`;
   return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(titel)}</title><style>
 @page{size:A4;margin:12mm 12mm 12mm}@page quer{size:A4 landscape;margin:12mm}section.quer{page:quer}.plan tbody{break-inside:avoid;page-break-inside:avoid}.quer .kreuz td{height:16mm}
@@ -136,6 +140,7 @@ tr.neu td{border-top:2px solid #000}
 .kreuz th.sp{text-align:center}.kreuz thead th{padding:4px 2px;text-align:center}.kreuz td{height:15mm;text-align:center}
 .kreuz td.leer{background:#ccc}
 .kreuz td.feld{position:relative;padding:10px 0 2px}.kreuz thead th{border-bottom:2.5px solid #000}.kreuz th.tm{border-right:2.5px solid #000}.kreuz .aus{border-left:2.5px solid #000}
+.vr tr.fremd td{color:#8a8a8a}.vr tr.fremd td.erg{background:#e4e4e4}.vr tr.fremd td.zeit{color:#000}.vr tr.fremd .sieger{font-weight:400}
 .vr .t1{text-align:right}.vr th.erg{text-align:center}.vr .sr{border-left:3px solid #000}.vr td.sr{padding-left:8px}
 .vr .rd{display:block;font-size:7pt;font-weight:700;text-transform:uppercase}.spnr{position:absolute;top:2px;left:4px;font-size:6.5pt;color:#555}
 .doppel{display:inline-flex;align-items:center;gap:2px;font-size:11pt}.doppel .z{display:inline-block;width:6.5mm;font-variant-numeric:tabular-nums}.doppel .z:first-child{text-align:right}.doppel .z:last-child{text-align:left}.doppel .z.fett{font-weight:800}
