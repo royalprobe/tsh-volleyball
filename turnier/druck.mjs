@@ -28,21 +28,24 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
   const teil = (id, text) => id ? `<b>${h(name(id))}</b>` : `<span class="platzhalter">${h(text)}</span><span class="linie"></span>`;
   const schiri = (s) => s.schiri ? h(name(s.schiri)) : s.schiriText === 'offen' ? '<span class="linie"></span>' : `<span class="platzhalter">${h(s.schiriText)}</span><span class="linie"></span>`;
   const seiten = {};
+  const mehr = gruppen.length > 1;
 
   // ---- Vorrunde
   seiten.vorrunde = () => {
     const zeilen = zeiten(vor).map((z) => {
       const sp = vor.filter((s) => s.zeit === z);
+      const pause = d.pause && !d.pause.text && sp[0].runde === d.pause.nach
+        ? `<tr class="neu pause"><td class="zeit">${uhr(d.pause.von)}</td><td colspan="${mehr ? 7 : 6}">Mittagspause bis ${h(d.pause.bis)} Uhr</td></tr>` : '';
       return sp.map((s, i) => {
         const e = s.ergebnis;
         return `<tr class="${i === 0 ? 'neu' : ''}">${i === 0 ? `<td class="zeit" rowspan="${sp.length}">${uhr(z)}</td>` : ''}
-        <td class="c">${s.feld}</td><td class="c">${s.nr}</td><td class="c">${h(s.titel.replace('Gruppe ', ''))}</td>
+        <td class="c">${s.feld}</td><td class="c">${s.nr}</td>${mehr ? `<td class="c">${h(s.titel.replace('Gruppe ', ''))}</td>` : ''}
         <td${e && e[0] > e[1] ? ' class="sieger"' : ''}>${h(name(s.heim))}</td><td${e && e[1] > e[0] ? ' class="sieger"' : ''}>${h(name(s.gast))}</td>
         <td class="erg">${box(e && e[0], e && e[0] > e[1])}:${box(e && e[1], e && e[1] > e[0])}</td><td class="klein">${schiri(s)}</td></tr>`;
-      }).join('');
+      }).join('') + pause;
     }).join('');
-    return `<section>${kopf('Vorrunde – Spielplan', '1 Satz auf 25')}
-    <table class="plan vr"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th><th>Gr.</th><th>Heim</th><th>Gast</th><th>Ergebnis</th><th>Schiedsgericht</th></tr></thead>
+    return `<section>${kopf(mehr ? 'Vorrunde – Spielplan' : 'Spielplan', '1 Satz auf 25')}
+    <table class="plan vr"><thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th>${mehr ? '<th>Gr.</th>' : ''}<th>Heim</th><th>Gast</th><th>Ergebnis</th><th>Schiedsgericht</th></tr></thead>
     <tbody>${zeilen}</tbody></table></section>`;
   };
 
@@ -58,14 +61,14 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         const pa = e ? (s.heim === a ? e[0] : e[1]) : null, pb = e ? (s.heim === a ? e[1] : e[0]) : null;
         return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel"><span class="z${e && pa > pb ? ' fett' : ''}">${pa ?? ''}</span>:<span class="z${e && pb > pa ? ' fett' : ''}">${pb ?? ''}</span></span></td>`;
       };
-      return `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2><table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:14mm"><col style="width:16mm"><col style="width:14mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
+      return `${mehr ? `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2>` : t.komplett ? '<h2><small>abgeschlossen</small></h2>' : ''}<table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:14mm"><col style="width:16mm"><col style="width:14mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th>Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
       ${ids.map((a, i) => {
         const z = zeile(a), gespielt = z && z.sp > 0;
         return `<tr><th class="tm"><span class="nr">${i + 1}</span>${h(name(a))}</th>${ids.map((b) => a === b ? '<td class="leer"></td>' : feld(a, b)).join('')}
         <td class="wert">${gespielt ? z.s : ''}</td>        <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
       }).join('')}</tbody></table>`;
     };
-    return `<section>${kopf('Gruppentabellen')}${gruppen.map(kreuz).join('')}</section>`;
+    return `<section>${kopf(mehr ? 'Gruppentabellen' : 'Tabelle')}${gruppen.map(kreuz).join('')}</section>`;
   };
 
   // ---- Playoff: je Spiel zwei Zeilen (Heim oben, Gast unten), pro Satz ein Kästchen je Team, dazu gewonnene Sätze
@@ -90,12 +93,12 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
     }).join('');
     const n = Object.keys(d.teams).length, haelfte = Math.ceil(n / 2);
     const platz = (p) => { const e = d.endstand.find((x) => x.platz === p); return e ? h(name(e.team)) : ''; };
-    return `<section>${kopf('Playoff – Spielplan', d.modus && d.modus.includes('KO') ? 'alle Spiele 2 Gewinnsätze (3. Satz auf 15)' : '')}
+    return `<section>${kopf(ko.length === 1 ? ko[0].titel : 'Playoff – Spielplan', d.modus && d.modus.includes('KO') ? 'alle Spiele 2 Gewinnsätze (3. Satz auf 15)' : '')}
     <table class="plan ko"><colgroup><col style="width:12mm"><col style="width:10mm"><col style="width:11mm"><col style="width:24mm"><col><col style="width:13mm"><col style="width:13mm"><col style="width:13mm"><col style="width:14mm"><col style="width:34mm"></colgroup>
     <thead><tr><th>Zeit</th><th>Feld</th><th>Spiel</th><th>Runde</th><th>Teams</th><th>1. Satz</th><th>2. Satz</th><th>3. Satz</th><th>Sätze</th><th>Schiedsgericht</th></tr></thead>
     <tbody>${zeilen}</tbody></table>
     <h2>Endstand</h2>
-    <table class="end"><colgroup><col style="width:12mm"><col><col style="width:12mm"><col></colgroup><tbody>${Array.from({ length: haelfte }, (_, i) => `<tr><td class="c">${i + 1}.</td><td>${platz(i + 1)}</td><td class="c">${i + 1 + haelfte}.</td><td>${platz(i + 1 + haelfte)}</td></tr>`).join('')}</tbody></table>
+    <table class="end"><colgroup><col style="width:12mm"><col><col style="width:12mm"><col></colgroup><tbody>${Array.from({ length: haelfte }, (_, i) => `<tr><td class="c">${i + 1}.</td><td>${platz(i + 1)}</td>${i + 1 + haelfte <= n ? `<td class="c">${i + 1 + haelfte}.</td><td>${platz(i + 1 + haelfte)}</td>` : '<td class="leer" colspan="2"></td>'}</tr>`).join('')}</tbody></table>
     </section>`;
   };
 
@@ -122,6 +125,7 @@ tr.neu td{border-top:2px solid #000}
 .ko td{height:9.5mm}.ko{table-layout:fixed}.ko tr.gast td{border-top:1px dotted #aaa}.ko tr.spiel td{border-top:2.5px solid #000}.ko tr.neu td{border-top:2.5px solid #000}
 .ko td.b{text-align:center;padding:2px}.ko td.x{background:repeating-linear-gradient(45deg,#ccc 0 1px,#fff 1px 6px)}.ko .linie{height:4mm}
 .erg{white-space:nowrap;text-align:center;width:24mm}.ko .box{width:8mm;height:6.5mm;margin:0}.ko td.team{font-size:9.5pt}
+.vr tr.pause td{height:7mm;text-align:center;font-weight:700;background:#eee}.vr tr.pause td.zeit{text-align:center}.end td.leer{border:0}
 .klein{font-size:8.5pt}.titel{font-size:8.5pt;font-weight:700;width:24mm}
 .team{line-height:1.15}.platzhalter{display:block;font-size:7.5pt;color:#444;font-style:italic}.linie{display:block;height:5mm}
 .hinweis{font-size:8.5pt;color:#333;margin:6px 0 0}

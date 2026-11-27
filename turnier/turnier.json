@@ -1,16 +1,14 @@
 {
   "name": "U14-Turnier",
-  "format": "10",
-  "varianten": [
+  "format": "9",
+  "varianten_ausgeblendet": [
     {
       "format": "10",
       "name": "Standardvariante",
       "pause": 15,
       "modus": "Vorrunde 1 Satz auf 25 – ab KO-Phase 2 Gewinnsätze",
       "koMinuten": 45
-    }
-  ],
-  "varianten_ausgeblendet": [
+    },
     {
       "format": "10v",
       "name": "Verlängerte Variante",
@@ -23,18 +21,28 @@
   "zeitraum": "9:00–15:00 Uhr",
   "minuten": 25,
   "pause": {
-    "nach": 7,
-    "minuten": 20,
-    "text": "Ende der Vorrunde"
+    "nach": 6,
+    "minuten": 30
   },
   "erklaerung": "Reihung: Siege, direkter Vergleich, Ballpunkt-Differenz.",
-  "modus": "1 Satz auf 25 – Platzierungsspiele 2 Gewinnsätze",
+  "modus": "Jeder gegen jeden, 1 Satz auf 25 – danach Finale 1. gegen 2.",
   "zurueck": {
     "text": "TS Hohenems Volleyball",
     "link": "https://www.ts-hohenems.at/sparten/volleyball/"
   },
   "jimdoKopfAusblenden": true,
   "teams": {
+    "A1": "VC Dornbirn 1",
+    "A2": "VC Dornbirn 2",
+    "A3": "VC Dornbirn Jungs",
+    "A4": "TS Hohenems",
+    "A5": "SMS Nenzing",
+    "A6": "VC Montafon 1",
+    "A7": "VC Montafon 2",
+    "A8": "VC Egg",
+    "A9": "VC Wolfurt"
+  },
+  "teams_10": {
     "A1": "VC Dornbirn 2",
     "A2": "VC Dornbirn Jungs",
     "A3": "TS Hohenems 1",
@@ -46,15 +54,9 @@
     "B4": "VC Egg",
     "B5": "VC Wolfurt"
   },
-  "teams_9": {
-    "A1": "VC Dornbirn 1",
-    "A2": "VC Dornbirn 2",
-    "A3": "VC Dornbirn Jungs",
-    "A4": "TS Hohenems 1",
-    "A5": "TS Hohenems 2",
-    "A6": "VC Montafon 1",
-    "A7": "VC Montafon 2",
-    "A8": "VC Egg",
-    "A9": "VC Wolfurt"
+  "pause_10": {
+    "nach": 7,
+    "minuten": 20,
+    "text": "Ende der Vorrunde"
   }
 }

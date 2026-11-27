@@ -67,7 +67,7 @@ function planNeun() {
     r.spiele.forEach(([a, b], f) => { nr++; spiele.push({ id: `S${nr}`, nr, runde: r.runde, feld: f + 1, phase: 'gruppe', titel: 'Gruppe A', heim: { t: `A${a}` }, gast: { t: `A${b}` }, schiri: { t: `A${r.schiri[f]}` } }); });
   }
   nr++;
-  spiele.push({ id: `S${nr}`, nr, runde: PLAN_9.length + 1, feld: null, phase: 'platz', titel: 'Finale', heim: { g: 'A', p: 1 }, gast: { g: 'A', p: 2 }, schiri: { g: 'A', p: 3 } });
+  spiele.push({ id: `S${nr}`, nr, runde: PLAN_9.length + 1, feld: 1, phase: 'platz', titel: 'Finale', heim: { g: 'A', p: 1 }, gast: { g: 'A', p: 2 }, schiri: { g: 'A', p: 3 } });
   return spiele;
 }
 // 10 Teams: Gruppenphase von werkzeuge/plan10-erzeugen.mjs (Runde 1–6 auf 3 Feldern, Runde 7 auf Feld 1+2; Dornbirn 2 –
