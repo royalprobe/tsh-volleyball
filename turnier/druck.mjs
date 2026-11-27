@@ -63,14 +63,14 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
         const pa = e ? (s.heim === a ? e[0] : e[1]) : null, pb = e ? (s.heim === a ? e[1] : e[0]) : null;
         return `<td class="feld${e ? (pa > pb ? ' gew' : ' verl') : ''}"><span class="spnr">Sp. ${s.nr}</span><span class="doppel"><span class="z${e && pa > pb ? ' fett' : ''}">${pa ?? ''}</span>:<span class="z${e && pb > pa ? ' fett' : ''}">${pb ?? ''}</span></span></td>`;
       };
-      return `${mehr ? `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2>` : t.komplett ? '<h2><small>abgeschlossen</small></h2>' : ''}<table class="kreuz"><colgroup><col style="width:44mm">${ids.map(() => '<col style="width:18mm">').join('')}<col style="width:14mm"><col style="width:16mm"><col style="width:14mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th class="aus">Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
+      return `${mehr ? `<h2>Gruppe ${g}${t.komplett ? ' <small>– abgeschlossen</small>' : ''}</h2>` : t.komplett ? '<h2><small>abgeschlossen</small></h2>' : ''}<table class="kreuz"><colgroup><col style="width:46mm">${ids.map(() => '<col>').join('')}<col style="width:16mm"><col style="width:16mm"><col style="width:16mm"></colgroup><thead><tr><th class="tm"></th>${ids.map((id, i) => `<th class="sp">${i + 1}</th>`).join('')}<th class="aus">Siege</th><th>Diff.</th><th>Platz</th></tr></thead><tbody>
       ${ids.map((a, i) => {
         const z = zeile(a), gespielt = z && z.sp > 0;
         return `<tr><th class="tm"><span class="nr">${i + 1}</span>${h(name(a))}</th>${ids.map((b) => a === b ? '<td class="leer"></td>' : feld(a, b)).join('')}
         <td class="wert aus">${gespielt ? z.s : ''}</td>        <td class="wert">${gespielt ? (z.bp - z.bm > 0 ? '+' : '') + (z.bp - z.bm) : ''}</td><td class="wert platz">${t.komplett ? z.platz + '.' : ''}</td></tr>`;
       }).join('')}</tbody></table>`;
     };
-    return `<section>${kopf(mehr ? 'Gruppentabellen' : 'Tabelle')}${gruppen.map(kreuz).join('')}</section>`;
+    return `<section class="quer">${kopf(mehr ? 'Gruppentabellen' : 'Tabelle')}${gruppen.map(kreuz).join('')}</section>`;
   };
 
   // ---- Playoff: je Spiel zwei Zeilen (Heim oben, Gast unten), pro Satz ein Kästchen je Team, dazu gewonnene Sätze
@@ -106,7 +106,7 @@ export function druckHtml(d, { teile = Object.keys(TEILE), logo = 'logo.png', kn
 
   const titel = teile.length === 1 ? `${d.name} – ${TEILE[teile[0]]}` : `${d.name} – Druck`;
   return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(titel)}</title><style>
-@page{size:A4;margin:12mm 12mm 12mm}
+@page{size:A4;margin:12mm 12mm 12mm}@page quer{size:A4 landscape;margin:12mm}section.quer{page:quer}.quer .kreuz td{height:16mm}
 *{box-sizing:border-box}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;font-size:10.5pt;color:#000;background:#fff}
 section+section{break-before:page;page-break-before:always}
