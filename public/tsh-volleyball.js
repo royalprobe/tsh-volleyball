@@ -353,7 +353,11 @@
   // Programm eines Aktuell-Eintrags: feste Zeilen (z. B. Turnier) plus die Heimspiele des Tages „spieleAm“ aus den Spieldaten –
   // die sind anklickbar und führen auf die Spielseite von volley-ball.at
   function programmHtml(a) {
-    var zeilen = (a.programm || []).map(function (z) { return { zeit: z[0], html: '<li><b>' + h(z[0]) + '</b><span>' + h(z[1]) + '</span></li>' }; });
+    // Programmpunkt: [Zeit, Text] oder [Zeit, Text, Link] – mit Link wie ein Spiel anklickbar
+    var zeilen = (a.programm || []).map(function (z) {
+      var innen = '<b>' + h(z[0]) + '</b><span>' + h(z[1]) + '</span>';
+      return { zeit: z[0], html: z[2] ? '<li class="spiel"><a href="' + h(z[2]) + '" target="_blank" rel="noopener">' + innen + '<i class="pfeil" aria-hidden="true">›</i></a></li>' : '<li>' + innen + '</li>' };
+    });
     if (a.spieleAm) daten.spiele.filter(function (s) { return s.datum === a.spieleAm && eigen(s.heim); }).forEach(function (s) {
       var stand = s.ergebnis ? '<em>' + h(s.ergebnis) + '</em>' : laeuft(s) ? '<span class="live"><i></i>LIVE</span>' : '';
       var inhaltZ = '<b>' + h(s.zeit || '–') + '</b><span><small>' + h(s.bewerb) + '</small>' + h(s.heim) + ' – ' + h(s.gast) + '</span>' + stand;
